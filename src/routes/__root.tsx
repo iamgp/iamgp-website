@@ -40,6 +40,11 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body>
+        <div className="page-effects" aria-hidden="true">
+          <div className="page-grid" />
+          <div className="page-glow page-glow-a" />
+          <div className="page-glow page-glow-b" />
+        </div>
         <main>
           <Nav />
           {children}

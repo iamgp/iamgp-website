@@ -11,25 +11,27 @@ export const Route = createFileRoute('/')(  {
 function Home() {
   return (
     <>
-      <div className="hero">
-        <div className="hero-top">
-          <div className="hero-text">
-            <p>
-              <strong>Gareth Price</strong> is a scientist and software engineer.
-            </p>
-            <p>
-              I'm a Principal Scientist at{' '}
-              <strong><a href="https://www.oxb.com" target="_blank" rel="noopener noreferrer">Oxford Biomedica</a></strong>,
-              where I build lab automation, data pipelines, and digital infrastructure for gene therapy manufacturing.
-            </p>
-            <p>
-              My postdoctoral research was in diabetic kidney disease — I have 7 peer-reviewed publications and still review
-              grants for <strong><a href="https://www.diabetes.org.uk" target="_blank" rel="noopener noreferrer">Diabetes UK</a></strong>.
-              In my spare time I build open-source data tools and iOS apps.
-            </p>
-            <Socials />
+      <div className="hero-shell">
+        <div className="hero">
+          <div className="hero-top">
+            <div className="hero-text">
+              <p>
+                <strong>Gareth Price</strong> is a scientist and software engineer.
+              </p>
+              <p>
+                I'm a Principal Scientist at{' '}
+                <strong><a href="https://www.oxb.com" target="_blank" rel="noopener noreferrer">Oxford Biomedica</a></strong>,
+                where I build lab automation, data pipelines, and digital infrastructure for gene therapy manufacturing.
+              </p>
+              <p>
+                My postdoctoral research was in diabetic kidney disease — I have 7 peer-reviewed publications and still review
+                grants for <strong><a href="https://www.diabetes.org.uk" target="_blank" rel="noopener noreferrer">Diabetes UK</a></strong>.
+                In my spare time I build open-source data tools and iOS apps.
+              </p>
+              <Socials />
+            </div>
+            <img src="/avatar.jpg" alt="Gareth Price" className="avatar" />
           </div>
-          <img src="/avatar.jpg" alt="Gareth Price" className="avatar" />
         </div>
       </div>
 
@@ -37,7 +39,9 @@ function Home() {
         <h2>work</h2>
         <div className="item-list">
           <a className="item" href="https://www.oxb.com" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#1a2744' }}>OXB</div>
+            <div className="item-logo-tile">
+              <img className="item-logo" src="/logos/oxb.png" alt="Oxford Biomedica" />
+            </div>
             <div className="item-body">
               <div className="item-title">Oxford Biomedica</div>
               <div className="item-sub">Principal Scientist, Innovation</div>
@@ -45,7 +49,9 @@ function Home() {
             <span className="item-meta">2021 – Now</span>
           </a>
           <a className="item" href="https://www.lincoln.ac.uk" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#006747' }}>UoL</div>
+            <div className="item-logo-tile">
+              <img className="item-logo" src="/logos/lincoln.png" alt="University of Lincoln" />
+            </div>
             <div className="item-body">
               <div className="item-title">University of Lincoln</div>
               <div className="item-sub">Diabetes UK Post-Doctoral Research Fellow</div>
@@ -53,7 +59,9 @@ function Home() {
             <span className="item-meta">2017 – 2021</span>
           </a>
           <a className="item" href="https://warwick.ac.uk" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#5f2167' }}>UoW</div>
+            <div className="item-logo-tile">
+              <img className="item-logo" src="/logos/warwick.png" alt="University of Warwick" />
+            </div>
             <div className="item-body">
               <div className="item-title">University of Warwick</div>
               <div className="item-sub">PhD &amp; MSc — Biology, Mathematical Biology</div>
