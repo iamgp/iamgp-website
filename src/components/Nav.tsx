@@ -6,9 +6,6 @@ export function Nav() {
       <Link to="/" activeProps={{ className: 'active' }} activeOptions={{ exact: true }}>
         home
       </Link>
-      <Link to="/uses" activeProps={{ className: 'active' }}>
-        uses
-      </Link>
       <Link to="/blog" activeProps={{ className: 'active' }}>
         blog
       </Link>
