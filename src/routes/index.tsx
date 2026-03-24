@@ -75,8 +75,8 @@ function Home() {
         <h2>projects</h2>
         <div className="item-list">
           <a className="item" href="https://github.com/phlohouse/phlo" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#2563eb' }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><path d="M12 3v6m0 0l-4 4m4-4l4 4m-8 4h8m-10 0a2 2 0 002 2h8a2 2 0 002-2"/></svg>
+            <div className="item-logo-circle" style={{ '--accent': '#2563eb' } as React.CSSProperties}>
+              <img src="/logos/phlo.png" alt="Phlo" style={{ transform: 'translateY(-2px) scale(1.12)' }} />
             </div>
             <div className="item-body">
               <div className="item-title">Phlo</div>
@@ -85,8 +85,8 @@ function Home() {
             <span className="tag">Python</span>
           </a>
           <a className="item" href="#">
-            <div className="item-icon" style={{ background: '#f97316' }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4m0 4a4 4 0 110 8 4 4 0 010-8z"/><path d="M12 16v4"/><path d="M8 12H4m16 0h-4"/></svg>
+            <div className="item-logo-circle" style={{ '--accent': '#f97316' } as React.CSSProperties}>
+              <img src="/logos/glucodisplay.png" alt="GlucOS" />
             </div>
             <div className="item-body">
               <div className="item-title">GlucOS</div>
@@ -95,8 +95,8 @@ function Home() {
             <span className="tag">iOS</span>
           </a>
           <a className="item" href="https://github.com/iamgp/pdfrag" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#0891b2' }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><circle cx="11" cy="15" r="3"/><path d="M13.5 17.5L16 20"/></svg>
+            <div className="item-logo-circle" style={{ '--accent': '#0891b2' } as React.CSSProperties}>
+              <img src="/logos/pdfrag.png" alt="pdfrag" />
             </div>
             <div className="item-body">
               <div className="item-title">pdfrag</div>
@@ -105,8 +105,8 @@ function Home() {
             <span className="tag">Go</span>
           </a>
           <a className="item" href="https://github.com/iamgp/helm" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#6366f1' }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><circle cx="12" cy="12" r="2"/></svg>
+            <div className="item-logo-circle" style={{ '--accent': '#6366f1' } as React.CSSProperties}>
+              <img src="/logos/helm.png" alt="Helm" />
             </div>
             <div className="item-body">
               <div className="item-title">Helm</div>
@@ -115,8 +115,8 @@ function Home() {
             <span className="tag">Go</span>
           </a>
           <a className="item" href="https://github.com/iamgp/cairn" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#059669' }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 18h8M7 14h10M9 10h6M10 6h4"/></svg>
+            <div className="item-logo-circle" style={{ '--accent': '#059669' } as React.CSSProperties}>
+              <img src="/logos/cairn.png" alt="Cairn" />
             </div>
             <div className="item-body">
               <div className="item-title">Cairn</div>
@@ -125,8 +125,8 @@ function Home() {
             <span className="tag">Go</span>
           </a>
           <a className="item" href="https://github.com/phlohouse/stencil" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#d946ef' }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+            <div className="item-logo-circle" style={{ '--accent': '#d946ef' } as React.CSSProperties}>
+              <img src="/logos/stencil.png" alt="Stencil" />
             </div>
             <div className="item-body">
               <div className="item-title">Stencil</div>
@@ -135,8 +135,8 @@ function Home() {
             <span className="tag">TS / Python</span>
           </a>
           <a className="item" href="https://github.com/iamgp/OpenDiscovery" target="_blank" rel="noopener noreferrer">
-            <div className="item-icon" style={{ background: '#dc2626' }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="10" r="3"/><circle cx="16" cy="10" r="3"/><path d="M11 10h2"/><path d="M8 13v3a2 2 0 002 2h4a2 2 0 002-2v-3"/></svg>
+            <div className="item-logo-circle" style={{ '--accent': '#dc2626' } as React.CSSProperties}>
+              <img src="/logos/opendiscovery.png" alt="OpenDiscovery" />
             </div>
             <div className="item-body">
               <div className="item-title">OpenDiscovery</div>
