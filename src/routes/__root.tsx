@@ -6,7 +6,6 @@ import {
   HeadContent,
   Scripts,
 } from '@tanstack/react-router'
-import { Nav } from '@/components/Nav'
 import globalCss from '@/styles/global.css?url'
 
 export const Route = createRootRoute({
@@ -18,7 +17,6 @@ export const Route = createRootRoute({
     links: [
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap' },
       { rel: 'stylesheet', href: globalCss },
     ],
   }),
@@ -46,7 +44,6 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           <div className="page-glow page-glow-b" />
         </div>
         <main>
-          <Nav />
           {children}
         </main>
         <footer>© gareth price · oxford, uk</footer>

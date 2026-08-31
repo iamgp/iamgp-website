@@ -9,9 +9,10 @@ export const Route = createFileRoute('/blog/')({
 
 function BlogIndex() {
   return (
-    <>
+    <div className="reading">
       <section style={{ marginTop: 0 }}>
-        <h2>writing</h2>
+        <h1>Writing.</h1>
+        <p className="systems-intro">Notes on the craft of building dependable things for science.</p>
         <div className="post-list">
           <Link className="post-link" to="/blog/hello-world">
             <span className="post-title">Hello, world</span>
@@ -19,6 +20,6 @@ function BlogIndex() {
           </Link>
         </div>
       </section>
-    </>
+    </div>
   )
 }
