@@ -1,0 +1,37 @@
+# A private development VPS, from a fresh install
+
+A seven-part guide to building a development machine that I can use through Rex on my Mac and iPhone, with private previews and an Amp runner that can deploy applications.
+
+The starting point is a fresh Ubuntu 24.04 LTS VPS with working provider-console access. The examples assume one owner, a Mac, an iPhone, Tailscale, 1Password and an existing Amp account.
+
+| Part | Post | What it covers |
+| --- | --- | --- |
+| 1 | [Deciding what each tool is responsible for](01-architecture.mdx) | The architecture, trust boundaries and the role of Cloudflare |
+| 2 | [Private access before convenience](02-private-access-and-ssh.mdx) | Tailscale policy, host verification, account separation and 1Password SSH |
+| 3 | [Rootless Docker with limits that actually apply](03-rootless-docker.mdx) | User services, cgroups, constrained jobs and writable project mounts |
+| 4 | [Rex, private previews and an iPhone connection](04-rex-and-private-previews.mdx) | The Rex server, HTTPS previews, a narrow privileged helper and mobile access |
+| 5 | [Giving a job one secret](05-secrets-with-1password.mdx) | Secret references, SSH stdin, validation and the limits of environment variables |
+| 6 | [An Amp runner that can deploy](06-amp-runner-and-deployments.mdx) | Persistent execution, account selection, global instructions and a real deployment |
+| 7 | [Checking the whole system](07-verification-and-recovery.mdx) | Client checks, restart tests, provider-console recovery and an honest handover |
+
+## Reading the examples
+
+All infrastructure identifiers are fictional or placeholders. None of the addresses, account labels, item names or hostnames below identify the actual installation.
+
+| Example | Meaning |
+| --- | --- |
+| `workbench` | The VPS operating-system Tailscale node, SSH alias and example Amp runner name |
+| `workbench-rex` | The separate Tailscale node used by Rex |
+| `builder` | The ordinary development account |
+| `operator` | The separate administrator account |
+| `YOUR_TAILNET` | Your own Tailscale DNS suffix, without the final `.ts.net` |
+| `YOUR_TAILSCALE_LOGIN` | The exact user identity shown in your Tailscale admin console |
+| `MAC_TS_IP`, `MAC_REX_TS_IP`, `PHONE_TS_IP` | The verified Tailscale addresses of your own devices |
+| `YOUR_AMP_USER_ID` | Your saved Amp account's user ID |
+| `Engineering` | A fictional 1Password vault used in the secret examples |
+
+Uppercase placeholders must be replaced before running a command or submitting a policy. Example URLs containing `YOUR_TAILNET` are deliberately incomplete. The fixed loopback addresses and example port ranges are ordinary configuration choices, not identifying details.
+
+Commands identify whether they run in the provider console, on the Mac, or as the development user. The code is adapted for the articles rather than copied from the private inventory. This series includes a small preview helper; it does not require access to the original infrastructure repository.
+
+The articles reflect the setup and product documentation checked on 31 October 2026. Check the linked vendor documentation when following them, particularly for Rex installation and Amp CLI options.

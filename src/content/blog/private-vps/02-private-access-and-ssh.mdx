@@ -1,0 +1,201 @@
+# Private access before convenience
+
+*Part 2 of 7. [Previous: architecture](01-architecture.mdx) · [Series index](README.mdx) · [Next: rootless Docker](03-rootless-docker.mdx)*
+
+A fresh VPS gives me a clean operating system, but it does not yet give me a trustworthy route into it. I started with the provider console, then established private connectivity, verified the SSH host and created the accounts I intended to use.
+
+These examples use Ubuntu 24.04 LTS. They assume that the initial root credential is already set and that the provider's authenticated console works. I used Hostinger; its [Web Console documentation](https://www.hostinger.com/support/how-to-use-the-web-console-in-hostinger/) explains its recovery entry point. A different provider needs an equivalent independent path.
+
+## Record recovery information before changing access
+
+In 1Password, create a recovery item with the provider account reference, the initial root credential and a short description of the recovery route. Keep the future administrator's sudo password in a distinct field. Use generated passwords that meet the provider's rules, and enter them through the password manager or an interactive password prompt.
+
+The root console credential and the administrator sudo credential have different jobs. Labelling them clearly prevents a surprisingly confusing failure during recovery.
+
+Do not paste their values into chat, shell arguments, configuration examples or a public article. The examples here use fictional labels throughout.
+
+## Establish the private network
+
+Install Tailscale in the provider console using the instructions for your operating system. You can download the official installer for inspection before running it:
+
+~~~sh
+curl -fsSLo /root/tailscale-install.sh https://tailscale.com/install.sh
+less /root/tailscale-install.sh
+sh /root/tailscale-install.sh
+~~~
+
+Before enrolling the server, prepare its access policy. I used separate tags for the operating-system node and the later Rex node. Tags represent service devices rather than personal ownership; define who may apply them. [Tailscale tags](https://tailscale.com/docs/features/tags)
+
+The following is an illustrative policy for a single owner. Replace every uppercase placeholder. Inspect your existing policy first and merge deliberately; this is not a replacement for an organisation's rules.
+
+~~~json
+{
+  "tagOwners": {
+    "tag:workbench": ["YOUR_TAILSCALE_LOGIN"],
+    "tag:workbench-rex": ["YOUR_TAILSCALE_LOGIN"]
+  },
+  "grants": [
+    {
+      "src": ["YOUR_TAILSCALE_LOGIN"],
+      "dst": ["autogroup:self"],
+      "ip": ["*"]
+    },
+    {
+      "src": ["MAC_TS_IP"],
+      "dst": ["tag:workbench"],
+      "ip": ["tcp:22"]
+    },
+    {
+      "src": ["MAC_TS_IP", "MAC_REX_TS_IP"],
+      "dst": ["tag:workbench-rex"],
+      "ip": ["tcp:443"]
+    },
+    {
+      "src": ["YOUR_TAILSCALE_LOGIN"],
+      "dst": ["tag:workbench"],
+      "ip": ["tcp:8443-8499"]
+    }
+  ],
+  "tests": [
+    {
+      "src": "MAC_TS_IP",
+      "accept": ["tag:workbench:22", "tag:workbench:8443", "tag:workbench-rex:443"],
+      "deny": ["tag:workbench:5432", "tag:workbench:2375"]
+    },
+    {
+      "src": "PHONE_TS_IP",
+      "accept": ["tag:workbench:8443"],
+      "deny": ["tag:workbench:22", "tag:workbench-rex:443"]
+    },
+    {
+      "src": "tag:workbench",
+      "deny": ["MAC_TS_IP:22", "MAC_TS_IP:443", "PHONE_TS_IP:8443"]
+    },
+    {
+      "src": "tag:workbench-rex",
+      "deny": ["MAC_TS_IP:22", "MAC_TS_IP:443"]
+    }
+  ]
+}
+~~~
+
+The personal-device rule preserves this owner's access to their own personal nodes. The tagged VPS nodes need their explicit grants. This is one particular policy choice, not a recommendation to add personal-device access to an unrelated network.
+
+Remove any old broad rule that also grants these paths. Grants combine their permissions, so adding a narrow rule does not cancel an existing allow-all rule. The built-in tests are useful checks on that mistake. [Tailscale grants syntax](https://tailscale.com/docs/reference/syntax/grants)
+
+Look up each device's address and owner in the admin console. The Mac Rex address, when present, is its embedded Tailscale node, which can be a different source from the Mac operating system. If you do not use that integration, omit its placeholder rather than guessing an address.
+
+Save the policy with its tests passing, then enrol the OS node from the provider console:
+
+~~~sh
+hostnamectl set-hostname workbench
+tailscale up --hostname=workbench --advertise-tags=tag:workbench
+tailscale status
+~~~
+
+Approve the displayed sign-in with your own account and verify the resulting device and tag. Enable MagicDNS for the DNS names used below. This design uses ordinary OpenSSH over Tailscale, not Tailscale SSH.
+
+## Verify the host before trusting it
+
+In the provider console, display the server's public host-key fingerprint:
+
+~~~sh
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+~~~
+
+On the Mac, collect the key offered over the private connection:
+
+~~~sh
+ssh-keyscan -t ed25519 workbench.YOUR_TAILNET.ts.net > workbench-host-key
+ssh-keygen -lf workbench-host-key
+~~~
+
+Compare the fingerprints through those independent paths. `ssh-keyscan` collects a key; it does not authenticate it. Only after the comparison succeeds should you add the entry to `~/.ssh/known_hosts`.
+
+~~~sh
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+cat workbench-host-key >> ~/.ssh/known_hosts
+chmod 600 ~/.ssh/known_hosts
+~~~
+
+## Create accounts with different responsibilities
+
+In the provider console as root:
+
+~~~sh
+adduser operator
+usermod -aG sudo operator
+adduser --disabled-password --gecos '' builder
+~~~
+
+Set the administrator password interactively. The development account does not need password authentication. Do not add it to the `sudo` or rootful `docker` group.
+
+Copy the selected public SSH key from 1Password into each account's `authorized_keys`. For both users, make `.ssh` mode `0700`, `authorized_keys` mode `0600`, and ensure that the directory and file belong to that user. Only the public key goes to the VPS. The private key stays with 1Password on the Mac.
+
+I used one selected identity for these two accounts. Separate identities are also possible. The important part is selecting the identity explicitly and keeping their privileges different.
+
+## Fix the SSH key-selection problem
+
+An SSH agent can offer enough identities for the server to reject a connection before it reaches the correct key. The resulting authentication-limit error can look like a server or network problem.
+
+Export the intended public key to `~/.ssh/workbench.pub`. In the Mac's SSH configuration, use that file to select the matching key from the agent:
+
+~~~sshconfig
+Host workbench
+    HostName workbench.YOUR_TAILNET.ts.net
+    User builder
+    IdentityAgent ~/.1password/agent.sock
+    IdentityFile ~/.ssh/workbench.pub
+    IdentitiesOnly yes
+    StrictHostKeyChecking yes
+    ForwardAgent no
+    ServerAliveInterval 30
+
+Host workbench-admin
+    HostName workbench.YOUR_TAILNET.ts.net
+    User operator
+    IdentityAgent ~/.1password/agent.sock
+    IdentityFile ~/.ssh/workbench.pub
+    IdentitiesOnly yes
+    StrictHostKeyChecking yes
+    ForwardAgent no
+    ServerAliveInterval 30
+~~~
+
+Use the agent socket configured by your 1Password installation; the short path above assumes it exists. Keep these host-specific entries before broad defaults that would set conflicting options, and preserve unrelated existing includes. Inspect `ssh -G workbench` if existing configuration adds identities or changes the selected agent. The public `IdentityFile` selects the key; the agent performs the private-key operation. [1Password's SSH agent configuration](https://www.1password.dev/ssh/agent/advanced)
+
+Open fresh connections to both aliases. Verify `whoami`, then run `sudo -v` as `operator`. Keep the provider console available while doing this.
+
+## Close the public route only after the private route works
+
+After the independent-console and fresh-login checks, create an administrator-owned `/etc/ssh/sshd_config.d/00-workbench.conf` with:
+
+~~~text
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+AllowUsers operator builder
+AllowAgentForwarding no
+X11Forwarding no
+MaxAuthTries 3
+~~~
+
+Validate with `sudo sshd -t`, then run `sudo systemctl reload ssh`. Inspect `sudo sshd -T` to check the effective configuration, including any earlier cloud-image snippets. Keep an existing administrator connection and the provider console available until another fresh private login succeeds.
+
+On this dedicated fresh host, the host firewall allowed SSH and the preview range only on `tailscale0`, plus Tailscale's UDP transport port. The relevant UFW commands, run as administrator, are:
+
+~~~sh
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow in on tailscale0 proto tcp to any port 22
+sudo ufw allow in on tailscale0 proto tcp to any port 8443:8499
+sudo ufw allow 41641/udp
+sudo ufw enable
+sudo ufw status verbose
+~~~
+
+Inspect existing rules before enabling this. A broad pre-existing `22/tcp` allow would still matter. The Tailscale policy controls the private network path as well; the host firewall does not replace it, particularly for Rex's embedded integration.
+
+Verify another fresh administrator login and the provider's local root console after hardening. The root console may continue to use its recovery password even though root SSH is disabled. The two login paths need separate tests.

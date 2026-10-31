@@ -1,0 +1,172 @@
+# An Amp runner that can deploy
+
+*Part 6 of 7. [Previous: project secrets](05-secrets-with-1password.mdx) · [Series index](README.mdx) · [Next: verification and recovery](07-verification-and-recovery.mdx)*
+
+The Amp runner uses `builder` and `/home/builder/projects`. Its deployment tasks build applications with rootless Docker and publish private URLs through the preview helper.
+
+The goal was to ask for a private deployment and receive a working URL. Installing a CLI would only be the first step.
+
+## Sign in on the machine that will execute the work
+
+Install Amp as `builder` using its [official CLI instructions](https://ampcode.com/docs/cli). I inspected the installer and verified the downloaded binary against the vendor's checksum during the setup. Record the selected version privately and let your installation process verify it; the exact build from my machine is not necessary here.
+
+Check the installed path, then sign in:
+
+~~~sh
+command -v amp
+amp --version
+amp login
+amp account list
+~~~
+
+Approve the sign-in with the existing account you intend to use for the VPS. A signed-in Mac app does not automatically authenticate a separate Linux installation.
+
+The unit below assumes the executable is available at `~/.local/bin/amp`, normally pointing to the installation's binary. Verify that path or adjust the unit. Inspect credential-file permissions without printing their contents. In the build used here, the main store was `~/.local/share/amp/secrets.json`, with mode `0600` and ownership by the development account.
+
+## Use a separate settings profile
+
+I did not copy the Mac's settings to the VPS. The Mac had integrations and preferences that were unrelated to this runner.
+
+As `builder`, create `~/.config/amp/workbench.json` with mode `0600`:
+
+~~~json
+{
+  "$schema": "https://ampcode.com/cli-settings.schema.json",
+  "amp.git.commit.ampThread.enabled": false,
+  "amp.git.commit.coauthor.enabled": false,
+  "amp.runner.env.enabled": false,
+  "amp.runner.autoUpdate.enabled": true,
+  "amp.updates.mode": "auto",
+  "amp.mcpPermissions": [
+    {"matches": {"command": "*"}, "action": "reject"},
+    {"matches": {"url": "*"}, "action": "reject"}
+  ]
+}
+~~~
+
+This profile keeps the Git-attribution preferences explicit, disables automatic cloud environment injection and rejects automatic MCP connections. Add project integrations deliberately later. The supported keys and their behaviour belong to the version of Amp you install, so check its [configuration reference](https://ampcode.com/docs/cli/settings).
+
+These settings do not sandbox the host account. Amp's authentication is itself sensitive, and code running as `builder` can access that user's files and Docker daemon. Treat this as a trusted deployment runner. Use the constrained job pattern from part 3 when a task should have fewer resources or mounts.
+
+## Make the runner persistent
+
+Create a private project directory and initialise a project if it is not already a Git checkout:
+
+~~~sh
+mkdir -p "$HOME/projects/demo"
+git -C "$HOME/projects/demo" init -b main
+~~~
+
+If that directory already contains a Git repository, keep its existing configuration instead of reinitialising it. Git-project discovery lets the runner offer project directories beneath its starting directory.
+
+Save this unit as `~/.config/systemd/user/amp-workbench.service`. Replace `YOUR_AMP_USER_ID` with the intended saved account's ID from `amp account list`.
+
+~~~ini
+[Unit]
+Description=Private Amp development runner
+After=docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/projects
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+UnsetEnvironment=AMP_API_KEY AMP_URL
+ExecStartPre=%h/.local/bin/amp --settings-file %h/.config/amp/workbench.json account switch YOUR_AMP_USER_ID
+ExecStart=%h/.local/bin/amp --settings-file %h/.config/amp/workbench.json --no-tui --runner-id workbench --remote-control-terminal --discover-dirs
+Restart=always
+RestartSec=5
+UMask=0077
+MemoryMax=4G
+CPUQuota=150%
+TasksMax=1024
+Nice=5
+TimeoutStopSec=45
+
+[Install]
+WantedBy=default.target
+~~~
+
+The runner uses a stable ID, serves the projects directory and remains private to the owner account. I did not enable workspace sharing, desktop sharing or network sharing. The [runner documentation](https://ampcode.com/docs/cli/runners) describes those as separate capabilities.
+
+Start it and inspect the result:
+
+~~~sh
+systemctl --user daemon-reload
+systemctl --user enable --now amp-workbench
+journalctl --user -u amp-workbench -n 30 --no-pager
+amp runner list
+amp runner dirs list
+~~~
+
+Check the registered account as well as the runner name. Lingering from part 3 lets this user service start without an interactive login. Its resource limits cover the runner's processes. Docker builds and application containers also need their own limits; the whole development-user slice provides an additional overall ceiling.
+
+I did not set `NoNewPrivileges=yes` on this host-runner unit. Its child commands need the setuid sudo operation for the narrowly allowed preview helper. The application containers and constrained jobs still use no-new-privileges. A design that forbids privilege elevation for the host runner would need a different preview broker.
+
+## A saved account is not necessarily the active account
+
+This was the important review finding in the Amp setup. My first provisioning check looked for the intended email address in `amp account list`.
+
+That proves the account is saved. It does not prove that a new process will use it. Amp supports multiple saved accounts, and an existing process keeps the account it started with. [Amp's account-selection documentation](https://ampcode.com/docs/cli)
+
+The pre-start command above selects the exact intended user ID on every service start. If that saved account is unavailable, the service does not start its main process. Clearing inherited `AMP_API_KEY` and `AMP_URL` prevents those environment overrides from selecting a different credential or server.
+
+I checked the successful path with a real runner restart. I also tested a temporary service with a deliberately missing account: its pre-start command failed and its main process never ran. The real account remained selected. That was a useful negative check on the failure behaviour.
+
+## Give Amp a deployment procedure it can find
+
+I put the detailed procedure in `/home/builder/.config/workbench/DEPLOYMENT.md`. Create that directory as `builder`, then save a runbook along these lines:
+
+~~~markdown
+# Development VPS deployment procedure
+
+Work as builder in a named project beneath /home/builder/projects. Obtain the intended repository and revision through approved project credentials, or transfer the requested source without secrets and local dependency directories.
+
+Inspect docker ps and the preview helper's status before choosing ports. Use rootless Docker Compose and build the Linux image on the VPS. Bind the application to 127.0.0.1 on an unused port from 3000 to 3999. Set explicit resource limits and a restart policy for persistent services.
+
+Run docker compose up -d --build from the project. Check container status, logs and a local HTTP health request. Resolve failures before publishing.
+
+Publish with sudo -n /usr/local/sbin/workbench-preview set HTTPS_PORT LOCAL_PORT, choosing an unused HTTPS port from 8443 to 8499. The private URL uses the operating-system node's Tailscale hostname, not the Rex hostname. Verify it from an authorised client.
+
+Keep other projects running. Record the source revision and previous working image for rollback. Do not promise a zero-downtime release from this simple Compose workflow.
+
+Keep privileged administration with operator. Use only approved project-specific secrets. Never print credentials or put values in command arguments. Public sharing and infrastructure changes require a separate explicit request.
+
+Report the actual source state, deployment result, health result and private URL. State whether a second device was checked. Code changes, a running container and accepted behaviour are separate claims.
+~~~
+
+Replace the uppercase port placeholders when executing a deployment. Keep this file owner-readable, for example mode `0600`.
+
+To make that procedure discoverable on the server, add a short pointer in `~/.config/amp/AGENTS.md`, such as: "For deployments, private previews and application restarts, read /home/builder/.config/workbench/DEPLOYMENT.md before making changes." Then append a focused section to Amp's Personal Settings, Instructions, Global AGENTS.md. Preserve the guidance already there. These mechanisms are described in [Amp's AGENTS.md documentation](https://ampcode.com/docs/customize/agents-md).
+
+An anonymised version of the global addition is:
+
+~~~markdown
+## Private development VPS
+
+When I ask to deploy development work to my VPS, use the private Amp runner workbench.
+
+If already running there as builder under /home/builder/projects, read /home/builder/.config/workbench/DEPLOYMENT.md and deploy directly. Otherwise start a thread on that runner in its served project directory. Pass the repository and branch, or the available source, together with the task and acceptance criteria. Check the result.
+
+Use rootless Docker Compose. Keep applications bound to loopback in ports 3000 to 3999. Check local health before publishing through the preview helper on an unused HTTPS port from 8443 to 8499. Return the private URL and verify the deployed behaviour.
+
+An explicit request to deploy to this private development VPS authorises that private deployment. Keep existing approval rules for public or production deployments and infrastructure changes. Keep privileged administration with the separate administrator account. Obtain only project-specific credentials through the approved 1Password workflow.
+~~~
+
+The conditional first step prevents a deployment thread already on the VPS from delegating recursively to another copy of itself. Global guidance is an instruction to the agent, not an operating-system permission boundary. It also does not automatically apply to every specialised Amp agent; check the current documentation for its scope.
+
+## Test the deployment through Amp
+
+In the app, choose the runner and its project directory. With an authenticated Mac CLI, the corresponding command is:
+
+~~~sh
+amp --executor runner:workbench --runner-dir /home/builder/projects/demo -x 'Deploy this project privately using the server runbook. Verify local health and return the private HTTPS URL. Preserve other projects.'
+~~~
+
+Keep the message immediately after `-x`; put the other options before it. The execute flag takes an optional message argument, and a misplaced positional message caused an avoidable failed test during the setup. Remote execution can return a thread URL while work continues, so inspect the thread's result rather than interpreting that URL as deployment success.
+
+My acceptance task used a separate disposable project and unused ports. Amp created a small HTTP application, built its Linux image on the VPS, started a constrained rootless Compose service and published its private preview through the helper.
+
+I then checked the marker from the Mac using normal TLS verification. I inspected the actual loopback listener and the container's cgroup limits. The existing example application stayed up. That demonstrated the full deployment path, rather than just runner registration.
+
+For a real private repository, supply the intended revision and an approved, project-scoped credential or source transfer. The test did not establish access to every private repository. It established that the runner could execute and verify a deployment on this machine.

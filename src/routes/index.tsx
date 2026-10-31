@@ -63,6 +63,6 @@ function Home() {
 
     <section className="home-section"><div className="section-heading"><h2>Skills</h2></div><div className="skills-list">{skills.map(([category, items]) => <div className="skills-row" key={category}><h3>{category}</h3><div>{items.map(([label, icon]) => <span className="skill" key={label}><HugeiconsIcon icon={icon} size={15} strokeWidth={1.9} aria-hidden="true" />{label}</span>)}</div></div>)}</div></section>
 
-    <section className="home-section"><h2>Writing</h2><div className="list"><Link className="list-row" to="/blog/hello-world"><MiniMark calendar="Mar26" /><span className="row-text"><span className="row-title">Hello, world</span><span className="badge">New</span><span className="row-detail">March 2026</span></span></Link></div></section>
+    <section className="home-section"><h2>Writing</h2><div className="list"><Link className="list-row" to="/blog/$slug" params={{ slug: "private-development-vps" }}><MiniMark calendar="Oct26" /><span className="row-text"><span className="row-title">A private development VPS</span><span className="badge">Series</span><span className="row-detail">October 2026</span></span></Link><Link className="list-row" to="/blog/hello-world"><MiniMark calendar="Mar26" /><span className="row-text"><span className="row-title">Hello, world</span><span className="badge">New</span><span className="row-detail">March 2026</span></span></Link></div></section>
   </>
 }

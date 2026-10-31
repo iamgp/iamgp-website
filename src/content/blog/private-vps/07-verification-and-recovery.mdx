@@ -1,0 +1,116 @@
+# Checking the whole system
+
+*Part 7 of 7. [Previous: Amp deployments](06-amp-runner-and-deployments.mdx) · [Series index](README.mdx)*
+
+By this stage, every component had reported that it was running. That still left the question I started with: could I use the machine for real work, reconnect from another device and recover it when the convenient route failed?
+
+I treated each of those as a separate check. A green service status could not answer all of them.
+
+## Check the actual clients
+
+Open fresh SSH connections as both development user and administrator. Reusing an old terminal can hide a configuration mistake or a dependency on an earlier authentication session.
+
+In the development connection, inspect:
+
+~~~sh
+whoami
+hostname
+docker context show
+docker info
+sudo -n -l
+systemctl --user is-active docker rex amp-workbench
+systemctl --user is-enabled docker rex amp-workbench
+~~~
+
+The ordinary user should have only the intended preview-helper sudo permission. A direct attempt to run an unrelated privileged command should fail:
+
+~~~sh
+sudo -n /usr/bin/id
+~~~
+
+Separately, the administrator should be able to authenticate with `sudo -v` using its own password.
+
+Open the VPS workspace in the Mac Rex app and in Rex iOS. Verify the account and hostname inside the terminal. On the VPS, inspect `rex client ls` for the expected clients and their authenticated identities. An app showing a connected host is useful; a shell on the intended machine is stronger evidence.
+
+## Check the preview through every relevant layer
+
+I used a harmless marker in the example application and followed the request outward:
+
+1. The application responds on its loopback port on the VPS.
+2. Docker and the OS listener agree that the published port is bound to loopback.
+3. Tailscale Serve points the selected HTTPS port at that local target.
+4. The Mac retrieves the marker over HTTPS with certificate verification enabled.
+5. The phone opens the private preview while connected to Tailscale.
+
+Use `docker compose ps`, `ss -lnt` and the preview helper's status output for the local layers. Then use a normal request from the Mac:
+
+~~~sh
+curl --fail --show-error https://workbench.YOUR_TAILNET.ts.net:8443/
+~~~
+
+I also checked that the intended public ports were unavailable through the VPS's public address. That check uses the public address, not the private hostname. Do not publish the actual probe target in a blog transcript.
+
+Tailscale's policy tests supply the other side of the access checks: the phone should not gain SSH or database access, and neither tagged VPS node should gain new connections to the personal devices. I also tested a prohibited connection from the server to a personal-device endpoint in the actual build.
+
+When testing an unauthorised browser path, make a fresh network request. A page already in a browser's cache does not demonstrate that the server is still reachable.
+
+## Verify resource limits where they are enforced
+
+For a running container, inspect its configured memory, CPU, process, capability and security options. Then read the cgroup files from inside it:
+
+~~~sh
+docker exec CONTAINER_NAME cat /sys/fs/cgroup/memory.max /sys/fs/cgroup/cpu.max /sys/fs/cgroup/pids.max
+~~~
+
+`CONTAINER_NAME` is another placeholder. Replace it with the container under test. Compare those values with the intended settings and with the parent development-user slice. Docker's [runtime-metrics documentation](https://docs.docker.com/engine/containers/runmetrics/) explains how these controls appear on the host.
+
+Check file ownership as well. A process that can calculate something but cannot write its project output has not passed a useful development-job test.
+
+## Test disconnection, service restart and reboot separately
+
+These failures have different consequences.
+
+A detached container or a server-side terminal can continue after the laptop disconnects. An operating-system reboot ends running processes. Enabled services and application restart policies determine what returns afterwards.
+
+I tested a detached job after its originating client had exited, then inspected the result from a later connection. I tested the persistent foundation after a VPS reboot. That covered private SSH, Rex, rootless Docker, the user resource limits and the original preview.
+
+After adding Amp, I tested its service restart, correct account selection and reconnection. The application containers continued to answer while the runner restarted. I also repeated the provisioning and checked that it reported no changes.
+
+For a new installation following this series, schedule a final full reboot after all components are installed. Record a boot identifier privately before and after, reconnect through fresh sessions and repeat the checks above. Do not call a service's enabled flag a completed reboot test.
+
+Our evidence had a precise limit: the foundation passed a full VPS reboot; Amp passed its own later service restart and startup checks. Those are the results I can report without inventing another test.
+
+## Prove the independent recovery route
+
+With root SSH disabled, I opened the authenticated provider console and logged in locally as root using the stored recovery credential. I checked the account and machine, then logged out.
+
+That test matters because the intended failure case is private networking being unavailable. A recovery route that depends on the same Tailscale session would not cover that case.
+
+Keep the console procedure and the distinction between recovery and administrator passwords in the private runbook. Keep access to the password manager's own recovery information outside this VPS too. None of those credentials or identifiers belongs in the public version of the instructions.
+
+This series does not add an independent backup system. Existing provider settings were left alone. Console recovery, pushed source code and data restoration solve different problems; the console test was not a backup restore test.
+
+## Keep the automation reviewable
+
+I separated provisioning, access hardening and Amp configuration. The hardening stage required successful private-access and provider-console checks first. Ansible syntax checks and a small set of boundary tests covered the helpers, while live checks covered the actual clients and services.
+
+The helper tests exercised invalid ports, project-path escape attempts, option-like arguments and environment names that could redirect the Docker client. The account-selection review found the saved-versus-active Amp bug described in part 6. I fixed it, checked the successful startup and verified that a missing account stopped a temporary service before its main command ran.
+
+Those checks ran locally and against the live development VPS. They were not evidence of a production release pipeline or of every future application being ready to deploy.
+
+For maintenance, keep the operating system's security updates enabled, review the deliberate Rex version pin, and checkpoint active agent work before restarting its service. An application should have a recorded source revision and a way to return to its previous working version. If a private-repository credential or application secret has not been supplied yet, say so instead of treating the machine's readiness as that project's readiness.
+
+## Leave a useful handover
+
+The private runbook should answer these questions without requiring the original chat:
+
+| Question | What to record privately |
+| --- | --- |
+| How do I enter the machine? | Development and administrator SSH aliases, Rex endpoint and workspace |
+| How do I inspect services? | User-service names, journal commands and Docker project locations |
+| How do I publish a preview? | Allowed ports, the narrow helper and the health-check sequence |
+| What can an agent access? | Host-runner authority, constrained-job mounts and credential scope |
+| What was actually tested? | Client checks, negative access tests, restart results and their limits |
+| How do I recover? | Provider-console procedure and credential references, with no password values in the runbook |
+
+The public posts contain the structure and adapted commands. The private record contains the real identifiers and evidence. That lets someone reproduce the approach without turning the articles into an inventory of my own server.
