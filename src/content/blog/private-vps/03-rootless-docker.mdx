@@ -40,7 +40,7 @@ loginctl show-user builder -p Linger
 
 For the resource controls, the host needs cgroup v2 and systemd. Rootless Docker can otherwise ignore the cgroup-related flags. Even with systemd, the CPU controller may need explicit delegation. [Docker's resource-limit guidance](https://docs.docker.com/engine/security/rootless/tips/)
 
-Our configuration included this administrator-owned drop-in at `/etc/systemd/system/user@.service.d/workbench.conf`:
+The configuration included this administrator-owned drop-in at `/etc/systemd/system/user@.service.d/workbench.conf`:
 
 ~~~ini
 [Service]
@@ -60,7 +60,7 @@ These are example budgets for a small development machine. Choose values that le
 
 Run `sudo systemctl daemon-reload`. If the user manager is already running, a daemon reload alone does not prove that its delegation changed. Apply the configuration through a planned manager restart or reboot before relying on the limits, then inspect the effective values. On a new machine, this is a good point to test the private access and recovery paths again.
 
-Ubuntu 24.04 also restricts unprivileged user namespaces through AppArmor. Use the packaged RootlessKit profile or the documented per-program approach when needed. Our provisioning checked for the vendor profile before considering a fallback. Disabling AppArmor globally would be a much broader change than this setup needs. Follow Docker's [distribution-specific troubleshooting](https://docs.docker.com/engine/security/rootless/troubleshoot/) if the setup reports a namespace permission error.
+Ubuntu 24.04 also restricts unprivileged user namespaces through AppArmor. Use the packaged RootlessKit profile or the documented per-program approach when needed. The provisioning checked for the vendor profile before considering a fallback. Disabling AppArmor globally would be a much broader change than this setup needs. Follow Docker's [distribution-specific troubleshooting](https://docs.docker.com/engine/security/rootless/troubleshoot/) if the setup reports a namespace permission error.
 
 ## Install the daemon as the development user
 

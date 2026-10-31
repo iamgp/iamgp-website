@@ -78,7 +78,7 @@ After adding Amp, I tested its service restart, correct account selection and re
 
 For a new installation following this series, schedule a final full reboot after all components are installed. Record a boot identifier privately before and after, reconnect through fresh sessions and repeat the checks above. Do not call a service's enabled flag a completed reboot test.
 
-Our evidence had a precise limit: the foundation passed a full VPS reboot; Amp passed its own later service restart and startup checks. Those are the results I can report without inventing another test.
+The foundation passed a full VPS reboot. Amp passed its own later service restart and startup checks. A final reboot with Amp installed remains a separate acceptance test.
 
 ## Prove the independent recovery route
 
@@ -100,9 +100,9 @@ Those checks ran locally and against the live development VPS. They were not evi
 
 For maintenance, keep the operating system's security updates enabled, review the deliberate Rex version pin, and checkpoint active agent work before restarting its service. An application should have a recorded source revision and a way to return to its previous working version. If a private-repository credential or application secret has not been supplied yet, say so instead of treating the machine's readiness as that project's readiness.
 
-## Leave a useful handover
+## Keep a private runbook
 
-The private runbook should answer these questions without requiring the original chat:
+The private runbook should answer these questions without having to reconstruct the setup:
 
 | Question | What to record privately |
 | --- | --- |

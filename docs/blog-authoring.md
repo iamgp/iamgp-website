@@ -12,4 +12,4 @@ MDX compiles executable code. Keep it limited to trusted repository content rath
 
 Run `npm run build` before opening a pull request. The build prerenders the pages discovered through the site's links. Check a direct article URL as well as navigation from the writing index. Check diagrams and wide code blocks at phone width, and use the homepage theme control to inspect light and dark modes.
 
-The VPS series' editorial scope and writing scores are in [its review records](private-vps-series/HUMANIZER-REVIEW.md). Its [change record](private-vps-series/HUMANIZER-CHANGES.md) shows every changed article line against the original drafts.
+The series guide documents the example names and placeholders. Keep the infrastructure identifiers fictional when editing the posts.

@@ -18,7 +18,7 @@ rex -v
 command -v rex
 ~~~
 
-Ubuntu also has an unrelated Perl automation package called `rex`. A successful package installation is not enough to identify the product. I used the vendor repository and selected a build compatible with the Mac client. Our private provisioning pinned that build deliberately and held it until a planned client/server update.
+Ubuntu also has an unrelated Perl automation package called `rex`. A successful package installation is not enough to identify the product. I used the vendor repository and selected a build compatible with the Mac client. The private provisioning pinned that build deliberately and held it until a planned client/server update.
 
 If you pin an older package, inspect the repository's existing preferences. An equal-priority rule may still leave the newer build selected. Do not copy an obsolete version number from a blog post; choose an available version and verify it on your own clients.
 
@@ -204,6 +204,6 @@ Review and save that specific access expansion. Direct phone SSH remains outside
 
 In Rex iOS, add the VPS address, `https://workbench-rex.YOUR_TAILNET.ts.net:443`, and open the server's workspace. If the Mac is already paired, keep that entry. It represents a different server.
 
-The Mac's pairing QR code in our build advertised the Mac's own Rex server, even while a VPS connection existed. Checking the address avoided pairing the wrong host again. I entered the VPS address separately on the phone.
+The Mac's pairing QR code in this build advertised the Mac's own Rex server, even while a VPS connection existed. Checking the address avoided pairing the wrong host again. I entered the VPS address separately on the phone.
 
 Finally, inspect `rex client ls` on the VPS. I checked the native iPhone client's presence and authenticated principal as well as the Mac's connection. A successful preview in Safari had proved browser access; this separate check proved Rex control access.
