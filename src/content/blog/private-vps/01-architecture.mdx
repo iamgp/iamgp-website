@@ -4,7 +4,7 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 *Part 1 of 7. [Series index](README.mdx) · [Next: private SSH access](02-private-access-and-ssh.mdx)*
 
-I wanted to start work on my Mac, leave it running and pick it up from my phone. A VPS gave that work somewhere to run while the laptop was closed. To make it useful, I needed persistent terminals, private browser previews and a way for Amp to work on the server. I also wanted credentials in 1Password and an administrator account separate from everyday development.
+I wanted to start work on my Mac, leave it running and pick it up from my phone. A virtual private server, or VPS, gave that work a rented Linux machine that runs while the laptop is closed. To make it useful, I needed persistent terminals, private browser previews and a way for Amp, the AI coding tool, to work on the server. I also wanted to keep credentials in 1Password, my password manager, and use a separate administrator account for system changes.
 
 <ArticleIllustration
   src="/images/blog/private-vps/01-private-workspace.svg"
@@ -14,15 +14,15 @@ I wanted to start work on my Mac, leave it running and pick it up from my phone.
 
 ## How the parts fit together
 
-The VPS owns the project files and runs the containers, Rex server and Amp runner. My Mac and iPhone connect to it as clients. Closing either client does not shut down the server's work.
+I keep the project files on the VPS and run the containers, Rex server and Amp runner there. My Mac and iPhone connect to it as clients. Closing either client does not shut down the server's work.
 
 | Component | What I use it for |
 | --- | --- |
 | Tailscale | A private network, called a tailnet, connecting my devices and the VPS |
 | Rex | Terminal sessions running on the VPS, accessible from the Mac and iPhone |
-| Rootless Docker | Project applications and jobs running under the development account |
-| 1Password | SSH keys, recovery credentials and project secrets |
-| Amp runner | Development and deployment tasks executed on the VPS |
+| Rootless Docker | Runs packaged applications in containers, with its background service owned by the development account |
+| 1Password | A password manager holding SSH keys, recovery credentials and project secrets |
+| Amp runner | A process for the AI coding tool Amp that accepts development and deployment work on the VPS |
 
 Rex runs on the VPS as well as on the Mac. The remote client connects to the Linux server, so the terminal and its processes live on the VPS.
 
@@ -32,9 +32,9 @@ I use `builder` for projects and services. It owns the rootless Docker daemon, R
 
 ## Keep access and previews private
 
-I only need previews on my own devices. Each application publishes a port on the VPS's loopback address, `127.0.0.1`. [Tailscale Serve](https://tailscale.com/docs/features/tailscale-serve) puts private HTTPS in front of it, with access controlled by the Tailscale policy.
+I only need previews on my own devices. Each application publishes a port on the VPS's loopback address, `127.0.0.1`. That address means the machine where a command runs, so a request to it on the Mac would reach the Mac, not the VPS. [Tailscale Serve](https://tailscale.com/docs/features/tailscale-serve) puts private HTTPS in front of it, with access controlled by the Tailscale policy.
 
-This also settled Cloudflare's role. I already had it available, but private previews do not need public DNS records or a Cloudflare tunnel. I left public sharing out of this setup. If I need it later, I can decide who should have access before exposing an application.
+This also settled Cloudflare's role. Cloudflare provides DNS services for domain names, and [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/) can connect a server application to its network. I already had Cloudflare available, but these private previews use Tailscale's names and connections. I left public sharing out of this setup. If I need it later, I can decide who should have access before exposing an application.
 
 Amp remains a hosted service. Its runner executes commands on the VPS and connects to Amp, so hosting the runner myself does not mean hosting the whole Amp service.
 

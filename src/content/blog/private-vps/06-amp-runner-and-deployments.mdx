@@ -16,7 +16,16 @@ The deployment pattern also applies to other coding agents that can execute on a
 
 ## Run Amp as a persistent service
 
-From the Mac, open `ssh workbench` to connect to the VPS as `builder`, then install Amp using its [CLI instructions](https://ampcode.com/docs/cli). Then check the binary and sign in:
+From the Mac, open `ssh workbench` as `builder`. On the VPS, download and inspect the installer from Amp's [CLI instructions](https://ampcode.com/docs/cli), then run it without sudo:
+
+~~~sh
+install -d -m 700 "$HOME/.cache/workbench"
+curl -fsSLo "$HOME/.cache/workbench/amp-install.sh" https://ampcode.com/install.sh
+less "$HOME/.cache/workbench/amp-install.sh"
+bash "$HOME/.cache/workbench/amp-install.sh"
+~~~
+
+Press `q` to leave `less`. After installation, run `exit` and reconnect from the Mac with `ssh workbench` so the new shell picks up any PATH change. PATH is the list of directories searched for commands. Then check the binary and sign in on the VPS:
 
 ~~~sh
 command -v amp
@@ -25,15 +34,15 @@ amp login
 amp account list
 ~~~
 
-Use the account you want to control this runner. Signing in to the Mac app does not sign in a separate Linux installation, so note the account's user ID for the service below. Keep the VPS configuration separate from any unrelated Mac integrations. The runner has access to `builder`'s files and Docker daemon, so use it for trusted development work. Selecting a served project directory is not a sandbox around that directory.
+For the default installation used below, `command -v amp` should return `/home/builder/.local/bin/amp`, and `amp --version` should print the installed version. If the path differs, use that absolute path for both executable lines in the service unit. Open the login link in the Mac's browser and approve the account you want to control this runner. Signing in to the Mac app does not sign in a separate Linux installation, so note the account's user ID for the service below. Keep the VPS configuration separate from any unrelated Mac integrations. The runner has access to `builder`'s files and Docker daemon, so use it for trusted development work. Selecting a served project directory is not a sandbox around that directory.
 
-Projects live beneath `/home/builder/projects`. To make the existing demo directory discoverable as a Git project, initialise it if it is not already a repository:
+Git records a project's source history in a repository, and Amp's discovery option looks for these repositories. The existing demo lives beneath `/home/builder/projects`. Still as `builder` on the VPS, initialise it only if it is not already a repository:
 
 ~~~sh
 git -C "$HOME/projects/demo" init -b main
 ~~~
 
-Save the following as `~/.config/systemd/user/amp-workbench.service`. Replace `YOUR_AMP_USER_ID` and check that Amp is installed at `%h/.local/bin/amp`, where `%h` means the user's home directory. Adjust both executable paths if your installation differs.
+In this `builder` session, run `mkdir -p ~/.config/systemd/user`, then open `nano ~/.config/systemd/user/amp-workbench.service` and save the following. Replace `YOUR_AMP_USER_ID` and check that Amp is installed at `%h/.local/bin/amp`, where `%h` means the user's home directory. Adjust both executable paths if your installation differs.
 
 ~~~ini
 [Unit]
@@ -63,7 +72,7 @@ WantedBy=default.target
 
 The pre-start command selects the intended account on every start. A saved account appearing in `amp account list` does not prove that a new process will use it. Clearing the two environment overrides prevents them from selecting a different credential or server. Amp's [account documentation](https://ampcode.com/docs/cli#manage-cli-accounts) explains the precedence.
 
-`--runner-id` gives the runner a stable name. `--discover-dirs` finds Git checkouts beneath its working directory, and `--remote-control-terminal` enables remote terminal access. These options are documented in [Amp's runner guide](https://ampcode.com/docs/cli/runners).
+`--no-tui` runs the service without an interactive terminal interface. `--runner-id` gives the runner a stable name. `--discover-dirs` finds Git checkouts beneath its working directory, and `--remote-control-terminal` enables remote terminal access. These options are documented in [Amp's runner guide](https://ampcode.com/docs/cli/runners).
 
 Start the service:
 
@@ -91,9 +100,9 @@ The service budgets above cover Amp's processes. Keep the separate Compose limit
 
 ## Make the deployment instructions available
 
-Download the example [DEPLOYMENT.md](/examples/private-vps/DEPLOYMENT.md). It describes how to choose unused ports, build a rootless Compose application and check local health before publishing a preview. It also requires a source revision and a previous working version for rollback.
+On the Mac, save the example [DEPLOYMENT.md](/examples/private-vps/DEPLOYMENT.md) in `~/Downloads/private-vps-examples`. It describes how to choose unused ports, build a rootless Compose application and check local health before publishing a preview. It also requires a source revision and a previous working version for rollback.
 
-Adapt it to your projects, then install it from the Mac:
+In a local Mac terminal, run `cd ~/Downloads/private-vps-examples` and `nano DEPLOYMENT.md` to adapt it to your projects. Then install it on the VPS:
 
 ~~~sh
 ssh workbench 'install -d -m 700 /home/builder/.config/workbench'
@@ -101,13 +110,13 @@ scp DEPLOYMENT.md workbench:/home/builder/.config/workbench/DEPLOYMENT.md
 ssh workbench 'chmod 600 /home/builder/.config/workbench/DEPLOYMENT.md'
 ~~~
 
-In `~/.config/amp/AGENTS.md` on the VPS, add this pointer alongside any existing guidance:
+From the Mac, open `ssh workbench` again. On the VPS, run `mkdir -p ~/.config/amp`, then open `nano ~/.config/amp/AGENTS.md` and append this pointer alongside any existing guidance:
 
 ~~~markdown
 For VPS deployments, private previews and application restarts, read /home/builder/.config/workbench/DEPLOYMENT.md before making changes.
 ~~~
 
-In Amp's personal settings, open Instructions and edit Global AGENTS.md. Append the following so requests made from the Mac can find the runner too:
+Back in the Amp app or website on the Mac, open personal Settings, then Instructions, and edit Global AGENTS.md. Append the following so requests made from the Mac can find the runner too:
 
 ~~~markdown
 ## Private VPS deployments
@@ -123,7 +132,7 @@ The local pointer applies on the VPS. The global guidance helps route a request 
 
 ## Deploy a project
 
-In Amp, choose `workbench` and the demo project. Ask it to deploy the project using the server procedure and return the private URL. With an authenticated Mac CLI, you can make the same request through [execute mode](https://ampcode.com/docs/cli/execute-mode):
+In Amp, choose `workbench` and the demo project. Ask it to deploy the project using the server procedure and return the private URL. For the optional CLI route, use a local Mac terminal, not the VPS shell. Install the Amp CLI on the Mac as well and run `amp login` with the same account. You can then make the request through [execute mode](https://ampcode.com/docs/cli/execute-mode):
 
 ~~~sh
 amp --executor runner:workbench --runner-dir /home/builder/projects/demo -x 'Deploy this project privately using the server runbook. Verify local health and return the private HTTPS URL. Preserve other projects.'

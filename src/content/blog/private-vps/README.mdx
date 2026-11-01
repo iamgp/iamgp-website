@@ -1,10 +1,10 @@
 # Building a private development VPS
 
-I wanted a development machine I could leave running and return to from my Mac or iPhone. This series explains how I put one together, with Rex for remote terminals, Tailscale for private access and an Amp runner for development and deployments. The VPS runs projects independently of the laptop, with private HTTPS previews. I use 1Password to hold the access credentials and project secrets.
+I wanted a development machine I could leave running and return to from my Mac or iPhone. A virtual private server, or VPS, is a rented virtual machine that runs independently of the laptop. This series explains my setup, with Rex as the remote terminal application, Tailscale as the private network and Amp as the AI coding tool that works on the server. I use the password manager 1Password for access credentials and project secrets.
 
 ## What you need
 
-The guide starts with a fresh Ubuntu 24.04 LTS VPS and working access to your provider's browser console. You should be comfortable using a terminal and editing configuration files. You will also need Tailscale on your Mac and iPhone, 1Password on the Mac and an Amp account. Follow the posts in order if you are building the whole setup, as the later examples use the accounts and services created earlier.
+The guide starts with a fresh Ubuntu 24.04 LTS VPS and working access to your provider's browser console. You should be comfortable using a terminal and editing configuration files. Install Tailscale on your Mac and iPhone and sign both into the same account. Install and unlock 1Password on the Mac, and have an Amp account available for part 6. You need permission to edit your Tailscale network's access policy. Follow the posts in order if you are building the whole setup, as the later examples use the accounts and services created earlier.
 
 Part 4 uses Rex's invite-only Linux server beta, so you will need an invitation for its server setup.
 
@@ -31,11 +31,18 @@ The server names and vault references are examples. Replace them with your own v
 | `YOUR_TAILNET` | Your Tailscale DNS suffix, without the final `.ts.net` |
 | `YOUR_TAILSCALE_LOGIN` | Your user identity as shown in the Tailscale admin console |
 | `MAC_TS_IP`, `MAC_REX_TS_IP`, `PHONE_TS_IP` | Your devices' Tailscale addresses. Omit the Mac Rex address if you do not use its embedded integration. |
+| `VPS_PUBLIC_IP` | Your VPS's public address from the provider dashboard, used only for the external access check |
 | `YOUR_AMP_USER_ID` | The intended account's ID from `amp account list` |
 | `Engineering` | The example 1Password vault |
 
 Uppercase placeholders need replacing before you run a command or save a policy. The posts identify where commands run. Addresses such as `127.0.0.1` and the port ranges are configuration examples you can keep.
 
 Command outputs are illustrative and shortened. Versions, fingerprints and device addresses are placeholders, so compare the relevant fields with your own results. A successful `chmod`, `chown` or `systemctl daemon-reload` normally prints nothing.
+
+A Mac command runs in a local Terminal window. `ssh workbench` opens the VPS as `builder`; `ssh workbench-admin` opens it as `operator`. Those aliases are created in part 2. Run `exit` to return to the Mac, or open another local Terminal window when a step switches machines. An SSH command followed by a quoted command runs that command remotely and returns to the Mac automatically. Prompts such as `mac$` or `builder@workbench$` in output examples identify the context; type only the command after the prompt.
+
+`nano` is the terminal text editor used below. Save with Ctrl+O, press Enter to confirm the filename, then use Ctrl+X to exit. `scp` copies a local file over SSH; the path after the destination alias and colon is on the VPS.
+
+For linked example files, create a folder on the Mac with `mkdir -p ~/Downloads/private-vps-examples`. Open each file link in the Mac's browser and save it there with the exact filename shown. The transfer commands use that folder.
 
 The linked vendor documentation covers installation details that may change. The [example files](/examples/private-vps/README.txt) contain the longer scripts and policy used in the posts.

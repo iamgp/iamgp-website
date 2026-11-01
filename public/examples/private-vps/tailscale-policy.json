@@ -64,7 +64,8 @@
         "tag:workbench-rex:443"
       ],
       "deny": [
-        "tag:workbench:22"
+        "tag:workbench:22",
+        "tag:workbench:5432"
       ]
     },
     {

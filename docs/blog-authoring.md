@@ -17,3 +17,5 @@ MDX compiles executable code. Keep it limited to trusted repository content rath
 Run `npm run build` before opening a pull request. The build prerenders the pages discovered through the site's links. Check a direct article URL as well as navigation from the writing index. Check diagrams and wide code blocks at phone width, and use the homepage theme control to inspect light and dark modes.
 
 The series guide documents the example names and placeholders. Keep the infrastructure identifiers fictional when editing the posts.
+
+Before publishing a procedural post, read it in series order as a fresh installation. Introduce each tool before using it. At every machine or account change, name the context and show the login or return command. Give the working directory, file-creation command and required permissions where a step depends on them. Pair checks with the expected result, labelling shortened or schematic output. Check that example files match the prose and that later steps use only files and settings already created. Preserve the series' fuller paragraphs and few headings.

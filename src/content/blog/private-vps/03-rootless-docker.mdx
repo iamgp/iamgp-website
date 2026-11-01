@@ -4,7 +4,7 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 *Part 3 of 7. [Previous: private SSH access](02-private-access-and-ssh.mdx) · [Series index](README.mdx) · [Next: Rex and previews](04-rex-and-private-previews.mdx)*
 
-I use rootless Docker to run applications under `builder`, the development account. Its background service, the Docker daemon, runs under that account too, rather than as root. To make this useful for development, containers need to write their project files, and resource limits need to leave enough capacity for the rest of the VPS.
+Private SSH now gives us the development login from part 2. Docker packages an application and its dependencies into an image, then runs that image as a container. I use rootless Docker to run those containers under `builder`, the development account. Its background service, the Docker daemon, runs under that account too, rather than as root. To make this useful for development, containers need to write their project files, and resource limits need to leave enough capacity for the rest of the VPS.
 
 <ArticleIllustration
   src="/images/blog/private-vps/03-rootless-runtime.svg"
@@ -14,7 +14,13 @@ I use rootless Docker to run applications under `builder`, the development accou
 
 ## Prepare Docker
 
-From the Mac, run `ssh workbench-admin` to enter the VPS as `operator`, then follow Docker's [Ubuntu installation instructions](https://docs.docker.com/engine/install/ubuntu/) to add its package repository. Install the engine, CLI, rootless extras, Buildx and Compose plugin, along with the `uidmap` package.
+From the Mac, run `ssh workbench-admin` to enter the VPS as `operator`. Complete the repository-setup step in Docker's [Ubuntu installation instructions](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository), then return here to install these packages on the VPS:
+
+~~~sh
+sudo apt install docker-ce docker-ce-cli containerd.io docker-ce-rootless-extras docker-buildx-plugin docker-compose-plugin uidmap dbus-user-session
+~~~
+
+Buildx builds application images. The Compose plugin reads a project's `compose.yaml` file to build and run its services; we use it in part 4. `uidmap` supplies the user-mapping tools rootless Docker needs.
 
 Check that `builder` has subordinate user and group ID ranges:
 
@@ -24,9 +30,9 @@ grep '^builder:' /etc/subuid
 grep '^builder:' /etc/subgid
 ~~~
 
-Each range needs at least 65,536 IDs and must not overlap another user's allocation. Docker's [rootless setup guide](https://docs.docker.com/engine/security/rootless/) covers missing prerequisites.
+For example, a line such as `builder:231072:65536` assigns 65,536 IDs starting at 231072. Your starting number can differ. Each range needs at least 65,536 IDs and must not overlap another user's allocation. Docker's [rootless setup guide](https://docs.docker.com/engine/security/rootless/) covers missing prerequisites.
 
-This machine uses only the rootless daemon. Disable the system daemon and enable lingering for `builder`:
+Ubuntu's service manager, systemd, runs Docker and the other background tools as user services. Lingering lets them start at boot and continue after the account's last login ends. This machine uses only the rootless daemon, so disable the system daemon and enable lingering for `builder`:
 
 ~~~sh
 sudo systemctl disable --now docker.service docker.socket
@@ -34,18 +40,26 @@ sudo systemctl mask docker.service docker.socket
 sudo loginctl enable-linger builder
 ~~~
 
-Ubuntu's systemd service manager runs Docker and the other background tools as user services. Lingering lets them start at boot and continue after the account's last login ends. Keep `builder` out of the rootful `docker` group, which would give it control of a privileged daemon.
+`systemctl --user` manages the current user's services; `sudo systemctl` manages system services. Keep `builder` out of the rootful `docker` group, which would give it control of a privileged daemon.
 
 ## Set limits and start the daemon
 
-I limit individual containers and the development account as a whole. A container limit controls one job; the account limit covers its combined workload. Linux applies these limits to groups of processes through cgroups. Rootless Docker needs cgroup v2 and the systemd cgroup driver to use them. CPU controls can also need explicit delegation. Create the directory `/etc/systemd/system/user@.service.d/` as administrator and add `workbench.conf`:
+I limit individual containers and the development account as a whole. A container limit controls one job; the account limit covers its combined workload. Linux applies these limits to groups of processes through cgroups. Rootless Docker needs cgroup v2 and the systemd cgroup driver to use them. CPU controls can also need explicit delegation. Still as `operator`, run `sudo mkdir -p /etc/systemd/system/user@.service.d`, then open `sudo nano /etc/systemd/system/user@.service.d/workbench.conf` and save:
 
 ~~~ini
 [Service]
 Delegate=cpu cpuset io memory pids
 ~~~
 
-For the account limit, get the numeric ID with `id -u builder`. Create `/etc/systemd/system/user-UID.slice.d/`, replacing `UID` with that number, and add another `workbench.conf`:
+In the same VPS administrator session, create the account-limit directory using the actual user ID:
+
+~~~sh
+builder_uid=$(id -u builder)
+sudo mkdir -p "/etc/systemd/system/user-${builder_uid}.slice.d"
+sudo nano "/etc/systemd/system/user-${builder_uid}.slice.d/workbench.conf"
+~~~
+
+Save the following in that file:
 
 ~~~ini
 [Slice]
@@ -81,12 +95,20 @@ Server:
   rootless
 ~~~
 
-Check that `docker info` reports rootless mode, cgroup version 2 and the systemd cgroup driver. `docker context show` should return `rootless`. If setup fails with a user-namespace permission error on Ubuntu 24.04, follow Docker's [AppArmor guidance](https://docs.docker.com/engine/security/rootless/troubleshoot/) rather than disabling AppArmor globally.
+Check that `docker info` reports rootless mode, cgroup version 2 and the systemd cgroup driver. `docker context show` should return `rootless`. AppArmor is Ubuntu's system for restricting what programs can access. If setup fails with a user-namespace permission error, follow Docker's [AppArmor guidance](https://docs.docker.com/engine/security/rootless/troubleshoot/) and keep AppArmor enabled.
 
-Check the account's effective limits too, replacing `UID` as before:
+In this `builder` session, check the account's effective limits using its current user ID:
 
 ~~~sh
-systemctl show user-UID.slice -p MemoryMax -p CPUQuotaPerSecUSec -p TasksMax
+systemctl show "user-$(id -u).slice" -p MemoryMax -p CPUQuotaPerSecUSec -p TasksMax
+~~~
+
+For the example budgets, expect these values. The time formatting can vary:
+
+~~~text
+MemoryMax=6442450944
+CPUQuotaPerSecUSec=1.750000s
+TasksMax=4096
 ~~~
 
 ## Run and check a project job
