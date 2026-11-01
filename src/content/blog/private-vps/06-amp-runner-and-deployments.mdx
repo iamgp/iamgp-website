@@ -4,7 +4,9 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 *Part 6 of 7. [Previous: project secrets](05-secrets-with-1password.mdx) · [Series index](README.mdx) · [Next: checks and recovery](07-verification-and-recovery.mdx)*
 
-An Amp runner lets me send development work to the VPS from the app. The files and commands stay on the server, so the Mac does not need to remain open while the work runs. I also want Amp to deploy there when asked. That needs a persistent runner and instructions describing the deployment path already built in this series.
+[Amp](https://ampcode.com/docs) is an AI coding tool that can edit files and run terminal commands. Its runner lets me send that work to the VPS from the app, using the account setup and private previews from the previous posts. The runner is a process on the server, so work can continue when the Mac is closed.
+
+The deployment pattern also applies to other coding agents that can execute on a Linux host. The development account, rootless Docker and preview helper can stay the same; the remote-execution setup and instruction files depend on the tool. I use Amp here, so the following steps cover its runner and global settings.
 
 <ArticleIllustration
   src="/images/blog/private-vps/06-private-deployment.svg"
@@ -14,7 +16,7 @@ An Amp runner lets me send development work to the VPS from the app. The files a
 
 ## Run Amp as a persistent service
 
-Connect as `builder` and install Amp using its [CLI instructions](https://ampcode.com/docs/cli). Then check the binary and sign in:
+From the Mac, open `ssh workbench` to connect to the VPS as `builder`, then install Amp using its [CLI instructions](https://ampcode.com/docs/cli). Then check the binary and sign in:
 
 ~~~sh
 command -v amp
@@ -73,7 +75,17 @@ amp runner list
 amp runner dirs list
 ~~~
 
-Check that the runner appears under the intended account and includes the demo project. Lingering, enabled in part 3, lets the service start without an interactive login.
+Check that the runner appears under the intended account and includes the demo project. The checks should identify the following, shown schematically because table formatting varies by version:
+
+~~~text
+amp runner list:
+  workbench ... <YOUR_AMP_USER_ID> ... online
+
+amp runner dirs list:
+  /home/builder/projects/demo
+~~~
+
+You can also run `systemctl --user is-active amp-workbench`, which should print `active`. Lingering, enabled in part 3, lets the service start without an interactive login.
 
 The service budgets above cover Amp's processes. Keep the separate Compose limits for application containers and the overall development-account limit from part 3.
 

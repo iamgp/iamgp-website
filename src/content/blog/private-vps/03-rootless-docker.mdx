@@ -14,7 +14,7 @@ I use rootless Docker to run applications under `builder`, the development accou
 
 ## Prepare Docker
 
-As `operator`, follow Docker's [Ubuntu installation instructions](https://docs.docker.com/engine/install/ubuntu/) to add its package repository. Install the engine, CLI, rootless extras, Buildx and Compose plugin, along with the `uidmap` package.
+From the Mac, run `ssh workbench-admin` to enter the VPS as `operator`, then follow Docker's [Ubuntu installation instructions](https://docs.docker.com/engine/install/ubuntu/) to add its package repository. Install the engine, CLI, rootless extras, Buildx and Compose plugin, along with the `uidmap` package.
 
 Check that `builder` has subordinate user and group ID ranges:
 
@@ -56,15 +56,29 @@ TasksMax=4096
 
 These are example budgets, so adjust them to your VPS. Leave capacity for Ubuntu, networking and administrator access. `CPUQuota=175%` permits up to 1.75 logical CPUs.
 
-Run `sudo systemctl daemon-reload`, then reboot the fresh server before starting Docker. This applies the user-manager configuration as well as the slice settings. Reconnect through private SSH afterwards. Docker's [resource-limit guidance](https://docs.docker.com/engine/security/rootless/tips/) explains the delegation requirement.
+In the VPS administrator session, run `sudo systemctl daemon-reload`, then `sudo reboot` before starting Docker. This applies the user-manager configuration as well as the slice settings. The SSH connection will close during the reboot. Once the VPS is back, reconnect from the Mac as described below. Docker's [resource-limit guidance](https://docs.docker.com/engine/security/rootless/tips/) explains the delegation requirement.
 
-Connect with `ssh workbench` and run the setup without sudo:
+On the Mac, run `ssh workbench` to open a new VPS session as `builder`, then run the setup without sudo:
 
 ~~~sh
 dockerd-rootless-setuptool.sh install
 systemctl --user enable --now docker
 docker context use rootless
 docker info
+~~~
+
+The relevant parts of `docker info` should look like this, with the rest omitted:
+
+~~~text
+Client:
+ Context: rootless
+...
+Server:
+ Cgroup Driver: systemd
+ Cgroup Version: 2
+ Security Options:
+  ...
+  rootless
 ~~~
 
 Check that `docker info` reports rootless mode, cgroup version 2 and the systemd cgroup driver. `docker context show` should return `rootless`. If setup fails with a user-namespace permission error on Ubuntu 24.04, follow Docker's [AppArmor guidance](https://docs.docker.com/engine/security/rootless/troubleshoot/) rather than disabling AppArmor globally.
@@ -77,7 +91,7 @@ systemctl show user-UID.slice -p MemoryMax -p CPUQuotaPerSecUSec -p TasksMax
 
 ## Run and check a project job
 
-The following job gets one writable project directory and a temporary filesystem. Run it as `builder` against the rootless daemon:
+The following job gets one writable project directory and a temporary filesystem. From the Mac, use `ssh workbench` to enter the VPS as `builder` if you are not still in that session, then run it against the rootless daemon:
 
 ~~~sh
 mkdir -p "$HOME/projects/demo"
@@ -92,7 +106,13 @@ docker run --rm --init \
   python -c 'from pathlib import Path; Path("/work/write-check.txt").write_text("project write passed"); print({name: Path("/sys/fs/cgroup", name).read_text().strip() for name in ("memory.max", "cpu.max", "pids.max")})'
 ~~~
 
-The container receives neither the user's home directory nor the Docker or SSH agent socket. It still has network access.
+The job prints its resource limits. For the settings above, an example result is:
+
+~~~text
+{'memory.max': '4294967296', 'cpu.max': '150000 100000', 'pids.max': '512'}
+~~~
+
+The CPU quota and period can be expressed with different numbers; their ratio should be 1.5. The container receives neither the user's home directory nor the Docker or SSH agent socket. It still has network access.
 
 `--user=0:0` is intentional here. With rootless Docker, [container UID 0 maps to the unprivileged account running the daemon](https://docs.docker.com/engine/security/rootless/uid-gid-mapping/), so it can write `builder`'s project files. Another container UID can lack that permission. This ownership behaviour depends on using the rootless daemon. Check the file on the host:
 
@@ -101,6 +121,13 @@ stat -c '%u %g %n' "$HOME/projects/demo/write-check.txt"
 id -u
 ~~~
 
-Its owner should match `builder`. The job also prints its cgroup limits. Expect a 4 GiB memory maximum, a CPU quota equivalent to 1.5 CPUs and a process limit of 512. Checking these values catches configurations where Docker accepts a flag but cannot enforce it.
+The first user ID printed by `stat` should match `id -u`. For example, both could be `1001`; use your own account's ID when comparing:
+
+~~~text
+1001 1001 /home/builder/projects/demo/write-check.txt
+1001
+~~~
+
+The resource output above represents a 4 GiB memory maximum, a CPU quota equivalent to 1.5 CPUs and a process limit of 512. Checking these values catches configurations where Docker accepts a flag but cannot enforce it.
 
 The account that owns the daemon can inspect and change its containers. These limits are useful for controlling development workloads, but a container is not a complete boundary for hostile code. In the next post, a small Compose application uses the same rootless daemon to provide a private preview.

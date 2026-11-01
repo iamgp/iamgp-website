@@ -6,6 +6,8 @@ I wanted a development machine I could leave running and return to from my Mac o
 
 The guide starts with a fresh Ubuntu 24.04 LTS VPS and working access to your provider's browser console. You should be comfortable using a terminal and editing configuration files. You will also need Tailscale on your Mac and iPhone, 1Password on the Mac and an Amp account. Follow the posts in order if you are building the whole setup, as the later examples use the accounts and services created earlier.
 
+Part 4 uses Rex's invite-only Linux server beta, so you will need an invitation for its server setup.
+
 | Part | Post | What you will have afterwards |
 | --- | --- | --- |
 | 1 | [A development VPS I can use from anywhere](01-architecture.mdx) | A clear plan for the machine and its access |
@@ -33,5 +35,7 @@ The server names and vault references are examples. Replace them with your own v
 | `Engineering` | The example 1Password vault |
 
 Uppercase placeholders need replacing before you run a command or save a policy. The posts identify where commands run. Addresses such as `127.0.0.1` and the port ranges are configuration examples you can keep.
+
+Command outputs are illustrative and shortened. Versions, fingerprints and device addresses are placeholders, so compare the relevant fields with your own results. A successful `chmod`, `chown` or `systemctl daemon-reload` normally prints nothing.
 
 The linked vendor documentation covers installation details that may change. The [example files](/examples/private-vps/README.txt) contain the longer scripts and policy used in the posts.

@@ -24,7 +24,7 @@ The VPS owns the project files and runs the containers, Rex server and Amp runne
 | 1Password | SSH keys, recovery credentials and project secrets |
 | Amp runner | Development and deployment tasks executed on the VPS |
 
-Rex runs on the VPS as well as on the Mac. The remote client connects to the Linux server, so the terminal and its processes live on the VPS. Rex's [remote-access documentation](https://www.superlogical.com/rex/docs/linux/remote-access) explains that connection.
+Rex runs on the VPS as well as on the Mac. The remote client connects to the Linux server, so the terminal and its processes live on the VPS.
 
 The operating system uses Tailscale for SSH and application previews. Rex's built-in integration joins Tailscale separately, so the same VPS appears as two devices. In these examples, `workbench` is the operating-system node and `workbench-rex` is the Rex node. Use the first for SSH and preview URLs, and the second when adding the server to Rex. Recording both names avoids trying to open a terminal through an application preview address.
 

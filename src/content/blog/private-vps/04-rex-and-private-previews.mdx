@@ -4,7 +4,7 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 *Part 4 of 7. [Previous: rootless Docker](03-rootless-docker.mdx) · [Series index](README.mdx) · [Next: project secrets](05-secrets-with-1password.mdx)*
 
-Rex gives me a terminal on the VPS that I can return to from either device. Tailscale Serve gives me a private HTTPS address for the application I am working on. Rex connects to `workbench-rex`, while application previews use `workbench`. This post sets up both, starting with the terminal.
+Rex is a terminal application with a server that keeps sessions running on a remote machine. Its Mac and iPhone clients connect to those sessions, so I can leave work on the VPS and return to it from either device. Tailscale Serve gives me a private HTTPS address for the application I am working on. Rex connects to `workbench-rex`, while application previews use `workbench`. This post sets up both, starting with the terminal.
 
 <ArticleIllustration
   src="/images/blog/private-vps/04-private-preview.svg"
@@ -14,7 +14,7 @@ Rex gives me a terminal on the VPS that I can return to from either device. Tail
 
 ## Connect Rex from both devices
 
-Install the Linux server using [Rex's own instructions](https://www.superlogical.com/rex/docs/linux/installation). The installation page requires sign-in to show its commands.
+Rex's Linux server is currently in an invite-only beta. You need access to that beta and the installation instructions supplied with your invitation before following the server steps below. From the Mac, open `ssh workbench-admin` for the package installation on the VPS.
 
 Check the installed binary and version:
 
@@ -23,9 +23,14 @@ rex -v
 command -v rex
 ~~~
 
-I run a personal server as `builder`, so its terminals have the same permissions as my development SSH session. Keep unused system-wide Rex server units disabled when using this personal service.
+For the Ubuntu package used here, the version and path checks produce output in this form:
 
-As `builder`, save the following in `~/.config/systemd/user/rex.service`:
+~~~text
+rex <BETA_VERSION>
+/usr/bin/rex
+~~~
+
+I run a personal server as `builder`, so its terminals have the same permissions as my development SSH session. Keep unused system-wide Rex server units disabled when using this personal service. From another Mac terminal, open `ssh workbench` as `builder` and save the following in `~/.config/systemd/user/rex.service`:
 
 ~~~ini
 [Unit]
@@ -51,7 +56,7 @@ systemctl --user enable --now rex
 journalctl --user -u rex -n 30 --no-pager
 ~~~
 
-Approve `workbench-rex` in Tailscale and check its tag. Enable MagicDNS and tailnet HTTPS certificates. The `--tailscale-allow-tailnet-members` flag admits callers allowed by the network policy, so the restricted Rex grant from part 2 is essential. A permitted client can control terminals as `builder`. [Rex's remote-access guide](https://www.superlogical.com/rex/docs/linux/remote-access) explains this tagged-device arrangement.
+Approve `workbench-rex` in Tailscale and check its tag. Enable MagicDNS and tailnet HTTPS certificates. The `--tailscale-allow-tailnet-members` flag admits callers allowed by the network policy, so the restricted Rex grant from part 2 is essential. A permitted client can control terminals as `builder`.
 
 In Rex on the Mac, add this remote host:
 
@@ -61,11 +66,20 @@ https://workbench-rex.YOUR_TAILNET.ts.net:443
 
 Open a workspace and run `whoami` and `hostname`. They should identify `builder` on `workbench`. On the iPhone, connect Tailscale first, then add the same VPS address in Rex iOS. Keep any existing Mac entry, as it connects to a different machine. Use the VPS address explicitly rather than a pairing code for the Mac's local server, and check the account and hostname in the phone's terminal too.
 
+An identity check in either Rex terminal should look like this:
+
+~~~text
+$ whoami
+builder
+$ hostname
+workbench
+~~~
+
 On the server, `rex client ls` should show the connected clients. If the app cannot connect, check that the actual source device appears in the Rex grant from part 2.
 
 ## Publish a private application preview
 
-As `builder`, create a small test page:
+From the Mac, open `ssh workbench` as `builder` and create a small test page on the VPS:
 
 ~~~sh
 mkdir -p "$HOME/projects/demo"
@@ -110,13 +124,28 @@ curl --fail http://127.0.0.1:3000/
 ss -lnt 'sport = :3000'
 ~~~
 
-The request should return the test page, and the host listener should be `127.0.0.1:3000`.
+The request should return the test page, and the host listener should be `127.0.0.1:3000`. An abridged example shows the response and the relevant listener column:
 
-As `operator`, configure Tailscale Serve:
+~~~text
+$ curl --fail http://127.0.0.1:3000/
+Private preview works
+$ ss -lnt 'sport = :3000'
+State   ... Local Address:Port ...
+LISTEN  ... 127.0.0.1:3000     ...
+~~~
+
+In another Mac terminal, open `ssh workbench-admin` as `operator` and configure Tailscale Serve on the VPS:
 
 ~~~sh
 sudo tailscale serve --bg --https=8443 http://127.0.0.1:3000
 sudo tailscale serve status
+~~~
+
+The status output should map the private HTTPS address to the local application. Shown schematically:
+
+~~~text
+https://workbench.YOUR_TAILNET.ts.net:8443 (tailnet only)
+|-- / proxy http://127.0.0.1:3000
 ~~~
 
 Open `https://workbench.YOUR_TAILNET.ts.net:8443/` on the Mac and phone while connected to Tailscale. Both should show the test page with a valid certificate. Background mode keeps the Serve configuration after the terminal closes. The [Serve CLI reference](https://tailscale.com/docs/reference/tailscale-cli/serve) documents the port and proxy options.
@@ -149,7 +178,7 @@ builder ALL=(root) NOPASSWD: /usr/local/sbin/workbench-preview *
 
 Set that file to mode `0440` and validate it with `sudo visudo -cf /etc/sudoers.d/workbench-preview`. The helper is privileged code, so its argument validation and ownership are part of the access control.
 
-As `builder`, test the interface:
+Back in the `builder` session, or after `ssh workbench` from the Mac, test the interface:
 
 ~~~sh
 sudo -n /usr/local/sbin/workbench-preview set 8443 3000

@@ -50,7 +50,7 @@ Replace `CONTAINER_NAME` with the container you are checking. For a job that wri
 
 First close the client connection while a detached application is running. Reconnect and check that the application still responds. This tests whether it depends on the terminal staying open.
 
-Then reboot the VPS through the administrator account. A reboot ends running terminals and jobs; enabled services and container restart policies determine what returns. After reconnecting, run these checks as `builder`:
+From the Mac, open `ssh workbench-admin` and run `sudo reboot` on the VPS. A reboot ends running terminals and jobs; enabled services and container restart policies determine what returns. Once the VPS is back, reconnect from the Mac with `ssh workbench` and run these checks as `builder`:
 
 ~~~sh
 systemctl --user is-active docker rex amp-workbench
@@ -60,7 +60,22 @@ docker compose -f /home/builder/projects/demo/compose.yaml ps
 amp runner list
 ~~~
 
-Reopen Rex and the private preview from both devices. Check that Amp can start a new task on the runner. If a service has not returned, read its journal with `journalctl --user -u SERVICE_NAME -n 50 --no-pager`, replacing `SERVICE_NAME` with the relevant unit.
+The first three commands should return the following sequence. The service checks print one line per service:
+
+~~~text
+$ systemctl --user is-active docker rex amp-workbench
+active
+active
+active
+$ systemctl --user is-enabled docker rex amp-workbench
+enabled
+enabled
+enabled
+$ docker context show
+rootless
+~~~
+
+Compose should also list the demo application as running, and Amp should list the `workbench` runner as online. Reopen Rex and the private preview from both devices. Check that Amp can start a new task on the runner. If a service has not returned, read its journal with `journalctl --user -u SERVICE_NAME -n 50 --no-pager`, replacing `SERVICE_NAME` with the relevant unit.
 
 Finally, open the provider's authenticated browser console and log in locally as root using the recovery credential in 1Password. Confirm the hostname, then log out. This route needs to work even when private networking is unavailable. Test it after disabling root SSH, as the console and SSH use different login paths. Console access restores control of the machine; recovering lost application data is a separate task.
 

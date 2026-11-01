@@ -4,7 +4,7 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 *Part 2 of 7. [Previous: the setup](01-architecture.mdx) · [Series index](README.mdx) · [Next: rootless Docker](03-rootless-docker.mdx)*
 
-I use ordinary SSH over Tailscale, with the private key held in 1Password on my Mac. Tailscale controls which devices can reach SSH; the SSH key controls which Linux account I can log into. Start in your VPS provider's authenticated browser console as root and keep it open until private access works. This route is also how you will recover access after disabling public SSH.
+The previous post set out how the VPS, remote terminals and private previews fit together. Before installing those tools, I need a reliable way to reach the server and an independent route for recovery. I use ordinary SSH over Tailscale, with the private key held in 1Password on my Mac. Tailscale controls which devices can reach SSH; the SSH key controls which Linux account I can log into. Start in your VPS provider's authenticated browser console as root and keep it open until private access works. This route is also how you will recover access after disabling public SSH.
 
 <ArticleIllustration
   src="/images/blog/private-vps/02-private-access.svg"
@@ -22,7 +22,9 @@ usermod -aG sudo operator
 adduser --disabled-password --gecos '' builder
 ~~~
 
-Set `operator`'s password when prompted. `builder` will use an SSH key and does not need a password or membership of the `sudo` group. Create or select a key in 1Password and copy its public key into `/home/operator/.ssh/authorized_keys` and `/home/builder/.ssh/authorized_keys`. Each `.ssh` directory should have mode `0700`, its `authorized_keys` file mode `0600`, and both should belong to the relevant user. Keep the private key in 1Password.
+Set `operator`'s password when prompted. `builder` will use an SSH key and does not need a password or membership of the `sudo` group. On the Mac, create or select an SSH key in 1Password and copy its Public key field. You will paste that public key into files on the VPS through the provider's browser console. The private key stays in 1Password on the Mac.
+
+In the VPS console, still as root, run `install -d -m 700 -o operator -g operator /home/operator/.ssh` to create the administrator's SSH directory. Open `nano /home/operator/.ssh/authorized_keys`, paste the public key as one line and save. Run `chmod 600 /home/operator/.ssh/authorized_keys` and `chown operator:operator /home/operator/.ssh/authorized_keys`. Repeat these commands with `builder` in place of `operator`, pasting the same public key. This gives each account its own directory and key file, owned by that account.
 
 Install Tailscale in the provider console. To inspect its official installer before running it:
 
@@ -69,6 +71,12 @@ ssh-keyscan -t ed25519 workbench.YOUR_TAILNET.ts.net > workbench-host-key
 ssh-keygen -lf workbench-host-key
 ~~~
 
+The two `ssh-keygen` results should show the same SHA256 fingerprint. Example format, with the fingerprint replaced by a placeholder:
+
+~~~text
+256 SHA256:<MATCHING_FINGERPRINT> ... (ED25519)
+~~~
+
 Compare the fingerprints. [`ssh-keyscan` collects a key without proving who owns it](https://man.openbsd.org/ssh-keyscan); the provider console gives you an independent value to compare. If they match, add the key on the Mac:
 
 ~~~sh
@@ -78,7 +86,7 @@ cat workbench-host-key >> ~/.ssh/known_hosts
 chmod 600 ~/.ssh/known_hosts
 ~~~
 
-Enable 1Password's SSH agent on the Mac so SSH can use the vault's key without exporting the private key. Download the selected public key to `~/.ssh/workbench.pub`, then add these entries to `~/.ssh/config`:
+Enable 1Password's SSH agent on the Mac so SSH can use the vault's key without exporting the private key. Download that same public key to `~/.ssh/workbench.pub`, then add these entries to `~/.ssh/config`:
 
 ~~~sshconfig
 Host workbench
@@ -104,7 +112,19 @@ Host workbench-admin
 
 Use the agent socket path configured by your 1Password installation. `IdentityFile` points to the public key so SSH asks the agent for the matching private key. `IdentitiesOnly` avoids offering every other key in the vault. This follows [1Password's host-specific configuration](https://www.1password.dev/ssh/agent/advanced).
 
-Open fresh connections with `ssh workbench` and `ssh workbench-admin`. Check `whoami` in each. As `operator`, run `sudo -v` and authenticate with its password. If key selection is wrong, `ssh -G workbench` shows the effective client configuration.
+From separate terminal windows on the Mac, open fresh connections with `ssh workbench` and `ssh workbench-admin`. Check `whoami` in each. The development login should print `builder`, and the administrator login should print `operator`. For example:
+
+~~~text
+mac$ ssh workbench
+builder@workbench$ whoami
+builder
+
+mac$ ssh workbench-admin
+operator@workbench$ whoami
+operator
+~~~
+
+In the `operator` session, run `sudo -v` and authenticate with its password. If key selection is wrong, `ssh -G workbench` on the Mac shows the effective client configuration.
 
 ## Close public access
 
