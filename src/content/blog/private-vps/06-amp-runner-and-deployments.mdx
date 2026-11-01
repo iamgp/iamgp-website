@@ -1,3 +1,5 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
 # An Amp runner that can deploy
 
 *Part 6 of 7. [Previous: project secrets](05-secrets-with-1password.mdx) · [Series index](README.mdx) · [Next: verification and recovery](07-verification-and-recovery.mdx)*
@@ -5,6 +7,12 @@
 The Amp runner uses `builder` and `/home/builder/projects`. Its deployment tasks build applications with rootless Docker and publish private URLs through the preview helper.
 
 The goal was to ask for a private deployment and receive a working URL. Installing a CLI would only be the first step.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/06-private-deployment.svg"
+  alt="An Amp deployment sequence with a separate runner startup check, local health checks and client verification."
+  caption="The runner connects outbound to Amp, then builds and verifies deployments on the VPS."
+/>
 
 ## Sign in on the machine that will execute the work
 

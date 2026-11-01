@@ -1,4 +1,4 @@
-import { MermaidDiagram } from '@/components/MermaidDiagram'
+import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 # Deciding what each tool is responsible for
 
@@ -45,20 +45,11 @@ They have different responsibilities:
 
 The addresses should be recorded separately. A preview URL is not automatically the Rex endpoint, and a successful SSH connection does not prove that the Rex client is authorised.
 
-<MermaidDiagram source={`
-flowchart LR
-    mac[Mac] -->|Private SSH| os[Operating-system node]
-    mac -->|Private HTTPS| rex[Rex node]
-    phone[iPhone] -->|Private HTTPS| rex
-    phone -->|Private preview| serve[Tailscale Serve]
-    mac --> serve
-    os --> projects[Project files and rootless Docker]
-    rex --> projects
-    serve --> app[Application bound to loopback]
-    projects --> app
-    amp[Amp service] <-->|VPS opens outbound connection| runner[Amp runner]
-    runner --> projects
-`} />
+<ArticleIllustration
+  src="/images/blog/private-vps/01-private-workspace.svg"
+  alt="Mac and iPhone connect to Tailscale and Rex on one VPS, with separate development and administrator roles."
+  caption="Ubuntu and Rex join Tailscale separately. SSH, previews and Rex each have their own access rules."
+/>
 
 The diagram shows the intended application paths. It does not imply that every endpoint trusts every device.
 

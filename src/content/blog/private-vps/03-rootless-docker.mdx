@@ -1,3 +1,5 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
 # Rootless Docker with limits that actually apply
 
 *Part 3 of 7. [Previous: private access](02-private-access-and-ssh.mdx) · [Series index](README.mdx) · [Next: Rex and previews](04-rex-and-private-previews.mdx)*
@@ -5,6 +7,12 @@
 Once private access worked, I needed a predictable way to run applications and agent jobs. I chose rootless Docker under the development account, with limits on both individual jobs and the account as a whole.
 
 The two checks I cared about were practical: could a job write to its project directory, and would the operating system enforce its CPU, memory and process limits?
+
+<ArticleIllustration
+  src="/images/blog/private-vps/03-rootless-runtime.svg"
+  alt="Rootless Docker account and container limits, a writable project mount and the container-to-host UID mapping."
+  caption="Each constrained job has its own resource limits beneath the development account's shared ceiling."
+/>
 
 ## Install the right Docker components
 

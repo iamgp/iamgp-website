@@ -1,3 +1,5 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
 # Rex, private previews and an iPhone connection
 
 *Part 4 of 7. [Previous: rootless Docker](03-rootless-docker.mdx) · [Series index](README.mdx) · [Next: project secrets](05-secrets-with-1password.mdx)*
@@ -5,6 +7,12 @@
 With private SSH and rootless Docker working, I added the interfaces I would actually use: a persistent Rex workspace and an HTTPS preview that opens on another device.
 
 These are two different services. The Rex endpoint controls terminals. The preview endpoint reaches an application. Keeping their addresses and permissions separate made the phone setup much easier to understand.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/04-private-preview.svg"
+  alt="A private HTTPS preview through Tailscale Serve to a loopback host port and a container application."
+  caption="Rex reaches a terminal. Tailscale Serve reaches an application through a host port bound to loopback."
+/>
 
 ## Install the intended Rex package
 

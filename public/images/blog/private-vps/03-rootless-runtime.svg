@@ -1,0 +1,236 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="sheet" viewBox="0 0 1700 1060" width="1700" height="1060" role="img" aria-label="A constrained job inside a rootless runtime, with account and job ceilings shown separately.">
+  <rect x="0" y="0" width="1700" height="1060" class="paper" />
+  <defs>
+    <marker id="ar0" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0,1.7 L10,5 L0,8.3 z" class="arrow" />
+    </marker>
+    <pattern id="hat0" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" class="hl" />
+    </pattern>
+    <style>
+.u{font-family:Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.07em}
+.border{fill:none;stroke:#111;stroke-width:1.2}
+.obj{fill:#ffffff;stroke:#111;stroke-width:1.6;stroke-linejoin:round}
+.well{fill:#f3f3f3;stroke:#111;stroke-width:1}
+.slot{fill:none;stroke:#444;stroke-width:.8;stroke-dasharray:4 3}
+.hug{fill:#e6e6e6;stroke:#111;stroke-width:1}
+.thin{fill:none;stroke:#111;stroke-width:.8}
+.ph{fill:none;stroke:#7a7a7a;stroke-width:.8;stroke-dasharray:14 3 3 3}
+.cl{fill:none;stroke:#7a7a7a;stroke-width:.7;stroke-dasharray:16 3 2 3}
+.cut{stroke:#111;stroke-width:2}
+.dl{stroke:#111;stroke-width:.7;fill:none}
+.ext{stroke:#111;stroke-width:.55;fill:none}
+.arrow{fill:#111}
+.hl{stroke:#444;stroke-width:.7}
+.hs{stroke:#111;stroke-width:.8}
+.env{fill:none;stroke:#111;stroke-width:.8;stroke-dasharray:10 3 2 3}
+.dt{font:400 11px Arial,Helvetica,sans-serif;fill:#111;paint-order:stroke;stroke:#ffffff;stroke-width:4px;stroke-linejoin:round}
+.dts{font:400 9.5px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.06em;text-transform:uppercase;paint-order:stroke;stroke:#ffffff;stroke-width:3px}
+.sl{font:400 9px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.08em;text-transform:uppercase}
+.nt{font:400 11.5px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em;text-transform:uppercase}
+.nth{font:700 13px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em}
+.vt{font:400 12px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.1em;text-transform:uppercase}
+.vtb{font:400 20px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em}
+.nb{fill:#ffffff;stroke:#111;stroke-width:.9}
+.nbt{font:400 9.5px Arial,Helvetica,sans-serif;fill:#111}
+.lead{stroke:#111;stroke-width:.7;fill:none}
+.dot{fill:#111}
+.th{font:400 10.5px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.05em;text-transform:uppercase}
+.tc{font:400 10.5px Arial,Helvetica,sans-serif;fill:#111}
+.tbk{font:400 7px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.04em;text-transform:uppercase}
+.tbt{font:700 15px Arial,Helvetica,sans-serif;fill:#111}
+.tbv{font:400 17px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em}
+
+/* title block restyled to match the drawing sheet: thin black rules, plain caps lettering */
+.tb{border:1.2px solid #111;border-radius:16px;overflow:hidden}
+.tb&gt;div{border-right:.8px solid #111;border-bottom:.8px solid #111;padding:10px 14px}
+.tb&gt;div:nth-child(4),.tb&gt;div:nth-child(7){border-right:0}
+.tb .lbl{font-size:9.5px;font-weight:400;letter-spacing:.06em;color:#444}
+.tb h1{font-weight:400;letter-spacing:.1em;font-size:clamp(28px,4vw,44px);margin-top:4px}
+.tb .v{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#111}
+.tb .big .v{font-size:11px;color:#444;line-height:1.6}
+.tb .notes{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:#111;line-height:1.9}
+.tb .notes ol{padding-left:20px}
+.tb .nh{font-weight:700;font-size:13px;letter-spacing:.06em}
+.tb .nh span{font-weight:400;font-size:11.5px;margin-left:6px}
+.tb .figs&gt;div{border-left:.8px solid #111;padding-left:14px}
+.tb .figs&gt;div:first-child{border-left:0;padding-left:0}
+.tb .figs .v{font-size:18px;letter-spacing:.06em;text-transform:none;margin-top:4px}
+.foot{font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.foot b{font-weight:700}
+
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1760px;padding:24px 12px 30px}.scroll{box-shadow:none;border-radius:16px}.tb{margin-bottom:18px}.tb .notes{line-height:1.65}.tb h1{font-size:36px}.tb .big .v{max-width:410px}.th,.tc{font-size:12px}.nt{font-size:11px}.paper{fill:#fff}.zone{fill:#fafafa;stroke:#777;stroke-width:1;stroke-dasharray:12 4 2 4}.flow{fill:none;stroke:#111;stroke-width:1.35;stroke-linejoin:round}.node-title{font:400 15px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.04em}.node-sub{font:400 10px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.05em}.role{font:400 13px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em}.hatch{stroke:#111;stroke-width:.8}.muted{fill:#666}.small{font-size:10px}
+
+.section-title{font:400 16px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.07em}.step-title{font:400 15px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.05em}.step-sub{font:400 11px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.04em}.strong-line{stroke:#111;stroke-width:2;fill:none}.dashed-flow{stroke:#555;stroke-width:1.1;stroke-dasharray:6 4;fill:none}.budget{fill:#eee;stroke:#111;stroke-width:1}.evidence{font:400 12px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.03em}
+.tb{grid-template-columns:2.2fr 1fr 1fr}.tb&gt;div:nth-child(4){border-right:.8px solid #111}.tb&gt;div:nth-child(3),.tb&gt;div:nth-child(5){border-right:0}@media(max-width:640px){.tb{grid-template-columns:1fr 1fr}}
+
+:root{--f:Arial,Helvetica,sans-serif}.node-title{font-size:16px}.node-sub{font-size:12px}.role{font-size:14px}.vt{font-size:12px}.nt{font-size:12px}.dts{font-size:11px}.layer-sub{font:400 10px Arial,Helvetica,sans-serif;fill:#555;letter-spacing:.04em}.tc{font-size:13px}.th{font-size:12px}.section-title{font-size:18px}.step-title{font-size:17px}.step-sub{font-size:12px}.evidence{font-size:13px}
+body{margin:0;background:#ececec}.review{max-width:1760px;margin:auto;padding:24px}.review h1{font:400 30px Arial,Helvetica,sans-serif;letter-spacing:.04em;text-transform:uppercase;margin:0 0 12px}.review p{font:15px/1.5 Arial,Helvetica,sans-serif;max-width:100ch;color:#444}.review svg{width:100%;height:auto;min-width:1100px}.review .scroll{overflow:auto}.review a{color:#222}
+</style>
+  </defs>
+  <rect x="20" y="20" width="1660" height="1020" rx="16" class="border" />
+  <text x="50" y="58" class="nth">NOTES:</text>
+  <rect x="50" y="78" width="12" height="12" class="nb" />
+  <text x="56" y="87.5" class="nbt" text-anchor="middle">1</text>
+  <text x="72" y="88" class="nt">THE USER SLICE COVERS THE WHOLE ACCOUNT.</text>
+  <rect x="50" y="102" width="12" height="12" class="nb" />
+  <text x="56" y="111.5" class="nbt" text-anchor="middle">2</text>
+  <text x="72" y="112" class="nt">THE JOB ALSO HAS ITS OWN RESOURCE LIMITS.</text>
+  <rect x="50" y="126" width="12" height="12" class="nb" />
+  <text x="56" y="135.5" class="nbt" text-anchor="middle">3</text>
+  <text x="72" y="136" class="nt">THE JOB GETS ONE WRITABLE PROJECT MOUNT.</text>
+  <rect x="50" y="150" width="12" height="12" class="nb" />
+  <text x="56" y="159.5" class="nbt" text-anchor="middle">4</text>
+  <text x="72" y="160" class="nt">CONTAINER UID ZERO MAPS TO THE HOST USER.</text>
+  <rect x="50" y="174" width="12" height="12" class="nb" />
+  <text x="56" y="183.5" class="nbt" text-anchor="middle">5</text>
+  <text x="72" y="184" class="nt">READ THE LIMITS INSIDE THE RUNNING JOB.</text>
+  <text x="480" y="62" class="section-title">A · RUNTIME CUTAWAY</text>
+  <text x="480" y="81" class="dts">ACCOUNT BUDGET AND JOB BUDGET ARE SEPARATE</text>
+  <rect x="470" y="142" width="840" height="510" rx="12" class="zone" />
+  <text x="485" y="166" class="node-sub">HOST OPERATING SYSTEM</text>
+  <rect x="496" y="184" width="790" height="438" rx="13" class="hatch" fill="url(#hat0)" />
+  <rect x="507" y="195" width="768" height="416" rx="12" class="zone" />
+  <text x="522" y="219" class="node-sub">DEVELOPMENT ACCOUNT / PROCESS BUDGET</text>
+  <rect x="1279" y="195" width="12" height="12" class="nb" />
+  <text x="1285" y="204.5" class="nbt" text-anchor="middle">1</text>
+  <rect x="535" y="238" width="696" height="55" rx="3" class="budget" />
+  <text x="883" y="261" class="role" text-anchor="middle">C1 / M1 / P1 · ACCOUNT CEILING</text>
+  <text x="883" y="280" class="dts" text-anchor="middle">ALL USER SERVICES AND WORKLOADS SHARE THIS BUDGET</text>
+  <rect x="540" y="335" width="213" height="84" rx="9" class="obj" />
+  <text x="646.5" y="372" class="node-title" text-anchor="middle">ROOTLESS DOCKER</text>
+  <text x="646.5" y="394" class="node-sub" text-anchor="middle">HOST DEVELOPMENT USER</text>
+  <rect x="848" y="320" width="392" height="266" rx="12" class="zone" />
+  <text x="863" y="344" class="node-sub">CONSTRAINED JOB</text>
+  <rect x="1244" y="326" width="12" height="12" class="nb" />
+  <text x="1250" y="335.5" class="nbt" text-anchor="middle">2</text>
+  <rect x="866" y="359" width="355" height="55" rx="3" class="budget" />
+  <text x="1043.5" y="382" class="role" text-anchor="middle">C2 / M2 / P2 · JOB CEILING</text>
+  <text x="1043.5" y="401" class="dts" text-anchor="middle">PER-CONTAINER LIMITS</text>
+  <rect x="879" y="434" width="329" height="67" rx="9" class="obj" />
+  <text x="1043.5" y="462.5" class="node-title" text-anchor="middle">APPLICATION PROCESS</text>
+  <text x="1043.5" y="484.5" class="node-sub" text-anchor="middle">U1 / MAPPED USER NAMESPACE</text>
+  <rect x="540" y="488" width="213" height="70" rx="9" class="obj" />
+  <text x="646.5" y="518" class="node-title" text-anchor="middle">PROJECT DIRECTORY</text>
+  <text x="646.5" y="540" class="node-sub" text-anchor="middle">ONE WRITABLE MOUNT</text>
+  <rect x="900" y="525" width="286" height="44" rx="9" class="obj" />
+  <text x="1043" y="553" class="node-title" text-anchor="middle">/work</text>
+  <path d="M753,523 H816 V547 H900" class="flow" marker-end="url(#ar0)" />
+  <rect x="773" y="540" width="12" height="12" class="nb" />
+  <text x="779" y="549.5" class="nbt" text-anchor="middle">3</text>
+  <path d="M753,377 H848" class="flow" marker-end="url(#ar0)" />
+  <text x="800" y="356" class="dts" text-anchor="middle">CONTROL</text>
+  <text x="78" y="704" class="section-title">B · USER-NAMESPACE DETAIL</text>
+  <text x="78" y="723" class="dts">ROOT INSIDE THIS CONTAINER IS NOT HOST ROOT</text>
+  <rect x="88" y="773" width="225" height="89" rx="9" class="obj" />
+  <text x="200.5" y="812.5" class="node-title" text-anchor="middle">CONTAINER UID 0</text>
+  <text x="200.5" y="834.5" class="node-sub" text-anchor="middle">U1 / INSIDE THE JOB</text>
+  <rect x="421" y="773" width="259" height="89" rx="9" class="obj" />
+  <text x="550.5" y="812.5" class="node-title" text-anchor="middle">HOST DEVELOPMENT USER</text>
+  <text x="550.5" y="834.5" class="node-sub" text-anchor="middle">UNPRIVILEGED HOST ACCOUNT</text>
+  <path d="M313,817 L421,817" class="flow" marker-end="url(#ar0)" />
+  <text x="365" y="794" class="dts" text-anchor="middle">MAPS TO</text>
+  <rect x="86" y="899" width="12" height="12" class="nb" />
+  <text x="92" y="908.5" class="nbt" text-anchor="middle">4</text>
+  <text x="111" y="909" class="dts" text-anchor="start">THE PROJECT OUTPUT SHOULD BELONG TO THIS HOST USER.</text>
+  <text x="790" y="704" class="section-title">C · VERIFY THE EFFECTIVE LIMITS</text>
+  <text x="790" y="723" class="dts">READ THE CGROUP FILES FROM INSIDE THE JOB</text>
+  <rect x="790" y="756" width="245" height="47" rx="0" class="well" />
+  <text x="802" y="784" class="evidence" text-anchor="start">KERNEL FILE</text>
+  <rect x="1035" y="756" width="238" height="47" rx="0" class="well" />
+  <text x="1047" y="784" class="evidence" text-anchor="start">EXPECTED INTERPRETATION</text>
+  <rect x="790" y="803" width="245" height="47" rx="0" class="thin" />
+  <text x="802" y="831" class="evidence" text-anchor="start">memory.max</text>
+  <rect x="1035" y="803" width="238" height="47" rx="0" class="thin" />
+  <text x="1047" y="831" class="evidence" text-anchor="start">M2 / 4 GiB</text>
+  <rect x="790" y="850" width="245" height="47" rx="0" class="thin" />
+  <text x="802" y="878" class="evidence" text-anchor="start">cpu.max</text>
+  <rect x="1035" y="850" width="238" height="47" rx="0" class="thin" />
+  <text x="1047" y="878" class="evidence" text-anchor="start">C2 / 1.5 CPUs</text>
+  <rect x="790" y="897" width="245" height="47" rx="0" class="thin" />
+  <text x="802" y="925" class="evidence" text-anchor="start">pids.max</text>
+  <rect x="1035" y="897" width="238" height="47" rx="0" class="thin" />
+  <text x="1047" y="925" class="evidence" text-anchor="start">P2 / 512</text>
+  <rect x="797" y="984" width="12" height="12" class="nb" />
+  <text x="803" y="993.5" class="nbt" text-anchor="middle">5</text>
+  <text x="822" y="994" class="dts" text-anchor="start">ACCEPTED FLAGS ALONE DO NOT PROVE KERNEL ENFORCEMENT.</text>
+  <text x="1350" y="80" class="vt">ARTICLE EXAMPLE / ACCOUNT</text>
+  <rect x="1350" y="88" width="48" height="24" class="thin" />
+  <text x="1356" y="100" class="th" text-anchor="start">Code</text>
+  <rect x="1398" y="88" width="122" height="24" class="thin" />
+  <text x="1459" y="100" class="th" text-anchor="middle">Variable</text>
+  <rect x="1520" y="88" width="136" height="24" class="thin" />
+  <text x="1588" y="100" class="th" text-anchor="middle">Value</text>
+  <rect x="1350" y="112" width="48" height="24" class="thin" />
+  <text x="1356" y="124" class="tc" text-anchor="start">C1</text>
+  <rect x="1398" y="112" width="122" height="24" class="thin" />
+  <text x="1459" y="124" class="tc" text-anchor="middle">CPU quota</text>
+  <rect x="1520" y="112" width="136" height="24" class="thin" />
+  <text x="1588" y="124" class="tc" text-anchor="middle">175% / 1.75 CPU</text>
+  <rect x="1350" y="136" width="48" height="24" class="thin" />
+  <text x="1356" y="148" class="tc" text-anchor="start">M1</text>
+  <rect x="1398" y="136" width="122" height="24" class="thin" />
+  <text x="1459" y="148" class="tc" text-anchor="middle">memory max</text>
+  <rect x="1520" y="136" width="136" height="24" class="thin" />
+  <text x="1588" y="148" class="tc" text-anchor="middle">6 GiB</text>
+  <rect x="1350" y="160" width="48" height="24" class="thin" />
+  <text x="1356" y="172" class="tc" text-anchor="start">P1</text>
+  <rect x="1398" y="160" width="122" height="24" class="thin" />
+  <text x="1459" y="172" class="tc" text-anchor="middle">task max</text>
+  <rect x="1520" y="160" width="136" height="24" class="thin" />
+  <text x="1588" y="172" class="tc" text-anchor="middle">4096</text>
+  <text x="1350" y="260" class="vt">ARTICLE EXAMPLE / JOB</text>
+  <rect x="1350" y="268" width="48" height="24" class="thin" />
+  <text x="1356" y="280" class="th" text-anchor="start">Code</text>
+  <rect x="1398" y="268" width="122" height="24" class="thin" />
+  <text x="1459" y="280" class="th" text-anchor="middle">Variable</text>
+  <rect x="1520" y="268" width="136" height="24" class="thin" />
+  <text x="1588" y="280" class="th" text-anchor="middle">Value</text>
+  <rect x="1350" y="292" width="48" height="24" class="thin" />
+  <text x="1356" y="304" class="tc" text-anchor="start">C2</text>
+  <rect x="1398" y="292" width="122" height="24" class="thin" />
+  <text x="1459" y="304" class="tc" text-anchor="middle">CPU limit</text>
+  <rect x="1520" y="292" width="136" height="24" class="thin" />
+  <text x="1588" y="304" class="tc" text-anchor="middle">1.5 CPUs</text>
+  <rect x="1350" y="316" width="48" height="24" class="thin" />
+  <text x="1356" y="328" class="tc" text-anchor="start">M2</text>
+  <rect x="1398" y="316" width="122" height="24" class="thin" />
+  <text x="1459" y="328" class="tc" text-anchor="middle">memory limit</text>
+  <rect x="1520" y="316" width="136" height="24" class="thin" />
+  <text x="1588" y="328" class="tc" text-anchor="middle">4 GiB</text>
+  <rect x="1350" y="340" width="48" height="24" class="thin" />
+  <text x="1356" y="352" class="tc" text-anchor="start">P2</text>
+  <rect x="1398" y="340" width="122" height="24" class="thin" />
+  <text x="1459" y="352" class="tc" text-anchor="middle">task max</text>
+  <rect x="1520" y="340" width="136" height="24" class="thin" />
+  <text x="1588" y="352" class="tc" text-anchor="middle">512</text>
+  <rect x="1350" y="364" width="48" height="24" class="thin" />
+  <text x="1356" y="376" class="tc" text-anchor="start">U1</text>
+  <rect x="1398" y="364" width="122" height="24" class="thin" />
+  <text x="1459" y="376" class="tc" text-anchor="middle">container UID</text>
+  <rect x="1520" y="364" width="136" height="24" class="thin" />
+  <text x="1588" y="376" class="tc" text-anchor="middle">0</text>
+  <text x="1350" y="678" class="dts" text-anchor="start">VALUES ARE ILLUSTRATIVE ARTICLE BUDGETS.</text>
+  <text x="1350" y="698" class="dts" text-anchor="start">THE DAEMON OWNER CAN CONTROL ITS JOBS.</text>
+  <text x="1350" y="459" class="vt">CONTAINER INPUTS</text>
+  <rect x="1350" y="473" width="150" height="29" rx="0" class="well" />
+  <text x="1358" y="493" class="th">INPUT</text>
+  <rect x="1500" y="473" width="156" height="29" rx="0" class="well" />
+  <text x="1508" y="493" class="th">SETTING</text>
+  <rect x="1350" y="502" width="150" height="29" rx="0" class="thin" />
+  <text x="1358" y="522" class="tc">Project mount</text>
+  <rect x="1500" y="502" width="156" height="29" rx="0" class="thin" />
+  <text x="1508" y="522" class="tc">one / writable</text>
+  <rect x="1350" y="531" width="150" height="29" rx="0" class="thin" />
+  <text x="1358" y="551" class="tc">Docker socket</text>
+  <rect x="1500" y="531" width="156" height="29" rx="0" class="thin" />
+  <text x="1508" y="551" class="tc">not mounted</text>
+  <rect x="1350" y="560" width="150" height="29" rx="0" class="thin" />
+  <text x="1358" y="580" class="tc">no-new-privs</text>
+  <rect x="1500" y="560" width="156" height="29" rx="0" class="thin" />
+  <text x="1508" y="580" class="tc">enabled</text>
+  <rect x="1350" y="589" width="150" height="29" rx="0" class="thin" />
+  <text x="1358" y="609" class="tc">Network egress</text>
+  <rect x="1500" y="589" width="156" height="29" rx="0" class="thin" />
+  <text x="1508" y="609" class="tc">available</text>
+</svg>

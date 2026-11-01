@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="sheet" viewBox="0 0 1700 1060" width="1700" height="1060" role="img" aria-label="A deployment sequence with account selection, local health and client acceptance gates.">
+  <rect x="0" y="0" width="1700" height="1060" class="paper" />
+  <defs>
+    <marker id="ar0" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0,1.7 L10,5 L0,8.3 z" class="arrow" />
+    </marker>
+    <pattern id="hat0" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" class="hl" />
+    </pattern>
+    <style>
+.u{font-family:Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.07em}
+.border{fill:none;stroke:#111;stroke-width:1.2}
+.obj{fill:#ffffff;stroke:#111;stroke-width:1.6;stroke-linejoin:round}
+.well{fill:#f3f3f3;stroke:#111;stroke-width:1}
+.slot{fill:none;stroke:#444;stroke-width:.8;stroke-dasharray:4 3}
+.hug{fill:#e6e6e6;stroke:#111;stroke-width:1}
+.thin{fill:none;stroke:#111;stroke-width:.8}
+.ph{fill:none;stroke:#7a7a7a;stroke-width:.8;stroke-dasharray:14 3 3 3}
+.cl{fill:none;stroke:#7a7a7a;stroke-width:.7;stroke-dasharray:16 3 2 3}
+.cut{stroke:#111;stroke-width:2}
+.dl{stroke:#111;stroke-width:.7;fill:none}
+.ext{stroke:#111;stroke-width:.55;fill:none}
+.arrow{fill:#111}
+.hl{stroke:#444;stroke-width:.7}
+.hs{stroke:#111;stroke-width:.8}
+.env{fill:none;stroke:#111;stroke-width:.8;stroke-dasharray:10 3 2 3}
+.dt{font:400 11px Arial,Helvetica,sans-serif;fill:#111;paint-order:stroke;stroke:#ffffff;stroke-width:4px;stroke-linejoin:round}
+.dts{font:400 9.5px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.06em;text-transform:uppercase;paint-order:stroke;stroke:#ffffff;stroke-width:3px}
+.sl{font:400 9px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.08em;text-transform:uppercase}
+.nt{font:400 11.5px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em;text-transform:uppercase}
+.nth{font:700 13px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em}
+.vt{font:400 12px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.1em;text-transform:uppercase}
+.vtb{font:400 20px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em}
+.nb{fill:#ffffff;stroke:#111;stroke-width:.9}
+.nbt{font:400 9.5px Arial,Helvetica,sans-serif;fill:#111}
+.lead{stroke:#111;stroke-width:.7;fill:none}
+.dot{fill:#111}
+.th{font:400 10.5px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.05em;text-transform:uppercase}
+.tc{font:400 10.5px Arial,Helvetica,sans-serif;fill:#111}
+.tbk{font:400 7px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.04em;text-transform:uppercase}
+.tbt{font:700 15px Arial,Helvetica,sans-serif;fill:#111}
+.tbv{font:400 17px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em}
+
+/* title block restyled to match the drawing sheet: thin black rules, plain caps lettering */
+.tb{border:1.2px solid #111;border-radius:16px;overflow:hidden}
+.tb&gt;div{border-right:.8px solid #111;border-bottom:.8px solid #111;padding:10px 14px}
+.tb&gt;div:nth-child(4),.tb&gt;div:nth-child(7){border-right:0}
+.tb .lbl{font-size:9.5px;font-weight:400;letter-spacing:.06em;color:#444}
+.tb h1{font-weight:400;letter-spacing:.1em;font-size:clamp(28px,4vw,44px);margin-top:4px}
+.tb .v{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#111}
+.tb .big .v{font-size:11px;color:#444;line-height:1.6}
+.tb .notes{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:#111;line-height:1.9}
+.tb .notes ol{padding-left:20px}
+.tb .nh{font-weight:700;font-size:13px;letter-spacing:.06em}
+.tb .nh span{font-weight:400;font-size:11.5px;margin-left:6px}
+.tb .figs&gt;div{border-left:.8px solid #111;padding-left:14px}
+.tb .figs&gt;div:first-child{border-left:0;padding-left:0}
+.tb .figs .v{font-size:18px;letter-spacing:.06em;text-transform:none;margin-top:4px}
+.foot{font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.foot b{font-weight:700}
+
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1760px;padding:24px 12px 30px}.scroll{box-shadow:none;border-radius:16px}.tb{margin-bottom:18px}.tb .notes{line-height:1.65}.tb h1{font-size:36px}.tb .big .v{max-width:410px}.th,.tc{font-size:12px}.nt{font-size:11px}.paper{fill:#fff}.zone{fill:#fafafa;stroke:#777;stroke-width:1;stroke-dasharray:12 4 2 4}.flow{fill:none;stroke:#111;stroke-width:1.35;stroke-linejoin:round}.node-title{font:400 15px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.04em}.node-sub{font:400 10px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.05em}.role{font:400 13px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.06em}.hatch{stroke:#111;stroke-width:.8}.muted{fill:#666}.small{font-size:10px}
+
+.section-title{font:400 16px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.07em}.step-title{font:400 15px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.05em}.step-sub{font:400 11px Arial,Helvetica,sans-serif;fill:#444;letter-spacing:.04em}.strong-line{stroke:#111;stroke-width:2;fill:none}.dashed-flow{stroke:#555;stroke-width:1.1;stroke-dasharray:6 4;fill:none}.budget{fill:#eee;stroke:#111;stroke-width:1}.evidence{font:400 12px Arial,Helvetica,sans-serif;fill:#111;letter-spacing:.03em}
+.tb{grid-template-columns:2.2fr 1fr 1fr}.tb&gt;div:nth-child(4){border-right:.8px solid #111}.tb&gt;div:nth-child(3),.tb&gt;div:nth-child(5){border-right:0}@media(max-width:640px){.tb{grid-template-columns:1fr 1fr}}
+
+:root{--f:Arial,Helvetica,sans-serif}.node-title{font-size:16px}.node-sub{font-size:12px}.role{font-size:14px}.vt{font-size:12px}.nt{font-size:12px}.dts{font-size:11px}.layer-sub{font:400 10px Arial,Helvetica,sans-serif;fill:#555;letter-spacing:.04em}.tc{font-size:13px}.th{font-size:12px}.section-title{font-size:18px}.step-title{font-size:17px}.step-sub{font-size:12px}.evidence{font-size:13px}
+body{margin:0;background:#ececec}.review{max-width:1760px;margin:auto;padding:24px}.review h1{font:400 30px Arial,Helvetica,sans-serif;letter-spacing:.04em;text-transform:uppercase;margin:0 0 12px}.review p{font:15px/1.5 Arial,Helvetica,sans-serif;max-width:100ch;color:#444}.review svg{width:100%;height:auto;min-width:1100px}.review .scroll{overflow:auto}.review a{color:#222}
+</style>
+  </defs>
+  <rect x="20" y="20" width="1660" height="1020" rx="16" class="border" />
+  <text x="50" y="58" class="nth">NOTES:</text>
+  <rect x="50" y="78" width="12" height="12" class="nb" />
+  <text x="56" y="87.5" class="nbt" text-anchor="middle">1</text>
+  <text x="72" y="88" class="nt">SELECT THE INTENDED ACCOUNT AT STARTUP.</text>
+  <rect x="50" y="102" width="12" height="12" class="nb" />
+  <text x="56" y="111.5" class="nbt" text-anchor="middle">2</text>
+  <text x="72" y="112" class="nt">BUILD AND RUN AS THE DEVELOPMENT USER.</text>
+  <rect x="50" y="126" width="12" height="12" class="nb" />
+  <text x="56" y="135.5" class="nbt" text-anchor="middle">3</text>
+  <text x="72" y="136" class="nt">PASS LOCAL HEALTH BEFORE PUBLISHING.</text>
+  <rect x="50" y="150" width="12" height="12" class="nb" />
+  <text x="56" y="159.5" class="nbt" text-anchor="middle">4</text>
+  <text x="72" y="160" class="nt">CHECK THE PREVIEW FROM AN AUTHORISED CLIENT.</text>
+  <text x="440" y="62" class="section-title">A · Amp deployment sequence</text>
+  <text x="440" y="81" class="dts">PROCEDURE / NOT AN EXECUTION LOG</text>
+  <rect x="430" y="150" width="880" height="555" rx="12" class="zone" />
+  <text x="445" y="174" class="node-sub">DEVELOPMENT USER / EXISTING SERVICES REMAIN SEPARATE</text>
+  <rect x="453" y="215" width="245" height="155" rx="9" class="obj" />
+  <rect x="466" y="228" width="12" height="12" class="nb" />
+  <text x="472" y="237.5" class="nbt" text-anchor="middle">1</text>
+  <text x="575" y="328" class="step-title" text-anchor="middle">PROJECT SOURCE</text>
+  <text x="575" y="350" class="step-sub" text-anchor="middle">INTENDED REVISION</text>
+  <rect x="547" y="238" width="57" height="60" rx="2" class="thin" />
+  <line x1="556" y1="256" x2="595" y2="256" class="thin" />
+  <line x1="556" y1="267" x2="595" y2="267" class="thin" />
+  <line x1="556" y1="278" x2="595" y2="278" class="thin" />
+  <line x1="556" y1="289" x2="595" y2="289" class="thin" />
+  <rect x="748" y="215" width="245" height="155" rx="9" class="obj" />
+  <rect x="761" y="228" width="12" height="12" class="nb" />
+  <text x="767" y="237.5" class="nbt" text-anchor="middle">2</text>
+  <text x="870" y="328" class="step-title" text-anchor="middle">BUILD IMAGE</text>
+  <text x="870" y="350" class="step-sub" text-anchor="middle">LINUX IMAGE / ON THE VPS</text>
+  <polyline points="836,248 878,234.8 906,248 864,261.2 836,248 836,292 864,305.2 906,292 906,248 864,261.2 864,305.2" class="thin" />
+  <line x1="878" y1="234.8" x2="878" y2="276.6" class="ph" />
+  <rect x="1043" y="215" width="245" height="155" rx="9" class="obj" />
+  <rect x="1056" y="228" width="12" height="12" class="nb" />
+  <text x="1062" y="237.5" class="nbt" text-anchor="middle">3</text>
+  <text x="1165" y="328" class="step-title" text-anchor="middle">START APPLICATION</text>
+  <text x="1165" y="350" class="step-sub" text-anchor="middle">ROOTLESS DOCKER / LOOPBACK</text>
+  <rect x="1120" y="243" width="91" height="13" rx="2" class="thin" />
+  <circle cx="1131" cy="249" r="1.5" class="dot" />
+  <rect x="1120" y="261" width="91" height="13" rx="2" class="thin" />
+  <circle cx="1131" cy="267" r="1.5" class="dot" />
+  <rect x="1120" y="279" width="91" height="13" rx="2" class="thin" />
+  <circle cx="1131" cy="285" r="1.5" class="dot" />
+  <path d="M698,292 L748,292" class="flow" marker-end="url(#ar0)" />
+  <path d="M993,292 L1043,292" class="flow" marker-end="url(#ar0)" />
+  <path d="M1166,370 L1166,480" class="flow" marker-end="url(#ar0)" />
+  <rect x="1043" y="480" width="245" height="155" rx="9" class="obj" />
+  <rect x="1056" y="493" width="12" height="12" class="nb" />
+  <text x="1062" y="502.5" class="nbt" text-anchor="middle">4</text>
+  <text x="1165" y="593" class="step-title" text-anchor="middle">LOCAL HEALTH</text>
+  <text x="1165" y="615" class="step-sub" text-anchor="middle">CHECK STATUS / LOGS / HTTP</text>
+  <path d="M1110,541 h25 l10,-23 l17,47 l15,-29 h42" class="strong-line" />
+  <rect x="748" y="480" width="245" height="155" rx="9" class="obj" />
+  <rect x="761" y="493" width="12" height="12" class="nb" />
+  <text x="767" y="502.5" class="nbt" text-anchor="middle">5</text>
+  <text x="870" y="593" class="step-title" text-anchor="middle">PUBLISH PRIVATELY</text>
+  <text x="870" y="615" class="step-sub" text-anchor="middle">VALIDATED HELPER / P2</text>
+  <rect x="828" y="502" width="85" height="60" rx="7" class="thin" />
+  <path d="M803,531 L853,531" class="flow" marker-end="url(#ar0)" />
+  <rect x="453" y="480" width="245" height="155" rx="9" class="obj" />
+  <rect x="466" y="493" width="12" height="12" class="nb" />
+  <text x="472" y="502.5" class="nbt" text-anchor="middle">6</text>
+  <text x="575" y="593" class="step-title" text-anchor="middle">CLIENT VERIFICATION</text>
+  <text x="575" y="615" class="step-sub" text-anchor="middle">TLS / DEPLOYED BEHAVIOUR</text>
+  <rect x="523" y="500" width="104" height="61" rx="4" class="thin" />
+  <path d="M516,561 h118 l8,8 h-134 z" class="thin" />
+  <path d="M1043,558 L993,558" class="flow" marker-end="url(#ar0)" />
+  <path d="M748,558 L698,558" class="flow" marker-end="url(#ar0)" />
+  <text x="1009" y="541" class="dts" text-anchor="middle">PASS</text>
+  <rect x="1280" y="674" width="12" height="12" class="nb" />
+  <text x="1286" y="683.5" class="nbt" text-anchor="middle">4</text>
+  <text x="74" y="711" class="section-title">B · Amp runner startup</text>
+  <text x="74" y="730" class="dts">A SAVED ACCOUNT MAY NOT BE THE ACTIVE ACCOUNT</text>
+  <rect x="80" y="778" width="239" height="85" rx="9" class="obj" />
+  <text x="199.5" y="815.5" class="node-title" text-anchor="middle">SELECT EXACT ACCOUNT</text>
+  <text x="199.5" y="837.5" class="node-sub" text-anchor="middle">BEFORE AMP STARTS</text>
+  <rect x="416" y="778" width="260" height="85" rx="9" class="obj" />
+  <text x="546" y="815.5" class="node-title" text-anchor="middle">Amp runner starts</text>
+  <text x="546" y="837.5" class="node-sub" text-anchor="middle">ACCOUNT SELECTED</text>
+  <path d="M319,821 L416,821" class="flow" marker-end="url(#ar0)" />
+  <text x="368" y="804" class="dts" text-anchor="middle">PASS</text>
+  <rect x="74" y="895" width="12" height="12" class="nb" />
+  <text x="80" y="904.5" class="nbt" text-anchor="middle">1</text>
+  <text x="100" y="905" class="dts" text-anchor="start">IF THE ACCOUNT IS MISSING, THE MAIN PROCESS DOES NOT RUN.</text>
+  <text x="794" y="747" class="section-title">C · FAILED LOCAL HEALTH</text>
+  <text x="794" y="766" class="dts">DIAGNOSE BEFORE PUBLISHING</text>
+  <rect x="811" y="809" width="210" height="73" rx="9" class="obj" />
+  <text x="916" y="840.5" class="node-title" text-anchor="middle">STOP / DIAGNOSE</text>
+  <text x="916" y="862.5" class="node-sub" text-anchor="middle">FIX THE APPLICATION</text>
+  <path d="M1166,635 V845 H1021" class="dashed-flow" marker-end="url(#ar0)" />
+  <text x="1183" y="767" class="dts" text-anchor="start">FAIL</text>
+  <rect x="1247" y="665" width="12" height="12" class="nb" />
+  <text x="1253" y="674.5" class="nbt" text-anchor="middle">3</text>
+  <path d="M811,845 H713 V700 H416 V183 H870 V215" class="dashed-flow" marker-end="url(#ar0)" />
+  <text x="708" y="724" class="dts" text-anchor="end">REBUILD AND RECHECK</text>
+  <text x="800" y="950" class="dts" text-anchor="start">AMP RUNNER OPENS ITS CONTROL CONNECTION OUTBOUND.</text>
+  <text x="1350" y="80" class="vt">DEPLOYMENT PORTS</text>
+  <rect x="1350" y="88" width="48" height="24" class="thin" />
+  <text x="1356" y="100" class="th" text-anchor="start">Code</text>
+  <rect x="1398" y="88" width="122" height="24" class="thin" />
+  <text x="1459" y="100" class="th" text-anchor="middle">Variable</text>
+  <rect x="1520" y="88" width="136" height="24" class="thin" />
+  <text x="1588" y="100" class="th" text-anchor="middle">Value</text>
+  <rect x="1350" y="112" width="48" height="24" class="thin" />
+  <text x="1356" y="124" class="tc" text-anchor="start">P1</text>
+  <rect x="1398" y="112" width="122" height="24" class="thin" />
+  <text x="1459" y="124" class="tc" text-anchor="middle">host app ports</text>
+  <rect x="1520" y="112" width="136" height="24" class="thin" />
+  <text x="1588" y="124" class="tc" text-anchor="middle">3000 to 3999</text>
+  <rect x="1350" y="136" width="48" height="24" class="thin" />
+  <text x="1356" y="148" class="tc" text-anchor="start">P2</text>
+  <rect x="1398" y="136" width="122" height="24" class="thin" />
+  <text x="1459" y="148" class="tc" text-anchor="middle">private HTTPS</text>
+  <rect x="1520" y="136" width="136" height="24" class="thin" />
+  <text x="1588" y="148" class="tc" text-anchor="middle">8443 to 8499</text>
+  <rect x="1350" y="160" width="48" height="24" class="thin" />
+  <text x="1356" y="172" class="tc" text-anchor="start">B1</text>
+  <rect x="1398" y="160" width="122" height="24" class="thin" />
+  <text x="1459" y="172" class="tc" text-anchor="middle">host app bind</text>
+  <rect x="1520" y="160" width="136" height="24" class="thin" />
+  <text x="1588" y="172" class="tc" text-anchor="middle">127.0.0.1</text>
+  <text x="1350" y="479" class="dts" text-anchor="start">RECORD THE SOURCE REVISION AND IMAGE.</text>
+</svg>

@@ -6,7 +6,11 @@ Edit the `.mdx` source, then update its title, description and filename in `src/
 
 Relative links between the series files resolve to their published routes. Keep executable filenames inside code examples unchanged.
 
-Import React components directly into an MDX file when a post needs them. The architecture post imports `MermaidDiagram`, which loads Mermaid in the browser and follows the selected site theme. Its source remains readable when JavaScript cannot draw the diagram.
+Import React components directly into an MDX file when a post needs them. The VPS series uses `ArticleIllustration` for the approved drawings in `public/images/blog/private-vps/`. Supply descriptive alt text and a caption. The component reserves the image's aspect ratio and links both the image and its caption to the full-size SVG. The white paper is part of the drawings; the surrounding caption and focus styles use the site's theme tokens.
+
+The drawings use the [Dimensional Drawing kit](https://github.com/enesozturk/dimensional-drawing). Keep its accompanying MIT licence with the assets. Copy only approved drawings into the public folder; review notes and infrastructure records remain outside the site.
+
+`MermaidDiagram` remains available for diagrams written as Mermaid source. It loads Mermaid in the browser, follows the selected site theme and keeps the source readable if rendering fails.
 
 MDX compiles executable code. Keep it limited to trusted repository content rather than accepting it from readers.
 

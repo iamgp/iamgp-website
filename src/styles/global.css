@@ -88,3 +88,10 @@ footer { width: min(100% - 48px, 692px); margin: 0 auto; padding: 0 0 44px; colo
 .article-diagram figcaption { margin: 10px 0; color: var(--body); font-size: 12px; }
 .markdown-body blockquote { margin: 24px 0; padding-left: 18px; border-left: 2px solid var(--border); }
 @media (max-width: 640px) { .blog-series .post-link { align-items: baseline; gap: 10px; }.blog-series .post-date { font-size: 11px; }.markdown-body pre { padding: 12px; font-size: 12px; } }
+
+.article-illustration { margin: 28px 0 32px; }
+.article-illustration-link { display: block; overflow: hidden; border-radius: 10px; background: #fff; line-height: 0; cursor: zoom-in; }
+.article-illustration-link img { display: block; width: 100%; height: auto; }
+.article-illustration-link:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+.article-illustration figcaption { margin-top: 10px; color: var(--body); font-size: 13px; line-height: 1.5; }
+.article-illustration figcaption a { white-space: nowrap; }

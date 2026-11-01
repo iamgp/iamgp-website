@@ -1,3 +1,5 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
 # Private access before convenience
 
 *Part 2 of 7. [Previous: architecture](01-architecture.mdx) · [Series index](README.mdx) · [Next: rootless Docker](03-rootless-docker.mdx)*
@@ -5,6 +7,12 @@
 A fresh VPS gives me a clean operating system, but it does not yet give me a trustworthy route into it. I started with the provider console, then established private connectivity, verified the SSH host and created the accounts I intended to use.
 
 These examples use Ubuntu 24.04 LTS. They assume that the initial root credential is already set and that the provider's authenticated console works. I used Hostinger; its [Web Console documentation](https://www.hostinger.com/support/how-to-use-the-web-console-in-hostinger/) explains its recovery entry point. A different provider needs an equivalent independent path.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/02-private-access.svg"
+  alt="SSH host-key comparison, a private key held in 1Password, separate Linux accounts and server SSH policy."
+  caption="Verify the server, authenticate with the selected SSH key and choose a Linux account with the right privileges."
+/>
 
 ## Record recovery information before changing access
 

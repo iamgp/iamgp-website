@@ -1,3 +1,5 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
 # Checking the whole system
 
 *Part 7 of 7. [Previous: Amp deployments](06-amp-runner-and-deployments.mdx) · [Series index](README.mdx)*
@@ -5,6 +7,12 @@
 By this stage, every component had reported that it was running. That still left the question I started with: could I use the machine for real work, reconnect from another device and recover it when the convenient route failed?
 
 I treated each of those as a separate check. A green service status could not answer all of them.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/07-verification-recovery.svg"
+  alt="Private SSH and provider-console recovery paths, followed by a checklist to repeat after a VPS reboot."
+  caption="Keep provider-console recovery available and repeat client checks after a full VPS reboot."
+/>
 
 ## Check the actual clients
 
