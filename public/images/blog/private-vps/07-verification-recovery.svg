@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="sheet" viewBox="0 0 1700 1060" width="1700" height="1060" role="img" aria-label="Private maintenance and independent console recovery, with the limits of recorded verification.">
+  <view id="light" viewBox="0 0 1700 1060" />
+  <view id="dark" viewBox="0 0 1700 1060" />
+  <rect x="0" y="0" width="1700" height="1060" class="paper" />
+  <defs>
+    <marker id="ar0" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0,1.7 L10,5 L0,8.3 z" class="arrow" />
+    </marker>
+    <pattern id="hat0" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" class="hl" />
+    </pattern>
+    <style>
+/* Native SVG themes; full-size #light/#dark views preserve the site's choice. */
+:root {
+  --drawing-paper:#ffffff;
+  --drawing-surface:#f3f3f3;
+  --drawing-surface-soft:#fafafa;
+  --drawing-shade:#e6e6e6;
+  --drawing-fill-soft:#eee;
+  --drawing-fill-mid:#ececec;
+  --drawing-ink:#111;
+  --drawing-ink-soft:#222;
+  --drawing-muted:#444;
+  --drawing-secondary:#555;
+  --drawing-quiet:#666;
+  --drawing-line:#777;
+  --drawing-construction:#7a7a7a;
+  --drawing-default-ink:#000;
+  fill:var(--drawing-default-ink);
+  background:var(--drawing-paper);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+  --drawing-paper:#191d23;
+  --drawing-surface:#252c36;
+  --drawing-surface-soft:#1d222a;
+  --drawing-shade:#303946;
+  --drawing-fill-soft:#28313c;
+  --drawing-fill-mid:#2b3542;
+  --drawing-ink:#edf0f5;
+  --drawing-ink-soft:#dce3ed;
+  --drawing-muted:#b3bac6;
+  --drawing-secondary:#a8b1be;
+  --drawing-quiet:#9aa5b4;
+  --drawing-line:#8e99a9;
+  --drawing-construction:#858d9b;
+  --drawing-default-ink:#edf0f5;
+  }
+}
+:root:has(#light:target) {
+  color-scheme:light;
+  --drawing-paper:#ffffff;
+  --drawing-surface:#f3f3f3;
+  --drawing-surface-soft:#fafafa;
+  --drawing-shade:#e6e6e6;
+  --drawing-fill-soft:#eee;
+  --drawing-fill-mid:#ececec;
+  --drawing-ink:#111;
+  --drawing-ink-soft:#222;
+  --drawing-muted:#444;
+  --drawing-secondary:#555;
+  --drawing-quiet:#666;
+  --drawing-line:#777;
+  --drawing-construction:#7a7a7a;
+  --drawing-default-ink:#000;
+}
+:root:has(#dark:target) {
+  color-scheme:dark;
+  --drawing-paper:#191d23;
+  --drawing-surface:#252c36;
+  --drawing-surface-soft:#1d222a;
+  --drawing-shade:#303946;
+  --drawing-fill-soft:#28313c;
+  --drawing-fill-mid:#2b3542;
+  --drawing-ink:#edf0f5;
+  --drawing-ink-soft:#dce3ed;
+  --drawing-muted:#b3bac6;
+  --drawing-secondary:#a8b1be;
+  --drawing-quiet:#9aa5b4;
+  --drawing-line:#8e99a9;
+  --drawing-construction:#858d9b;
+  --drawing-default-ink:#edf0f5;
+}
+/* Drawing styles. */
+
+.u{font-family:Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.07em}
+.border{fill:none;stroke:var(--drawing-ink);stroke-width:1.2}
+.obj{fill:var(--drawing-paper);stroke:var(--drawing-ink);stroke-width:1.6;stroke-linejoin:round}
+.well{fill:var(--drawing-surface);stroke:var(--drawing-ink);stroke-width:1}
+.slot{fill:none;stroke:var(--drawing-muted);stroke-width:.8;stroke-dasharray:4 3}
+.hug{fill:var(--drawing-shade);stroke:var(--drawing-ink);stroke-width:1}
+.thin{fill:none;stroke:var(--drawing-ink);stroke-width:.8}
+.ph{fill:none;stroke:var(--drawing-construction);stroke-width:.8;stroke-dasharray:14 3 3 3}
+.cl{fill:none;stroke:var(--drawing-construction);stroke-width:.7;stroke-dasharray:16 3 2 3}
+.cut{stroke:var(--drawing-ink);stroke-width:2}
+.dl{stroke:var(--drawing-ink);stroke-width:.7;fill:none}
+.ext{stroke:var(--drawing-ink);stroke-width:.55;fill:none}
+.arrow{fill:var(--drawing-ink)}
+.hl{stroke:var(--drawing-muted);stroke-width:.7}
+.hs{stroke:var(--drawing-ink);stroke-width:.8}
+.env{fill:none;stroke:var(--drawing-ink);stroke-width:.8;stroke-dasharray:10 3 2 3}
+.dt{font:400 11px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);paint-order:stroke;stroke:var(--drawing-paper);stroke-width:4px;stroke-linejoin:round}
+.dts{font:400 9.5px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.06em;text-transform:uppercase;paint-order:stroke;stroke:var(--drawing-paper);stroke-width:3px}
+.sl{font:400 9px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.08em;text-transform:uppercase}
+.nt{font:400 11.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em;text-transform:uppercase}
+.nth{font:700 13px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+.vt{font:400 12px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.1em;text-transform:uppercase}
+.vtb{font:400 20px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+.nb{fill:var(--drawing-paper);stroke:var(--drawing-ink);stroke-width:.9}
+.nbt{font:400 9.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.lead{stroke:var(--drawing-ink);stroke-width:.7;fill:none}
+.dot{fill:var(--drawing-ink)}
+.th{font:400 10.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.05em;text-transform:uppercase}
+.tc{font:400 10.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.tbk{font:400 7px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.04em;text-transform:uppercase}
+.tbt{font:700 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.tbv{font:400 17px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+
+/* title block restyled to match the drawing sheet: thin black rules, plain caps lettering */
+.tb{border:1.2px solid var(--drawing-ink);border-radius:16px;overflow:hidden}
+.tb&gt;div{border-right:.8px solid var(--drawing-ink);border-bottom:.8px solid var(--drawing-ink);padding:10px 14px}
+.tb&gt;div:nth-child(4),.tb&gt;div:nth-child(7){border-right:0}
+.tb .lbl{font-size:9.5px;font-weight:400;letter-spacing:.06em;color:var(--drawing-muted)}
+.tb h1{font-weight:400;letter-spacing:.1em;font-size:clamp(28px,4vw,44px);margin-top:4px}
+.tb .v{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--drawing-ink)}
+.tb .big .v{font-size:11px;color:var(--drawing-muted);line-height:1.6}
+.tb .notes{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--drawing-ink);line-height:1.9}
+.tb .notes ol{padding-left:20px}
+.tb .nh{font-weight:700;font-size:13px;letter-spacing:.06em}
+.tb .nh span{font-weight:400;font-size:11.5px;margin-left:6px}
+.tb .figs&gt;div{border-left:.8px solid var(--drawing-ink);padding-left:14px}
+.tb .figs&gt;div:first-child{border-left:0;padding-left:0}
+.tb .figs .v{font-size:18px;letter-spacing:.06em;text-transform:none;margin-top:4px}
+.foot{font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.foot b{font-weight:700}
+
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1760px;padding:24px 12px 30px}.scroll{box-shadow:none;border-radius:16px}.tb{margin-bottom:18px}.tb .notes{line-height:1.65}.tb h1{font-size:36px}.tb .big .v{max-width:410px}.th,.tc{font-size:12px}.nt{font-size:11px}.paper{fill:var(--drawing-paper)}.zone{fill:var(--drawing-surface-soft);stroke:var(--drawing-line);stroke-width:1;stroke-dasharray:12 4 2 4}.flow{fill:none;stroke:var(--drawing-ink);stroke-width:1.35;stroke-linejoin:round}.node-title{font:400 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.04em}.node-sub{font:400 10px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.05em}.role{font:400 13px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}.hatch{stroke:var(--drawing-ink);stroke-width:.8}.muted{fill:var(--drawing-quiet)}.small{font-size:10px}
+
+.section-title{font:400 16px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.07em}.step-title{font:400 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.05em}.step-sub{font:400 11px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.04em}.strong-line{stroke:var(--drawing-ink);stroke-width:2;fill:none}.dashed-flow{stroke:var(--drawing-secondary);stroke-width:1.1;stroke-dasharray:6 4;fill:none}.budget{fill:var(--drawing-fill-soft);stroke:var(--drawing-ink);stroke-width:1}.evidence{font:400 12px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.03em}
+.tb{grid-template-columns:2.2fr 1fr 1fr}.tb&gt;div:nth-child(4){border-right:.8px solid var(--drawing-ink)}.tb&gt;div:nth-child(3),.tb&gt;div:nth-child(5){border-right:0}@media(max-width:640px){.tb{grid-template-columns:1fr 1fr}}
+
+:root{--f:Arial,Helvetica,sans-serif}.node-title{font-size:16px}.node-sub{font-size:12px}.role{font-size:14px}.vt{font-size:12px}.nt{font-size:12px}.dts{font-size:11px}.layer-sub{font:400 10px Arial,Helvetica,sans-serif;fill:var(--drawing-secondary);letter-spacing:.04em}.tc{font-size:13px}.th{font-size:12px}.section-title{font-size:18px}.step-title{font-size:17px}.step-sub{font-size:12px}.evidence{font-size:13px}
+body{margin:0;background:var(--drawing-fill-mid)}.review{max-width:1760px;margin:auto;padding:24px}.review h1{font:400 30px Arial,Helvetica,sans-serif;letter-spacing:.04em;text-transform:uppercase;margin:0 0 12px}.review p{font:15px/1.5 Arial,Helvetica,sans-serif;max-width:100ch;color:var(--drawing-muted)}.review svg{width:100%;height:auto;min-width:1100px}.review .scroll{overflow:auto}.review a{color:var(--drawing-ink-soft)}
+</style>
+  </defs>
+  <rect x="20" y="20" width="1660" height="1020" rx="16" class="border" />
+  <text x="50" y="58" class="nth">NOTES:</text>
+  <rect x="50" y="78" width="12" height="12" class="nb" />
+  <text x="56" y="87.5" class="nbt" text-anchor="middle">1</text>
+  <text x="72" y="88" class="nt">CHECK A FRESH SSH CONNECTION FROM THE MAC.</text>
+  <rect x="50" y="102" width="12" height="12" class="nb" />
+  <text x="56" y="111.5" class="nbt" text-anchor="middle">2</text>
+  <text x="72" y="112" class="nt">THE PROVIDER CONSOLE IS AN INDEPENDENT PATH.</text>
+  <rect x="50" y="126" width="12" height="12" class="nb" />
+  <text x="56" y="135.5" class="nbt" text-anchor="middle">3</text>
+  <text x="72" y="136" class="nt">ROOT CONSOLE LOGIN AND ROOT SSH DIFFER.</text>
+  <rect x="50" y="150" width="12" height="12" class="nb" />
+  <text x="56" y="159.5" class="nbt" text-anchor="middle">4</text>
+  <text x="72" y="160" class="nt">REPEAT THE CLIENT CHECKS AFTER RECOVERY.</text>
+  <text x="480" y="62" class="section-title">A · FAILURE AND RECOVERY TREE</text>
+  <text x="480" y="81" class="dts">CHOOSE A PATH ACCORDING TO PRIVATE SSH ACCESS</text>
+  <rect x="766" y="150" width="250" height="72" rx="9" class="obj" />
+  <text x="891" y="181" class="node-title" text-anchor="middle">FAILURE REPORTED</text>
+  <text x="891" y="203" class="node-sub" text-anchor="middle">START A FRESH ACCESS CHECK</text>
+  <path d="M891,222 L891,261" class="flow" marker-end="url(#ar0)" />
+  <polygon points="891,261 1051,328 891,395 731,328" class="obj" />
+  <text x="891" y="325" class="node-title" text-anchor="middle">PRIVATE SSH</text>
+  <text x="891" y="346" class="node-sub" text-anchor="middle">AVAILABLE?</text>
+  <text x="652" y="311" class="dts" text-anchor="middle">NO</text>
+  <text x="1103" y="311" class="dts" text-anchor="middle">YES</text>
+  <rect x="447" y="414" width="300" height="304" rx="12" class="zone" />
+  <text x="462" y="438" class="node-sub">INDEPENDENT RECOVERY ROUTE</text>
+  <rect x="467" y="464" width="260" height="67" rx="9" class="obj" />
+  <text x="597" y="492.5" class="node-title" text-anchor="middle">PROVIDER CONSOLE</text>
+  <text x="597" y="514.5" class="node-sub" text-anchor="middle">AUTHENTICATED PORTAL</text>
+  <path d="M597,531 L597,561" class="flow" marker-end="url(#ar0)" />
+  <rect x="467" y="561" width="260" height="72" rx="9" class="obj" />
+  <text x="597" y="592" class="node-title" text-anchor="middle">LOCAL ROOT LOGIN</text>
+  <text x="597" y="614" class="node-sub" text-anchor="middle">RECOVERY CREDENTIAL</text>
+  <rect x="714" y="686" width="12" height="12" class="nb" />
+  <text x="720" y="695.5" class="nbt" text-anchor="middle">2</text>
+  <text x="469" y="684" class="dts" text-anchor="start">ROOT SSH CAN REMAIN DISABLED.</text>
+  <rect x="1011" y="414" width="300" height="304" rx="12" class="zone" />
+  <text x="1026" y="438" class="node-sub">NORMAL PRIVATE MAINTENANCE</text>
+  <rect x="1031" y="464" width="260" height="67" rx="9" class="obj" />
+  <text x="1161" y="492.5" class="node-title" text-anchor="middle">PRIVATE SSH</text>
+  <text x="1161" y="514.5" class="node-sub" text-anchor="middle">VERIFY MACHINE AND ACCOUNT</text>
+  <path d="M1161,531 L1161,561" class="flow" marker-end="url(#ar0)" />
+  <rect x="1031" y="561" width="260" height="72" rx="9" class="obj" />
+  <text x="1161" y="592" class="node-title" text-anchor="middle">SERVICE / APP CHECKS</text>
+  <text x="1161" y="614" class="node-sub" text-anchor="middle">STATUS / LOGS / LOCAL REQUEST</text>
+  <rect x="1277" y="684" width="12" height="12" class="nb" />
+  <text x="1283" y="693.5" class="nbt" text-anchor="middle">1</text>
+  <path d="M731,328 H597 V414" class="flow" marker-end="url(#ar0)" />
+  <path d="M1051,328 H1161 V414" class="flow" marker-end="url(#ar0)" />
+  <rect x="761" y="773" width="260" height="80" rx="9" class="obj" />
+  <text x="891" y="808" class="node-title" text-anchor="middle">DIAGNOSE / REPAIR</text>
+  <text x="891" y="830" class="node-sub" text-anchor="middle">NETWORK / SERVICES / CONFIG</text>
+  <path d="M597,633 V654 H730 V813 H761" class="flow" marker-end="url(#ar0)" />
+  <path d="M1161,633 V813 H1021" class="flow" marker-end="url(#ar0)" />
+  <rect x="731" y="816" width="12" height="12" class="nb" />
+  <text x="737" y="825.5" class="nbt" text-anchor="middle">3</text>
+  <path d="M891,853 L891,890" class="flow" marker-end="url(#ar0)" />
+  <rect x="761" y="890" width="260" height="76" rx="9" class="obj" />
+  <text x="891" y="923" class="node-title" text-anchor="middle">RECHECK FROM CLIENTS</text>
+  <text x="891" y="945" class="node-sub" text-anchor="middle">SHELL / TERMINAL / PRIVATE HTTPS</text>
+  <rect x="1037" y="936" width="12" height="12" class="nb" />
+  <text x="1043" y="945.5" class="nbt" text-anchor="middle">4</text>
+  <text x="75" y="730" class="section-title">B · AFTER A FULL VPS REBOOT</text>
+  <text x="75" y="749" class="dts">RECHECK THE CLIENT PATHS</text>
+  <rect x="75" y="776" width="220" height="49" rx="0" class="well" />
+  <text x="85" y="805" class="evidence" text-anchor="start">CHECK</text>
+  <rect x="295" y="776" width="134" height="49" rx="0" class="well" />
+  <text x="305" y="805" class="evidence" text-anchor="start">RECHECK</text>
+  <rect x="75" y="825" width="220" height="49" rx="0" class="thin" />
+  <text x="85" y="854" class="evidence" text-anchor="start">SSH FROM MAC</text>
+  <rect x="295" y="825" width="134" height="49" rx="0" class="thin" />
+  <rect x="75" y="874" width="220" height="49" rx="0" class="thin" />
+  <text x="85" y="903" class="evidence" text-anchor="start">Rex / Mac and phone</text>
+  <rect x="295" y="874" width="134" height="49" rx="0" class="thin" />
+  <rect x="75" y="923" width="220" height="49" rx="0" class="thin" />
+  <text x="85" y="952" class="evidence" text-anchor="start">PRIVATE HTTPS</text>
+  <rect x="295" y="923" width="134" height="49" rx="0" class="thin" />
+  <rect x="75" y="972" width="220" height="49" rx="0" class="thin" />
+  <text x="85" y="1001" class="evidence" text-anchor="start">AMP TEST DEPLOYMENT</text>
+  <rect x="295" y="972" width="134" height="49" rx="0" class="thin" />
+  <rect x="353" y="840" width="18" height="18" rx="0" class="thin" />
+  <rect x="353" y="889" width="18" height="18" rx="0" class="thin" />
+  <rect x="353" y="938" width="18" height="18" rx="0" class="thin" />
+  <rect x="353" y="987" width="18" height="18" rx="0" class="thin" />
+  <text x="1350" y="74" class="vt">RECOVERY ACCESS</text>
+  <rect x="1350" y="88" width="90" height="29" rx="0" class="well" />
+  <text x="1358" y="108" class="th">PATH</text>
+  <rect x="1440" y="88" width="120" height="29" rx="0" class="well" />
+  <text x="1448" y="108" class="th">VIA</text>
+  <rect x="1560" y="88" width="96" height="29" rx="0" class="well" />
+  <text x="1568" y="108" class="th">LOGIN</text>
+  <rect x="1350" y="117" width="90" height="29" rx="0" class="thin" />
+  <text x="1358" y="137" class="tc">SSH</text>
+  <rect x="1440" y="117" width="120" height="29" rx="0" class="thin" />
+  <text x="1448" y="137" class="tc">Tailscale</text>
+  <rect x="1560" y="117" width="96" height="29" rx="0" class="thin" />
+  <text x="1568" y="137" class="tc">Linux user</text>
+  <rect x="1350" y="146" width="90" height="29" rx="0" class="thin" />
+  <text x="1358" y="166" class="tc">Console</text>
+  <rect x="1440" y="146" width="120" height="29" rx="0" class="thin" />
+  <text x="1448" y="166" class="tc">Provider portal</text>
+  <rect x="1560" y="146" width="96" height="29" rx="0" class="thin" />
+  <text x="1568" y="166" class="tc">Local root</text>
+</svg>

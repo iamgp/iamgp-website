@@ -1,0 +1,206 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
+# Deploying to the VPS with an Amp runner
+
+[Amp](https://ampcode.com/docs) is an AI coding tool that can edit files and run terminal commands. Its runner lets me send that work to the VPS from the app, using the account setup and private previews from the previous posts. The runner is a process on the server, so work can continue when the Mac is closed.
+
+The deployment pattern also applies to other coding agents that can execute on a Linux host. The development account, rootless Docker and preview helper can stay the same; the remote-execution setup and instruction files depend on the tool. I use Amp here, so the following steps cover its runner and global settings.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/06-private-deployment.svg"
+  alt="An Amp deployment sequence with a separate runner startup check, local health checks and client verification."
+  caption="The runner connects outbound to Amp, then builds and verifies deployments on the VPS."
+/>
+
+## Run Amp as a persistent service
+
+From the Mac, open `ssh workbench` as `builder`. On the VPS, download and inspect the installer from Amp's [CLI instructions](https://ampcode.com/docs/cli), then run it without sudo:
+
+~~~sh
+install -d -m 700 "$HOME/.cache/workbench"
+curl -fsSLo "$HOME/.cache/workbench/amp-install.sh" https://ampcode.com/install.sh
+less "$HOME/.cache/workbench/amp-install.sh"
+bash "$HOME/.cache/workbench/amp-install.sh"
+~~~
+
+Press `q` to leave `less`. After installation, run `exit` and reconnect from the Mac with `ssh workbench` so the new shell picks up any PATH change. PATH is the list of directories searched for commands. Then check the binary and sign in on the VPS:
+
+~~~sh
+command -v amp
+amp --version
+amp login
+amp account list
+~~~
+
+For the default installation used below, `command -v amp` should return `/home/builder/.local/bin/amp`, and `amp --version` should print the installed version. If the path differs, use that absolute path for both executable lines in the service unit. Open the login link in the Mac's browser and approve the account you want to control this runner. Signing in to the Mac app does not sign in a separate Linux installation, so note the account's user ID for the service below. Keep the VPS configuration separate from any unrelated Mac integrations. The runner has access to `builder`'s files and Docker daemon, so use it for trusted development work. Selecting a served project directory is not a sandbox around that directory.
+
+Git records a project's source history in a repository, and Amp's discovery option looks for these repositories. The existing demo lives beneath `/home/builder/projects`. For the fresh demo from part 4, create its first commit as `builder` on the VPS. Replace the Git identity placeholders with the name and commit email you want recorded in this repository. These settings apply only to this project. If you are using an existing repository, keep its history and identity, and use its current working revision instead of repeating this initialisation.
+
+~~~sh
+cd "$HOME/projects/demo"
+git init -b main
+git config user.name 'YOUR_GIT_NAME'
+git config user.email 'YOUR_GIT_EMAIL'
+printf 'write-check.txt\n' >> .gitignore
+git add .gitignore Dockerfile compose.yaml index.html
+git commit -m 'Add private preview demo'
+git log -1 --oneline
+~~~
+
+The ignore entry leaves out the ownership-test file from part 3. The log should now show a commit ID and `Add private preview demo`. Still in this project directory, name the working revision and retain the running image:
+
+~~~sh
+git tag demo-before-amp
+demo_container=$(docker compose ps -q web)
+demo_image=$(docker inspect --format '{{.Image}}' "$demo_container")
+docker image tag "$demo_image" workbench-demo:before-amp
+~~~
+
+The Git tag records the source checkpoint. The Docker tag keeps the exact working image available after the next build. Check `git status --short`; it should print nothing before you hand the project to Amp.
+
+In this `builder` session, run `mkdir -p ~/.config/systemd/user`, then open `nano ~/.config/systemd/user/amp-workbench.service` and save the following. Replace `YOUR_AMP_USER_ID` and check that Amp is installed at `%h/.local/bin/amp`, where `%h` means the user's home directory. Adjust both executable paths if your installation differs.
+
+~~~ini
+[Unit]
+Description=Private Amp development runner
+After=docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/projects
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+UnsetEnvironment=AMP_API_KEY AMP_URL
+ExecStartPre=%h/.local/bin/amp account switch YOUR_AMP_USER_ID
+ExecStart=%h/.local/bin/amp --no-tui --runner-id workbench --remote-control-terminal --discover-dirs
+Restart=always
+RestartSec=5
+UMask=0077
+MemoryMax=4G
+CPUQuota=150%
+TasksMax=1024
+Nice=5
+TimeoutStopSec=45
+
+[Install]
+WantedBy=default.target
+~~~
+
+The pre-start command selects the intended account on every start. A saved account appearing in `amp account list` does not prove that a new process will use it. Clearing the two environment overrides prevents them from selecting a different credential or server. Amp's [account documentation](https://ampcode.com/docs/cli#manage-cli-accounts) explains the precedence.
+
+`--no-tui` runs the service without an interactive terminal interface. `--runner-id` gives the runner a stable name. `--discover-dirs` finds Git checkouts beneath its working directory, and `--remote-control-terminal` enables remote terminal access. These options are documented in [Amp's runner guide](https://ampcode.com/docs/cli/runners).
+
+Start the service:
+
+~~~sh
+systemctl --user daemon-reload
+systemctl --user enable --now amp-workbench
+journalctl --user -u amp-workbench -n 30 --no-pager
+amp runner list
+amp runner dirs list
+~~~
+
+Check that the runner appears under the intended account and includes the demo project. The checks should identify the following, shown schematically because table formatting varies by version:
+
+~~~text
+amp runner list:
+  workbench ... <YOUR_AMP_USER_ID> ... online
+
+amp runner dirs list:
+  /home/builder/projects/demo
+~~~
+
+You can also run `systemctl --user is-active amp-workbench`, which should print `active`. Lingering, enabled in part 3, lets the service start without an interactive login.
+
+The service budgets above cover Amp's processes. Keep the separate Compose limits for application containers and the overall development-account limit from part 3.
+
+## Make the deployment instructions available
+
+On the Mac, save the example [DEPLOYMENT.md](/examples/private-vps/DEPLOYMENT.md) in `~/Downloads/private-vps-examples`. It describes how to choose unused ports, build a rootless Compose application and check local health before publishing a preview. It also requires a source revision and a previous working version for rollback.
+
+In a local Mac terminal, run `cd ~/Downloads/private-vps-examples` and `nano DEPLOYMENT.md` to adapt it to your projects. Then install it on the VPS:
+
+~~~sh
+ssh workbench 'install -d -m 700 /home/builder/.config/workbench'
+scp DEPLOYMENT.md workbench:/home/builder/.config/workbench/DEPLOYMENT.md
+ssh workbench 'chmod 600 /home/builder/.config/workbench/DEPLOYMENT.md'
+~~~
+
+From the Mac, open `ssh workbench` again. On the VPS, run `mkdir -p ~/.config/amp`, then open `nano ~/.config/amp/AGENTS.md` and append this pointer alongside any existing guidance:
+
+~~~markdown
+For VPS deployments, private previews and application restarts, read /home/builder/.config/workbench/DEPLOYMENT.md before making changes.
+~~~
+
+Back in the Amp app or website on the Mac, open personal Settings, then Instructions, and edit Global AGENTS.md. Append the following so requests made from the Mac can find the runner too:
+
+~~~markdown
+## Private VPS deployments
+
+When I ask to deploy development work to my VPS, use runner workbench and a named project under /home/builder/projects.
+
+If already running on that VPS, read /home/builder/.config/workbench/DEPLOYMENT.md and deploy there. Otherwise start a thread on runner workbench in the project's directory. Pass the repository and revision, or the available source, with the requested behaviour.
+
+Follow the server's deployment procedure. Return the private HTTPS URL and report which health and client checks passed. Use project-specific credentials. Keep public sharing, production releases and privileged administration subject to their existing approval rules.
+~~~
+
+The local pointer applies on the VPS. The global guidance helps route a request there, without asking a thread already on the server to start another copy of itself. [Amp's AGENTS.md documentation](https://ampcode.com/docs/customize/agents-md) describes where these instructions apply. They guide behaviour; the Linux accounts and preview helper enforce permissions.
+
+## Deploy a project
+
+In Amp on the Mac, choose runner `workbench` and project `/home/builder/projects/demo`. Send this request:
+
+~~~markdown
+Read /home/builder/.config/workbench/DEPLOYMENT.md. In the demo project, change only index.html so the page says "Deployed through the VPS runner". Commit that single file change, then build and deploy it.
+
+Keep the existing host port 3000, private HTTPS port 8443 and resource limits. Preserve workbench-demo:before-amp for rollback and leave other projects alone. Return the commit ID, private preview URL and health-check results.
+~~~
+
+Wait for the thread to finish, then open the returned URL on the Mac or phone with Tailscale connected. The page should now say `Deployed through the VPS runner`. From a local Mac terminal, check the response directly:
+
+~~~sh
+curl --fail --show-error https://workbench.YOUR_TAILNET.ts.net:8443/
+~~~
+
+Expected page content:
+
+~~~text
+Deployed through the VPS runner
+~~~
+
+From the Mac, open `ssh workbench`. As `builder` on the VPS, review what changed before recording the deployed revision:
+
+~~~sh
+cd "$HOME/projects/demo"
+git status --short
+git log --oneline demo-before-amp..HEAD
+git diff demo-before-amp HEAD -- index.html
+~~~
+
+The status should be empty. The log should contain one new commit, and the diff should show the page-text change. Compare that commit ID with Amp's report. If other files changed or the history differs, review those changes before continuing. Once the result matches, run `git tag demo-through-amp` to name this revision.
+
+To practise rollback, keep this `builder` session in the demo directory. Open `nano /home/builder/.config/workbench/demo-rollback.yaml` and save:
+
+~~~yaml
+services:
+  web:
+    image: workbench-demo:before-amp
+~~~
+
+This extra Compose file selects the retained image while keeping the ports and limits from `compose.yaml`. Check `git status --short` again and resolve any uncommitted changes before proceeding. Then undo the recorded demo change and start its previous image:
+
+~~~sh
+git revert --no-edit demo-through-amp
+docker compose -f compose.yaml -f /home/builder/.config/workbench/demo-rollback.yaml up -d --no-build --pull never --wait --wait-timeout 60 web
+curl --fail --show-error http://127.0.0.1:3000/
+~~~
+
+Expected page content after rollback:
+
+~~~text
+Private preview works
+~~~
+
+[`git revert`](https://git-scm.com/docs/git-revert) records a new commit that undoes the page change. The [Compose options](https://docs.docker.com/reference/cli/docker/compose/up/) use the retained local image without rebuilding or pulling it. Open the same private URL on the Mac or phone to check that it also shows the original page. The rollback file is used only when named with `-f`; later deployments can use the normal `docker compose up -d --build --wait --wait-timeout 60` command.
+
+This example restores a stateless page. An application with database changes needs a migration and recovery procedure for that data too. For a private repository, the runner also needs the intended source revision and a repository-scoped credential or a source transfer.

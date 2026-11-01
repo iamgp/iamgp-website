@@ -7,6 +7,7 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import globalCss from '@/styles/global.css?url'
+import { ThemeProvider, themeBootstrapScript } from '@/components/ThemeProvider'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -33,8 +34,9 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
         <HeadContent />
       </head>
       <body>
@@ -43,10 +45,12 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           <div className="page-glow page-glow-a" />
           <div className="page-glow page-glow-b" />
         </div>
-        <main>
-          {children}
-        </main>
-        <footer>© gareth price · oxford, uk</footer>
+        <ThemeProvider>
+          <main>
+            {children}
+          </main>
+          <footer>© gareth price · oxford, uk</footer>
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>

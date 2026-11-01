@@ -1,0 +1,193 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
+# Using Rex and private previews from a Mac and iPhone
+
+Rex is a terminal application with a server that keeps sessions running on a remote machine. Its Mac and iPhone clients connect to those sessions, so I can leave work on the VPS and return to it from either device. With Docker working from part 3, Tailscale Serve can give the application a private HTTPS address by forwarding requests to its local port. Rex connects to `workbench-rex`, while application previews use `workbench`. This post sets up both, starting with the terminal.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/04-private-preview.svg"
+  alt="A private HTTPS preview through Tailscale Serve to a loopback host port and a container application."
+  caption="Rex reaches a terminal. Tailscale Serve reaches an application through a host port bound to loopback."
+/>
+
+## Connect Rex from both devices
+
+Rex's Linux server is currently in an invite-only beta. You need access to that beta and the installation instructions supplied with your invitation before following the server steps below. From the Mac, open `ssh workbench-admin` for the package installation on the VPS.
+
+Check the installed binary and version:
+
+~~~sh
+rex -v
+command -v rex
+~~~
+
+For the Ubuntu package used here, the version and path checks produce output in this form:
+
+~~~text
+rex <BETA_VERSION>
+/usr/bin/rex
+~~~
+
+I run a personal server as `builder`, so its terminals have the same permissions as my development SSH session. In the `operator` VPS session, inspect `systemctl list-unit-files 'rex*'`. Disable an unused system-wide server with `sudo systemctl disable --now UNIT_NAME`, using the installed unit name, such as `rex.service`. From another Mac terminal, open `ssh workbench` as `builder`. On the VPS, run `mkdir -p ~/.config/systemd/user`, then open `nano ~/.config/systemd/user/rex.service` and save:
+
+~~~ini
+[Unit]
+Description=Personal development Rex server
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rex server run --tailscale --tailscale-hostname workbench-rex --tailscale-advertise-tag tag:workbench-rex --tailscale-allow-tailnet-members --log-format text
+Restart=on-failure
+RestartSec=5
+UMask=0077
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target
+~~~
+
+The executable path assumes the vendor's Ubuntu package. In the Mac's browser, enable MagicDNS and HTTPS certificates on the Tailscale admin console's DNS page. Then, in the `builder` VPS session, start the service and read its sign-in link. `journalctl` displays the service logs:
+
+~~~sh
+systemctl --user daemon-reload
+systemctl --user enable --now rex
+journalctl --user -u rex -n 30 --no-pager
+~~~
+
+Open the journal's sign-in link in the Mac's browser, approve `workbench-rex` in Tailscale and check its tag. The `--tailscale-allow-tailnet-members` flag admits callers allowed by the network policy, so the restricted Rex grant from part 2 is essential. A permitted client can control terminals as `builder`.
+
+In Rex on the Mac, add this remote host:
+
+~~~text
+https://workbench-rex.YOUR_TAILNET.ts.net:443
+~~~
+
+Open a workspace and run `whoami` and `hostname`. They should identify `builder` on `workbench`. On the iPhone, connect Tailscale first, then add the same VPS address in Rex iOS. Keep any existing Mac entry, as it connects to a different machine. Use the VPS address explicitly rather than a pairing code for the Mac's local server, and check the account and hostname in the phone's terminal too.
+
+An identity check in either Rex terminal should look like this:
+
+~~~text
+$ whoami
+builder
+$ hostname
+workbench
+~~~
+
+On the server, `rex client ls` should show the connected clients. If the app cannot connect, check that the actual source device appears in the Rex grant from part 2.
+
+## Publish a private application preview
+
+From the Mac, open `ssh workbench` as `builder` and create a small test page on the VPS:
+
+~~~sh
+mkdir -p "$HOME/projects/demo"
+cd "$HOME/projects/demo"
+printf 'Private preview works\n' > index.html
+~~~
+
+In that VPS project directory, open `nano Dockerfile` and save the image-build instructions:
+
+~~~dockerfile
+FROM python:3.12-slim
+WORKDIR /site
+COPY --chmod=0644 index.html /site/index.html
+USER 65534:65534
+CMD ["python", "-m", "http.server", "8080", "--bind", "0.0.0.0", "--directory", "/site"]
+~~~
+
+In the same directory, open `nano compose.yaml` and save the service configuration:
+
+~~~yaml
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:3000:8080"
+    restart: unless-stopped
+    cpus: 0.25
+    mem_limit: 128m
+    pids_limit: 64
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/', timeout=2).read()"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+~~~
+
+The application listens on the container's interfaces. Docker publishes it only on the host's loopback address. The explicit file mode lets the container's application user read the copied file even when the host's default file permissions are restrictive.
+
+The health check requests the page from inside the container. Compose's `--wait` option waits for it to pass before returning, so the first request below runs after the server is ready. Start the application and check its local response:
+
+~~~sh
+docker compose up -d --build --wait --wait-timeout 60
+curl --fail http://127.0.0.1:3000/
+ss -lnt 'sport = :3000'
+~~~
+
+The request should return the test page, and the host listener should be `127.0.0.1:3000`. An abridged example shows the response and the relevant listener column:
+
+~~~text
+$ curl --fail http://127.0.0.1:3000/
+Private preview works
+$ ss -lnt 'sport = :3000'
+State   ... Local Address:Port ...
+LISTEN  ... 127.0.0.1:3000     ...
+~~~
+
+In another Mac terminal, open `ssh workbench-admin` as `operator` and configure Tailscale Serve on the VPS:
+
+~~~sh
+sudo tailscale serve --bg --https=8443 http://127.0.0.1:3000
+sudo tailscale serve status
+~~~
+
+The status output should map the private HTTPS address to the local application. Shown schematically:
+
+~~~text
+https://workbench.YOUR_TAILNET.ts.net:8443 (tailnet only)
+|-- / proxy http://127.0.0.1:3000
+~~~
+
+Open `https://workbench.YOUR_TAILNET.ts.net:8443/` on the Mac and phone while connected to Tailscale. Both should show the test page with a valid certificate. Background mode keeps the Serve configuration after the terminal closes. The [Serve CLI reference](https://tailscale.com/docs/reference/tailscale-cli/serve) documents the port and proxy options.
+
+I use one HTTPS port per application. The examples reserve host ports 3000 to 3999 and HTTPS ports 8443 to 8499, avoiding URL-prefix changes in each application.
+
+## Give builder a preview command
+
+The Amp runner will need to publish previews without general sudo access. I use a small root-owned helper that accepts only the reserved port ranges and always forwards to host loopback.
+
+On the Mac, run `mkdir -p ~/Downloads/private-vps-examples`, then use its browser to save [workbench-preview.py](/examples/private-vps/workbench-preview.py) in that folder and inspect it. Open a local Mac terminal and transfer it to the administrator account:
+
+~~~sh
+cd "$HOME/Downloads/private-vps-examples"
+scp workbench-preview.py workbench-admin:/home/operator/workbench-preview.py
+~~~
+
+In an `ssh workbench-admin` session, install it with root ownership:
+
+~~~sh
+sudo install -o root -g root -m 0755 /home/operator/workbench-preview.py /usr/local/sbin/workbench-preview
+~~~
+
+Run `ls -ld /usr/local/sbin` in this administrator session. Its owner should be `root`, with no write permission for `builder` or other ordinary users.
+
+`visudo` edits sudo's permission files and checks their syntax when you save. Still as `operator`, open `sudo visudo -f /etc/sudoers.d/workbench-preview` and add:
+
+~~~sudoers
+builder ALL=(root) NOPASSWD: /usr/local/sbin/workbench-preview *
+~~~
+
+In the same administrator session, run `sudo chmod 440 /etc/sudoers.d/workbench-preview`, then `sudo visudo -cf /etc/sudoers.d/workbench-preview`. Successful validation prints `/etc/sudoers.d/workbench-preview: parsed OK`. The helper is privileged code, so its argument validation and ownership are part of the access control.
+
+Back in the `builder` session, or after `ssh workbench` from the Mac, test the interface:
+
+~~~sh
+sudo -n /usr/local/sbin/workbench-preview set 8443 3000
+sudo -n /usr/local/sbin/workbench-preview status
+~~~
+
+The `set` command should report the private preview URL. The helper's `status` command returns JSON rather than the plain Serve summary above; it should contain the HTTPS port 8443 and the target `http://127.0.0.1:3000`. This permission lets `builder` change previews within the reserved range. The helper accepts neither arbitrary destinations nor configuration for Tailscale Funnel, its public-sharing feature. You now have a terminal and a private application URL on both devices, plus a preview operation the deployment runner can use.

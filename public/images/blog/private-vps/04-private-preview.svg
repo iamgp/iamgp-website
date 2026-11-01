@@ -1,0 +1,286 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="sheet" viewBox="0 0 1700 1060" width="1700" height="1060" role="img" aria-label="The authorised client path through private HTTPS to a loopback-bound application.">
+  <view id="light" viewBox="0 0 1700 1060" />
+  <view id="dark" viewBox="0 0 1700 1060" />
+  <rect x="0" y="0" width="1700" height="1060" class="paper" />
+  <defs>
+    <marker id="ar0" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0,1.7 L10,5 L0,8.3 z" class="arrow" />
+    </marker>
+    <pattern id="hat0" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" class="hl" />
+    </pattern>
+    <style>
+/* Native SVG themes; full-size #light/#dark views preserve the site's choice. */
+:root {
+  --drawing-paper:#ffffff;
+  --drawing-surface:#f3f3f3;
+  --drawing-surface-soft:#fafafa;
+  --drawing-shade:#e6e6e6;
+  --drawing-fill-soft:#eee;
+  --drawing-fill-mid:#ececec;
+  --drawing-ink:#111;
+  --drawing-ink-soft:#222;
+  --drawing-muted:#444;
+  --drawing-secondary:#555;
+  --drawing-quiet:#666;
+  --drawing-line:#777;
+  --drawing-construction:#7a7a7a;
+  --drawing-default-ink:#000;
+  fill:var(--drawing-default-ink);
+  background:var(--drawing-paper);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+  --drawing-paper:#191d23;
+  --drawing-surface:#252c36;
+  --drawing-surface-soft:#1d222a;
+  --drawing-shade:#303946;
+  --drawing-fill-soft:#28313c;
+  --drawing-fill-mid:#2b3542;
+  --drawing-ink:#edf0f5;
+  --drawing-ink-soft:#dce3ed;
+  --drawing-muted:#b3bac6;
+  --drawing-secondary:#a8b1be;
+  --drawing-quiet:#9aa5b4;
+  --drawing-line:#8e99a9;
+  --drawing-construction:#858d9b;
+  --drawing-default-ink:#edf0f5;
+  }
+}
+:root:has(#light:target) {
+  color-scheme:light;
+  --drawing-paper:#ffffff;
+  --drawing-surface:#f3f3f3;
+  --drawing-surface-soft:#fafafa;
+  --drawing-shade:#e6e6e6;
+  --drawing-fill-soft:#eee;
+  --drawing-fill-mid:#ececec;
+  --drawing-ink:#111;
+  --drawing-ink-soft:#222;
+  --drawing-muted:#444;
+  --drawing-secondary:#555;
+  --drawing-quiet:#666;
+  --drawing-line:#777;
+  --drawing-construction:#7a7a7a;
+  --drawing-default-ink:#000;
+}
+:root:has(#dark:target) {
+  color-scheme:dark;
+  --drawing-paper:#191d23;
+  --drawing-surface:#252c36;
+  --drawing-surface-soft:#1d222a;
+  --drawing-shade:#303946;
+  --drawing-fill-soft:#28313c;
+  --drawing-fill-mid:#2b3542;
+  --drawing-ink:#edf0f5;
+  --drawing-ink-soft:#dce3ed;
+  --drawing-muted:#b3bac6;
+  --drawing-secondary:#a8b1be;
+  --drawing-quiet:#9aa5b4;
+  --drawing-line:#8e99a9;
+  --drawing-construction:#858d9b;
+  --drawing-default-ink:#edf0f5;
+}
+/* Drawing styles. */
+
+.u{font-family:Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.07em}
+.border{fill:none;stroke:var(--drawing-ink);stroke-width:1.2}
+.obj{fill:var(--drawing-paper);stroke:var(--drawing-ink);stroke-width:1.6;stroke-linejoin:round}
+.well{fill:var(--drawing-surface);stroke:var(--drawing-ink);stroke-width:1}
+.slot{fill:none;stroke:var(--drawing-muted);stroke-width:.8;stroke-dasharray:4 3}
+.hug{fill:var(--drawing-shade);stroke:var(--drawing-ink);stroke-width:1}
+.thin{fill:none;stroke:var(--drawing-ink);stroke-width:.8}
+.ph{fill:none;stroke:var(--drawing-construction);stroke-width:.8;stroke-dasharray:14 3 3 3}
+.cl{fill:none;stroke:var(--drawing-construction);stroke-width:.7;stroke-dasharray:16 3 2 3}
+.cut{stroke:var(--drawing-ink);stroke-width:2}
+.dl{stroke:var(--drawing-ink);stroke-width:.7;fill:none}
+.ext{stroke:var(--drawing-ink);stroke-width:.55;fill:none}
+.arrow{fill:var(--drawing-ink)}
+.hl{stroke:var(--drawing-muted);stroke-width:.7}
+.hs{stroke:var(--drawing-ink);stroke-width:.8}
+.env{fill:none;stroke:var(--drawing-ink);stroke-width:.8;stroke-dasharray:10 3 2 3}
+.dt{font:400 11px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);paint-order:stroke;stroke:var(--drawing-paper);stroke-width:4px;stroke-linejoin:round}
+.dts{font:400 9.5px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.06em;text-transform:uppercase;paint-order:stroke;stroke:var(--drawing-paper);stroke-width:3px}
+.sl{font:400 9px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.08em;text-transform:uppercase}
+.nt{font:400 11.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em;text-transform:uppercase}
+.nth{font:700 13px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+.vt{font:400 12px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.1em;text-transform:uppercase}
+.vtb{font:400 20px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+.nb{fill:var(--drawing-paper);stroke:var(--drawing-ink);stroke-width:.9}
+.nbt{font:400 9.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.lead{stroke:var(--drawing-ink);stroke-width:.7;fill:none}
+.dot{fill:var(--drawing-ink)}
+.th{font:400 10.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.05em;text-transform:uppercase}
+.tc{font:400 10.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.tbk{font:400 7px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.04em;text-transform:uppercase}
+.tbt{font:700 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.tbv{font:400 17px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+
+/* title block restyled to match the drawing sheet: thin black rules, plain caps lettering */
+.tb{border:1.2px solid var(--drawing-ink);border-radius:16px;overflow:hidden}
+.tb&gt;div{border-right:.8px solid var(--drawing-ink);border-bottom:.8px solid var(--drawing-ink);padding:10px 14px}
+.tb&gt;div:nth-child(4),.tb&gt;div:nth-child(7){border-right:0}
+.tb .lbl{font-size:9.5px;font-weight:400;letter-spacing:.06em;color:var(--drawing-muted)}
+.tb h1{font-weight:400;letter-spacing:.1em;font-size:clamp(28px,4vw,44px);margin-top:4px}
+.tb .v{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--drawing-ink)}
+.tb .big .v{font-size:11px;color:var(--drawing-muted);line-height:1.6}
+.tb .notes{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--drawing-ink);line-height:1.9}
+.tb .notes ol{padding-left:20px}
+.tb .nh{font-weight:700;font-size:13px;letter-spacing:.06em}
+.tb .nh span{font-weight:400;font-size:11.5px;margin-left:6px}
+.tb .figs&gt;div{border-left:.8px solid var(--drawing-ink);padding-left:14px}
+.tb .figs&gt;div:first-child{border-left:0;padding-left:0}
+.tb .figs .v{font-size:18px;letter-spacing:.06em;text-transform:none;margin-top:4px}
+.foot{font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.foot b{font-weight:700}
+
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1760px;padding:24px 12px 30px}.scroll{box-shadow:none;border-radius:16px}.tb{margin-bottom:18px}.tb .notes{line-height:1.65}.tb h1{font-size:36px}.tb .big .v{max-width:410px}.th,.tc{font-size:12px}.nt{font-size:11px}.paper{fill:var(--drawing-paper)}.zone{fill:var(--drawing-surface-soft);stroke:var(--drawing-line);stroke-width:1;stroke-dasharray:12 4 2 4}.flow{fill:none;stroke:var(--drawing-ink);stroke-width:1.35;stroke-linejoin:round}.node-title{font:400 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.04em}.node-sub{font:400 10px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.05em}.role{font:400 13px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}.hatch{stroke:var(--drawing-ink);stroke-width:.8}.muted{fill:var(--drawing-quiet)}.small{font-size:10px}
+
+.section-title{font:400 16px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.07em}.step-title{font:400 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.05em}.step-sub{font:400 11px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.04em}.strong-line{stroke:var(--drawing-ink);stroke-width:2;fill:none}.dashed-flow{stroke:var(--drawing-secondary);stroke-width:1.1;stroke-dasharray:6 4;fill:none}.budget{fill:var(--drawing-fill-soft);stroke:var(--drawing-ink);stroke-width:1}.evidence{font:400 12px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.03em}
+.tb{grid-template-columns:2.2fr 1fr 1fr}.tb&gt;div:nth-child(4){border-right:.8px solid var(--drawing-ink)}.tb&gt;div:nth-child(3),.tb&gt;div:nth-child(5){border-right:0}@media(max-width:640px){.tb{grid-template-columns:1fr 1fr}}
+
+:root{--f:Arial,Helvetica,sans-serif}.node-title{font-size:16px}.node-sub{font-size:12px}.role{font-size:14px}.vt{font-size:12px}.nt{font-size:12px}.dts{font-size:11px}.layer-sub{font:400 10px Arial,Helvetica,sans-serif;fill:var(--drawing-secondary);letter-spacing:.04em}.tc{font-size:13px}.th{font-size:12px}.section-title{font-size:18px}.step-title{font-size:17px}.step-sub{font-size:12px}.evidence{font-size:13px}
+body{margin:0;background:var(--drawing-fill-mid)}.review{max-width:1760px;margin:auto;padding:24px}.review h1{font:400 30px Arial,Helvetica,sans-serif;letter-spacing:.04em;text-transform:uppercase;margin:0 0 12px}.review p{font:15px/1.5 Arial,Helvetica,sans-serif;max-width:100ch;color:var(--drawing-muted)}.review svg{width:100%;height:auto;min-width:1100px}.review .scroll{overflow:auto}.review a{color:var(--drawing-ink-soft)}
+</style>
+  </defs>
+  <rect x="20" y="20" width="1660" height="1020" rx="16" class="border" />
+  <text x="50" y="58" class="nth">NOTES:</text>
+  <rect x="50" y="78" width="12" height="12" class="nb" />
+  <text x="56" y="87.5" class="nbt" text-anchor="middle">1</text>
+  <text x="72" y="88" class="nt">HTTPS ENTRY IS PRIVATE TO AUTHORISED CLIENTS.</text>
+  <rect x="50" y="102" width="12" height="12" class="nb" />
+  <text x="56" y="111.5" class="nbt" text-anchor="middle">2</text>
+  <text x="72" y="112" class="nt">THE HOST PORT IS BOUND TO LOOPBACK.</text>
+  <rect x="50" y="126" width="12" height="12" class="nb" />
+  <text x="56" y="135.5" class="nbt" text-anchor="middle">3</text>
+  <text x="72" y="136" class="nt">THE CONTAINER HAS ITS OWN LISTENER.</text>
+  <rect x="50" y="150" width="12" height="12" class="nb" />
+  <text x="56" y="159.5" class="nbt" text-anchor="middle">4</text>
+  <text x="72" y="160" class="nt">PORTS ARE EXAMPLES, NOT A LIVE INVENTORY.</text>
+  <rect x="72" y="338" width="325" height="180" rx="10" class="hatch" fill="url(#hat0)" />
+  <rect x="93" y="359" width="283" height="138" rx="7" class="obj" />
+  <circle cx="234" cy="402" r="22" class="thin" />
+  <line x1="219" y1="417" x2="249" y2="387" class="thin" />
+  <text x="234" y="452" class="role" text-anchor="middle">NO PUBLIC HTTP ENTRY</text>
+  <text x="234" y="475" class="dts" text-anchor="middle">PRIVATE PREVIEW ONLY</text>
+  <text x="910" y="62" class="vt" text-anchor="middle">A · PRIVATE PREVIEW PLAN</text>
+  <text x="910" y="76" class="dts" text-anchor="middle">TLS TERMINATES BEFORE THE LOCAL APPLICATION</text>
+  <rect x="510" y="140" width="800" height="450" rx="12" class="zone" />
+  <text x="525" y="164" class="node-sub">PRIVATE NETWORK / AUTHORISED CLIENTS</text>
+  <rect x="890" y="190" width="380" height="330" rx="12" class="zone" />
+  <text x="905" y="214" class="node-sub">VIRTUAL HOST</text>
+  <rect x="565" y="229" width="164" height="94" rx="7" class="obj" />
+  <rect x="573" y="237" width="148" height="76" rx="2" class="slot" />
+  <path d="M557,323 h180 l12,12 h-204 z" class="obj" />
+  <line x1="628" y1="327" x2="666" y2="327" class="thin" />
+  <text x="647" y="361" class="role" text-anchor="middle">LAPTOP</text>
+  <rect x="606" y="399" width="70" height="126" rx="10" class="obj" />
+  <rect x="612" y="406" width="58" height="110" rx="6" class="slot" />
+  <line x1="632" y1="412" x2="650" y2="412" class="thin" />
+  <text x="641" y="549" class="role" text-anchor="middle">PHONE</text>
+  <rect x="943" y="236" width="290" height="80" rx="9" class="obj" />
+  <text x="1088" y="271" class="node-title" text-anchor="middle">TAILSCALE SERVE</text>
+  <text x="1088" y="293" class="node-sub" text-anchor="middle">P1 / TLS LISTENER</text>
+  <rect x="943" y="410" width="290" height="80" rx="9" class="obj" />
+  <text x="1088" y="445" class="node-title" text-anchor="middle">HOST LOOPBACK</text>
+  <text x="1088" y="467" class="node-sub" text-anchor="middle">B1 : P2 / HTTP TARGET</text>
+  <path d="M729,271 H943" class="flow" marker-end="url(#ar0)" />
+  <text x="825" y="254" class="dts" text-anchor="middle">P1 / HTTPS</text>
+  <path d="M676,460 H832 V297 H943" class="flow" marker-end="url(#ar0)" />
+  <rect x="801" y="473" width="12" height="12" class="nb" />
+  <text x="807" y="482.5" class="nbt" text-anchor="middle">1</text>
+  <path d="M1088,316 V410" class="flow" marker-end="url(#ar0)" />
+  <text x="1103" y="370" class="dts">HTTP</text>
+  <rect x="1244" y="472" width="12" height="12" class="nb" />
+  <text x="1250" y="481.5" class="nbt" text-anchor="middle">2</text>
+  <circle cx="1237" cy="456" r="20" class="ph" />
+  <line x1="1240.8830130748988" y1="475.6194344836992" x2="1256" y2="552" class="lead" />
+  <text x="1260" y="556" class="dts" text-anchor="start">DETAIL B</text>
+  <line x1="340" y1="830" x2="340" y2="694" class="ph" />
+  <line x1="682.16" y1="891.88" x2="682.16" y2="755.88" class="ph" />
+  <line x1="629.8" y1="964.26" x2="629.8" y2="828.26" class="ph" />
+  <line x1="287.64" y1="902.38" x2="287.64" y2="766.38" class="ph" />
+  <g transform="matrix(0.6579999999999999,0.119,-0.238,0.32899999999999996,340,830)">
+    <rect x="0" y="0" width="520" height="220" rx="12" class="well" vector-effect="non-scaling-stroke" />
+    <rect x="16" y="24" width="488" height="172" rx="12" class="slot" vector-effect="non-scaling-stroke" />
+  </g>
+  <circle cx="287.64" cy="902.38" r="1.8" class="dot" />
+  <polyline points="287.64,902.38 234,902.38 224,902.38" class="lead" />
+  <text x="216" y="898.38" class="vt" text-anchor="end">L0 · APPLICATION</text>
+  <text x="216" y="914.38" class="layer-sub" text-anchor="end">CONTAINER LISTENER</text>
+  <g transform="matrix(0.6579999999999999,0.119,-0.238,0.32899999999999996,340,762)">
+    <rect x="0" y="0" width="520" height="220" rx="12" class="obj" vector-effect="non-scaling-stroke" />
+    <rect x="16" y="24" width="488" height="172" rx="12" class="slot" vector-effect="non-scaling-stroke" />
+  </g>
+  <circle cx="287.64" cy="834.38" r="1.8" class="dot" />
+  <polyline points="287.64,834.38 234,834.38 224,834.38" class="lead" />
+  <text x="216" y="830.38" class="vt" text-anchor="end">L1 · LOOPBACK SOCKET</text>
+  <text x="216" y="846.38" class="layer-sub" text-anchor="end">HOST-LOCAL SOCKET</text>
+  <g transform="matrix(0.6579999999999999,0.119,-0.238,0.32899999999999996,340,694)">
+    <rect x="0" y="0" width="520" height="220" rx="12" class="obj" vector-effect="non-scaling-stroke" />
+    <rect x="16" y="24" width="488" height="172" rx="12" class="slot" vector-effect="non-scaling-stroke" />
+  </g>
+  <circle cx="287.64" cy="766.38" r="1.8" class="dot" />
+  <polyline points="287.64,766.38 234,766.38 224,766.38" class="lead" />
+  <text x="216" y="762.38" class="vt" text-anchor="end">L2 · PRIVATE HTTPS</text>
+  <text x="216" y="778.38" class="layer-sub" text-anchor="end">AUTHORISED CLIENT ENTRY</text>
+  <text x="420" y="1000" class="vt" text-anchor="middle">EXPLODED VIEW</text>
+  <text x="420" y="1014" class="dts" text-anchor="middle">LOGICAL LAYERS</text>
+  <text x="1010" y="640" class="vt" text-anchor="middle">B · LISTENER SECTION</text>
+  <text x="1010" y="654" class="dts" text-anchor="middle">HOST AND CONTAINER NETWORK NAMESPACES</text>
+  <rect x="760" y="690" width="510" height="262" rx="12" class="zone" />
+  <text x="775" y="714" class="node-sub">HOST NAMESPACE</text>
+  <rect x="1010" y="755" width="232" height="161" rx="12" class="zone" />
+  <text x="1025" y="779" class="node-sub">CONTAINER NAMESPACE</text>
+  <rect x="785" y="770" width="184" height="78" rx="9" class="obj" />
+  <text x="877" y="804" class="node-title" text-anchor="middle">HOST SOCKET</text>
+  <text x="877" y="826" class="node-sub" text-anchor="middle">B1 : P2</text>
+  <rect x="1028" y="805" width="196" height="78" rx="9" class="obj" />
+  <text x="1126" y="839" class="node-title" text-anchor="middle">APPLICATION</text>
+  <text x="1126" y="861" class="node-sub" text-anchor="middle">B2 : P3</text>
+  <path d="M969,809 H990 V844 H1028" class="flow" marker-end="url(#ar0)" />
+  <text x="790" y="886" class="dts">LOOPBACK ONLY</text>
+  <rect x="1212" y="896" width="12" height="12" class="nb" />
+  <text x="1218" y="905.5" class="nbt" text-anchor="middle">3</text>
+  <text x="800" y="938" class="dts">THE CONTAINER BIND IS NOT THE HOST BIND.</text>
+  <text x="1340" y="80" class="vt">EXAMPLE CONNECTIONS</text>
+  <rect x="1340" y="88" width="48" height="24" class="thin" />
+  <text x="1346" y="100" class="th" text-anchor="start">Code</text>
+  <rect x="1388" y="88" width="122" height="24" class="thin" />
+  <text x="1449" y="100" class="th" text-anchor="middle">Variable</text>
+  <rect x="1510" y="88" width="136" height="24" class="thin" />
+  <text x="1578" y="100" class="th" text-anchor="middle">Value</text>
+  <rect x="1340" y="112" width="48" height="24" class="thin" />
+  <text x="1346" y="124" class="tc" text-anchor="start">P1</text>
+  <rect x="1388" y="112" width="122" height="24" class="thin" />
+  <text x="1449" y="124" class="tc" text-anchor="middle">private HTTPS</text>
+  <rect x="1510" y="112" width="136" height="24" class="thin" />
+  <text x="1578" y="124" class="tc" text-anchor="middle">8443</text>
+  <rect x="1340" y="136" width="48" height="24" class="thin" />
+  <text x="1346" y="148" class="tc" text-anchor="start">P2</text>
+  <rect x="1388" y="136" width="122" height="24" class="thin" />
+  <text x="1449" y="148" class="tc" text-anchor="middle">host port</text>
+  <rect x="1510" y="136" width="136" height="24" class="thin" />
+  <text x="1578" y="148" class="tc" text-anchor="middle">3000</text>
+  <rect x="1340" y="160" width="48" height="24" class="thin" />
+  <text x="1346" y="172" class="tc" text-anchor="start">P3</text>
+  <rect x="1388" y="160" width="122" height="24" class="thin" />
+  <text x="1449" y="172" class="tc" text-anchor="middle">container port</text>
+  <rect x="1510" y="160" width="136" height="24" class="thin" />
+  <text x="1578" y="172" class="tc" text-anchor="middle">8080</text>
+  <rect x="1340" y="184" width="48" height="24" class="thin" />
+  <text x="1346" y="196" class="tc" text-anchor="start">B1</text>
+  <rect x="1388" y="184" width="122" height="24" class="thin" />
+  <text x="1449" y="196" class="tc" text-anchor="middle">host bind</text>
+  <rect x="1510" y="184" width="136" height="24" class="thin" />
+  <text x="1578" y="196" class="tc" text-anchor="middle">127.0.0.1</text>
+  <rect x="1340" y="208" width="48" height="24" class="thin" />
+  <text x="1346" y="220" class="tc" text-anchor="start">B2</text>
+  <rect x="1388" y="208" width="122" height="24" class="thin" />
+  <text x="1449" y="220" class="tc" text-anchor="middle">container bind</text>
+  <rect x="1510" y="208" width="136" height="24" class="thin" />
+  <text x="1578" y="220" class="tc" text-anchor="middle">0.0.0.0</text>
+  <text x="72" y="578" class="role">Rex uses its own HTTPS endpoint</text>
+  <text x="72" y="602" class="dts">TERMINAL CONTROL / PORT 443</text>
+</svg>

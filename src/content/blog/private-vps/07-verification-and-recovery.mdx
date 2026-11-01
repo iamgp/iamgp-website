@@ -1,0 +1,105 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
+# Checking access, restarts and recovery
+
+The previous post added the Amp runner to the terminals and private preview. I now check that I can leave work running, return from another device and recover access if the private connection fails. This final post checks those outcomes after all the components are installed. Run the checks through fresh connections, as an existing terminal can keep working after a configuration change that prevents the next login.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/07-verification-recovery.svg"
+  alt="Private SSH and provider-console recovery paths, followed by a checklist to repeat after a VPS reboot."
+  caption="Keep provider-console recovery available and repeat client checks after a full VPS reboot."
+/>
+
+## Check everyday access and deployments
+
+On the Mac, use two local Terminal windows to open `ssh workbench` and `ssh workbench-admin`. In the `operator` session, run `sudo -v` and authenticate with its password. In the `builder` session, run the following; the sudo listing should grant only the preview helper:
+
+~~~sh
+whoami
+hostname
+sudo -n -l
+~~~
+
+The relevant part of the sudo listing should be:
+
+~~~text
+(root) NOPASSWD: /usr/local/sbin/workbench-preview *
+~~~
+
+Still as `builder` on the VPS, an unrelated privileged command should fail:
+
+~~~sh
+sudo -n /usr/bin/id
+~~~
+
+Run `echo $?` immediately afterwards; a refused command returns a non-zero status, commonly `1`. The wording of the refusal varies by sudo configuration. Open the VPS workspace in Rex on the Mac and iPhone. Run `whoami` and `hostname` in each terminal to confirm that both reach `builder` on the VPS, then open the preview on both devices. On the Mac, a terminal request checks HTTPS without relying on a cached browser page:
+
+~~~sh
+curl --fail --show-error https://workbench.YOUR_TAILNET.ts.net:8443/
+~~~
+
+On the Mac, temporarily disconnect Tailscale and use a local Terminal window for an external check. Replace `VPS_PUBLIC_IP` with the public address from the provider dashboard, not the private Tailscale name:
+
+~~~sh
+for service_port in 22 443 8443; do
+  nc -vz -w 3 VPS_PUBLIC_IP "$service_port"
+done
+~~~
+
+The Mac's [`nc` command](https://man.openbsd.org/nc) tests whether it can open a connection. These ports should refuse the connection or time out. A successful connection needs investigating before you rely on private-only access. Repeat the check for any other public IPv4 or IPv6 address assigned to the VPS. Reconnect Tailscale on the Mac afterwards, then rerun the access-policy tests in its admin console, including the phone's blocked SSH and database connections.
+
+From the Mac, open `ssh workbench` and run `cd ~/projects/demo` on the VPS. Inspect `docker compose ps` and `docker compose logs --tail=20 web`; the `web` service should be running, with no startup error. Check the host listener with `ss -lnt` and the preview mapping with `sudo -n /usr/local/sbin/workbench-preview status`. The application should respond locally before you troubleshoot HTTPS. If it does, follow the request through the Serve mapping and then the client-side Tailscale connection.
+
+Still in that VPS project directory, obtain the running `web` container's ID and read its actual resource limits:
+
+~~~sh
+demo_container=$(docker compose ps -q web)
+docker exec "$demo_container" cat /sys/fs/cgroup/memory.max /sys/fs/cgroup/cpu.max /sys/fs/cgroup/pids.max
+~~~
+
+For the unchanged demo from part 4, those lines represent 128 MiB of memory, 0.25 CPUs and 64 processes:
+
+~~~text
+134217728
+25000 100000
+64
+~~~
+
+Compare your own values with the Compose file if you changed its limits. The CPU quota divided by its period gives the CPU allowance. For a job that writes project files, check the output's owner on the host as in part 3.
+
+## Test restart and recovery
+
+First close the client connection while a detached application is running. Reconnect and check that the application still responds. This tests whether it depends on the terminal staying open.
+
+From the Mac, open `ssh workbench-admin` and run `sudo reboot` on the VPS. A reboot ends running terminals and jobs; enabled services and container restart policies determine what returns. Once the VPS is back, reconnect from the Mac with `ssh workbench` and run these checks as `builder`:
+
+~~~sh
+systemctl --user is-active docker rex amp-workbench
+systemctl --user is-enabled docker rex amp-workbench
+docker context show
+docker compose -f /home/builder/projects/demo/compose.yaml ps
+amp runner list
+~~~
+
+The first three commands should return the following sequence. The service checks print one line per service:
+
+~~~text
+$ systemctl --user is-active docker rex amp-workbench
+active
+active
+active
+$ systemctl --user is-enabled docker rex amp-workbench
+enabled
+enabled
+enabled
+$ docker context show
+rootless
+~~~
+
+Compose should also list the demo application as running, and Amp should list the `workbench` runner as online. Reopen Rex and the private preview from both devices. Check that Amp can start a new task on the runner. If a service has not returned, read its journal with `journalctl --user -u SERVICE_NAME -n 50 --no-pager`, replacing `SERVICE_NAME` with the relevant unit.
+
+Finally, in the Mac's browser, open the provider console independently of SSH and log in as root using the recovery credential in 1Password. In that console, `whoami` should print `root` and `hostname` should print `workbench`. Run `exit` to log out. This route needs to work even when private networking is unavailable. Test it after disabling root SSH, as the console and SSH use different login paths. Console access restores control of the machine; recovering lost application data is a separate task.
+
+Keep a private note of the SSH aliases, Rex address, project ports and service names, plus a reference to the recovery credential. Update it when those details change. That is enough to find the right account and service when something stops working.
+
+For Ubuntu maintenance, connect from the Mac with `ssh workbench-admin` and run `sudo apt update`, then `sudo apt upgrade`. Complete any required reboot and repeat the access checks afterwards. Follow the beta's instructions for Rex server and client updates, and keep a known working application version before redeploying.

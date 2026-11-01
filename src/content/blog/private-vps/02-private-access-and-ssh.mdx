@@ -1,0 +1,190 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
+# Private SSH access with Tailscale and 1Password
+
+The previous post set out how the VPS, remote terminals and private previews fit together. Before installing those tools, I need a reliable way to reach the server and an independent route for recovery. SSH provides an encrypted terminal connection to another computer. I use it over Tailscale, with the private key held in 1Password on my Mac. Tailscale controls which devices can reach SSH; the SSH key controls which Linux account I can log into. Start in your VPS provider's authenticated browser console as root and keep it open until private access works. This route is also how you will recover access after disabling public SSH.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/02-private-access.svg"
+  alt="SSH host-key comparison, a private key held in 1Password, separate Linux accounts and server SSH policy."
+  caption="Verify the server, authenticate with the selected SSH key and choose a Linux account with the right privileges."
+/>
+
+## Create the accounts and private connection
+
+Save the root recovery credential in 1Password, alongside a note explaining how to open the provider console. Keep the administrator's sudo password in a separately labelled field. `sudo` runs a permitted command with administrator privileges; it does not mean that every terminal is a root session. In the provider console as root, prepare the basic tools with `apt update` and `apt install ca-certificates curl git less nano openssh-server python3 sudo`. Then create the accounts used throughout the series:
+
+~~~sh
+adduser --ingroup operator operator
+usermod -aG sudo operator
+adduser --disabled-password --gecos '' builder
+~~~
+
+`--ingroup operator` reuses Ubuntu's existing Linux group of that name. Set `operator`'s password when prompted. `builder` will use an SSH key and does not need a password or membership of the `sudo` group. On the Mac, create or select an SSH key in 1Password, name the item `VPS SSH` for these examples and copy its Public key field. You will paste that public key into files on the VPS through the provider's browser console. The private key stays in 1Password on the Mac.
+
+In the VPS console, still as root, run `install -d -m 700 -o operator -g operator /home/operator/.ssh` to create the administrator's SSH directory. Open `nano /home/operator/.ssh/authorized_keys`, paste the public key as one line and save. Run `chmod 600 /home/operator/.ssh/authorized_keys` and `chown operator:operator /home/operator/.ssh/authorized_keys`. Repeat these commands with `builder` in place of `operator`, pasting the same public key. This gives each account its own directory and key file, owned by that account.
+
+Still in the root VPS console, install Tailscale. The commands below download its installer, open it in `less` for inspection and run it. Press `q` to leave `less`:
+
+~~~sh
+curl -fsSLo /root/tailscale-install.sh https://tailscale.com/install.sh
+less /root/tailscale-install.sh
+sh /root/tailscale-install.sh
+~~~
+
+On the Mac, open the Tailscale admin console and select [Access controls](https://tailscale.com/docs/features/tailnet-policy-file/manage-tailnet-policies). Use its JSON policy editor to adapt the [complete example policy](/examples/private-vps/tailscale-policy.json). A tag labels a server, and `tagOwners` says who may assign that label. Replace the uppercase placeholders using the device addresses and user identity in your admin console. The grants allow these connections:
+
+| Client | Destination | Access |
+| --- | --- | --- |
+| Mac | `workbench` | SSH on port 22 |
+| Mac and iPhone | `workbench-rex` | Rex on port 443 |
+| Your signed-in personal devices | `workbench` | Private previews on ports 8443 to 8499 |
+
+It also defines the server tags and tests that the phone cannot reach SSH or a database port. If the Mac Rex client uses its own embedded Tailscale device, include that address in the Rex grant too.
+
+Adapt this policy to your existing network. Tailscale permissions are additive, so an existing broad allow rule can defeat the restrictions above. Review those rules and get the policy tests passing before proceeding. [Tailscale's grants reference](https://tailscale.com/docs/reference/syntax/grants) explains the syntax.
+
+Then enrol the VPS from the provider console:
+
+~~~sh
+hostnamectl set-hostname workbench
+tailscale up --hostname=workbench --advertise-tags=tag:workbench
+tailscale status
+~~~
+
+Open the displayed sign-in link in the Mac's browser and approve the VPS with the same Tailscale account. Check that the admin console lists `workbench` with `tag:workbench`; `tailscale status` on the VPS should also show it connected. In the admin console's DNS page, enable [MagicDNS](https://tailscale.com/docs/features/magicdns), which gives devices private names instead of requiring their IP addresses. Use the tailnet suffix shown there for `YOUR_TAILNET`. This setup uses OpenSSH, the SSH server on Ubuntu, so you do not need to enable the separate Tailscale SSH feature.
+
+## Connect SSH through 1Password
+
+The key in 1Password identifies your login, while the server's host key identifies the VPS. A fingerprint is a short hash you can compare without reading the whole public key. The VPS's `authorized_keys` files control who may log in; the Mac's `known_hosts` file records which server it trusts. In the provider console, display the host-key fingerprint:
+
+~~~sh
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+~~~
+
+On the Mac, collect the key offered through Tailscale and display its fingerprint:
+
+~~~sh
+ssh-keyscan -t ed25519 workbench.YOUR_TAILNET.ts.net > workbench-host-key
+ssh-keygen -lf workbench-host-key
+~~~
+
+The two `ssh-keygen` results should show the same SHA256 fingerprint. Example format, with the fingerprint replaced by a placeholder:
+
+~~~text
+256 SHA256:<MATCHING_FINGERPRINT> ... (ED25519)
+~~~
+
+Compare the fingerprints. [`ssh-keyscan` collects a key without proving who owns it](https://man.openbsd.org/ssh-keyscan); the provider console gives you an independent value to compare. If they match, add the key on the Mac:
+
+~~~sh
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+cat workbench-host-key >> ~/.ssh/known_hosts
+chmod 600 ~/.ssh/known_hosts
+~~~
+
+On the Mac, open 1Password's Settings, then Developer, and enable Use the SSH Agent. The agent lets SSH use the key without exporting it. Copy the Public key field in 1Password again. In the local Mac terminal, run `pbpaste > ~/.ssh/workbench.pub` to save that clipboard text, then open `nano ~/.ssh/config`. Add the following entries before conflicting `Host *` defaults, preserving your other hosts. The quoted socket path is the [documented macOS path](https://www.1password.dev/ssh/get-started), with no optional shortcut required:
+
+~~~sshconfig
+Host workbench
+    HostName workbench.YOUR_TAILNET.ts.net
+    User builder
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    IdentityFile ~/.ssh/workbench.pub
+    IdentitiesOnly yes
+    StrictHostKeyChecking yes
+    ForwardAgent no
+    ServerAliveInterval 30
+
+Host workbench-admin
+    HostName workbench.YOUR_TAILNET.ts.net
+    User operator
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    IdentityFile ~/.ssh/workbench.pub
+    IdentitiesOnly yes
+    StrictHostKeyChecking yes
+    ForwardAgent no
+    ServerAliveInterval 30
+~~~
+
+If your SSH key is outside the default Personal, Private or Employee vaults, explicitly include it in the [agent configuration](https://www.1password.dev/ssh/agent/config). On the Mac, run `mkdir -p ~/.config/1Password/ssh`, then open `nano ~/.config/1Password/ssh/agent.toml`. For a new file, the following keeps the default vault selection and adds the example key. If you already have a custom file, preserve it and append only the final entry. Replace the example vault and item names with yours:
+
+~~~toml
+[[ssh-keys]]
+vault = "Personal"
+
+[[ssh-keys]]
+vault = "Private"
+
+[[ssh-keys]]
+vault = "Employee"
+
+[[ssh-keys]]
+vault = "Engineering"
+item = "VPS SSH"
+~~~
+
+The agent configuration chooses which keys 1Password offers. `IdentityFile` points to the public key so SSH asks the agent for the matching private key. `IdentitiesOnly` avoids offering every other key in the vault. This follows [1Password's host-specific configuration](https://www.1password.dev/ssh/agent/advanced).
+
+From separate terminal windows on the Mac, open fresh connections with `ssh workbench` and `ssh workbench-admin`. Check `whoami` in each. The development login should print `builder`, and the administrator login should print `operator`. For example:
+
+~~~text
+mac$ ssh workbench
+builder@workbench$ whoami
+builder
+
+mac$ ssh workbench-admin
+operator@workbench$ whoami
+operator
+~~~
+
+In the `operator` session, run `sudo -v` and authenticate with its password. If key selection is wrong, `ssh -G workbench` on the Mac shows the effective client configuration.
+
+## Close public access
+
+Once both private logins work, use `ssh workbench-admin` from a Mac terminal. In that `operator` session, open `sudo nano /etc/ssh/sshd_config.d/00-workbench.conf` and save:
+
+~~~sshconfig
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+AllowUsers operator builder
+AllowAgentForwarding no
+X11Forwarding no
+MaxAuthTries 3
+~~~
+
+In this VPS administrator session, run `sudo sshd -t`; valid syntax produces no output. Then inspect the effective settings, including any cloud-image defaults:
+
+~~~sh
+sudo sshd -T | grep -E '^(permitrootlogin|passwordauthentication|allowusers) '
+~~~
+
+The relevant values should be:
+
+~~~text
+permitrootlogin no
+passwordauthentication no
+allowusers operator builder
+~~~
+
+Once these match, run `sudo systemctl reload ssh`. Keep the existing console and administrator session open while testing another fresh login from a new Mac terminal.
+
+Use Ubuntu's [UFW firewall](https://documentation.ubuntu.com/security/security-features/network/firewall/) to allow SSH and the preview range through the Tailscale interface, along with Tailscale's UDP transport port:
+
+~~~sh
+sudo apt install ufw
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow in on tailscale0 proto tcp to any port 22
+sudo ufw allow in on tailscale0 proto tcp to any port 8443:8499
+sudo ufw allow 41641/udp
+sudo ufw enable
+sudo ufw status verbose
+~~~
+
+The status summary should say `Status: active` and `Default: deny (incoming), allow (outgoing)`. Check that the TCP rules for port 22 and ports 8443 to 8499 name `tailscale0`; the UDP transport rule for 41641 can accept public traffic. In the same administrator session, inspect `sudo ufw status numbered`. If it lists a public SSH allow rule, remove that specific rule with `sudo ufw delete RULE_NUMBER`, replacing `RULE_NUMBER` with its displayed number. Recheck the list after each deletion because the numbers change. Tailscale's policy remains necessary, including for Rex's embedded network connection.
+
+Finish by testing a new private administrator login and a root login through the provider console. Disabling root SSH does not disable the provider's local console login. You now have separate routes for everyday work, administration and recovery.

@@ -1,0 +1,273 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="sheet" viewBox="0 0 1700 1060" width="1700" height="1060" role="img" aria-label="Independent host verification and a client-held identity with separate account permissions.">
+  <view id="light" viewBox="0 0 1700 1060" />
+  <view id="dark" viewBox="0 0 1700 1060" />
+  <rect x="0" y="0" width="1700" height="1060" class="paper" />
+  <defs>
+    <marker id="ar0" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0,1.7 L10,5 L0,8.3 z" class="arrow" />
+    </marker>
+    <pattern id="hat0" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" class="hl" />
+    </pattern>
+    <style>
+/* Native SVG themes; full-size #light/#dark views preserve the site's choice. */
+:root {
+  --drawing-paper:#ffffff;
+  --drawing-surface:#f3f3f3;
+  --drawing-surface-soft:#fafafa;
+  --drawing-shade:#e6e6e6;
+  --drawing-fill-soft:#eee;
+  --drawing-fill-mid:#ececec;
+  --drawing-ink:#111;
+  --drawing-ink-soft:#222;
+  --drawing-muted:#444;
+  --drawing-secondary:#555;
+  --drawing-quiet:#666;
+  --drawing-line:#777;
+  --drawing-construction:#7a7a7a;
+  --drawing-default-ink:#000;
+  fill:var(--drawing-default-ink);
+  background:var(--drawing-paper);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+  --drawing-paper:#191d23;
+  --drawing-surface:#252c36;
+  --drawing-surface-soft:#1d222a;
+  --drawing-shade:#303946;
+  --drawing-fill-soft:#28313c;
+  --drawing-fill-mid:#2b3542;
+  --drawing-ink:#edf0f5;
+  --drawing-ink-soft:#dce3ed;
+  --drawing-muted:#b3bac6;
+  --drawing-secondary:#a8b1be;
+  --drawing-quiet:#9aa5b4;
+  --drawing-line:#8e99a9;
+  --drawing-construction:#858d9b;
+  --drawing-default-ink:#edf0f5;
+  }
+}
+:root:has(#light:target) {
+  color-scheme:light;
+  --drawing-paper:#ffffff;
+  --drawing-surface:#f3f3f3;
+  --drawing-surface-soft:#fafafa;
+  --drawing-shade:#e6e6e6;
+  --drawing-fill-soft:#eee;
+  --drawing-fill-mid:#ececec;
+  --drawing-ink:#111;
+  --drawing-ink-soft:#222;
+  --drawing-muted:#444;
+  --drawing-secondary:#555;
+  --drawing-quiet:#666;
+  --drawing-line:#777;
+  --drawing-construction:#7a7a7a;
+  --drawing-default-ink:#000;
+}
+:root:has(#dark:target) {
+  color-scheme:dark;
+  --drawing-paper:#191d23;
+  --drawing-surface:#252c36;
+  --drawing-surface-soft:#1d222a;
+  --drawing-shade:#303946;
+  --drawing-fill-soft:#28313c;
+  --drawing-fill-mid:#2b3542;
+  --drawing-ink:#edf0f5;
+  --drawing-ink-soft:#dce3ed;
+  --drawing-muted:#b3bac6;
+  --drawing-secondary:#a8b1be;
+  --drawing-quiet:#9aa5b4;
+  --drawing-line:#8e99a9;
+  --drawing-construction:#858d9b;
+  --drawing-default-ink:#edf0f5;
+}
+/* Drawing styles. */
+
+.u{font-family:Arial,Helvetica,sans-serif;text-transform:uppercase;letter-spacing:.07em}
+.border{fill:none;stroke:var(--drawing-ink);stroke-width:1.2}
+.obj{fill:var(--drawing-paper);stroke:var(--drawing-ink);stroke-width:1.6;stroke-linejoin:round}
+.well{fill:var(--drawing-surface);stroke:var(--drawing-ink);stroke-width:1}
+.slot{fill:none;stroke:var(--drawing-muted);stroke-width:.8;stroke-dasharray:4 3}
+.hug{fill:var(--drawing-shade);stroke:var(--drawing-ink);stroke-width:1}
+.thin{fill:none;stroke:var(--drawing-ink);stroke-width:.8}
+.ph{fill:none;stroke:var(--drawing-construction);stroke-width:.8;stroke-dasharray:14 3 3 3}
+.cl{fill:none;stroke:var(--drawing-construction);stroke-width:.7;stroke-dasharray:16 3 2 3}
+.cut{stroke:var(--drawing-ink);stroke-width:2}
+.dl{stroke:var(--drawing-ink);stroke-width:.7;fill:none}
+.ext{stroke:var(--drawing-ink);stroke-width:.55;fill:none}
+.arrow{fill:var(--drawing-ink)}
+.hl{stroke:var(--drawing-muted);stroke-width:.7}
+.hs{stroke:var(--drawing-ink);stroke-width:.8}
+.env{fill:none;stroke:var(--drawing-ink);stroke-width:.8;stroke-dasharray:10 3 2 3}
+.dt{font:400 11px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);paint-order:stroke;stroke:var(--drawing-paper);stroke-width:4px;stroke-linejoin:round}
+.dts{font:400 9.5px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.06em;text-transform:uppercase;paint-order:stroke;stroke:var(--drawing-paper);stroke-width:3px}
+.sl{font:400 9px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.08em;text-transform:uppercase}
+.nt{font:400 11.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em;text-transform:uppercase}
+.nth{font:700 13px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+.vt{font:400 12px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.1em;text-transform:uppercase}
+.vtb{font:400 20px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+.nb{fill:var(--drawing-paper);stroke:var(--drawing-ink);stroke-width:.9}
+.nbt{font:400 9.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.lead{stroke:var(--drawing-ink);stroke-width:.7;fill:none}
+.dot{fill:var(--drawing-ink)}
+.th{font:400 10.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.05em;text-transform:uppercase}
+.tc{font:400 10.5px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.tbk{font:400 7px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.04em;text-transform:uppercase}
+.tbt{font:700 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink)}
+.tbv{font:400 17px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}
+
+/* title block restyled to match the drawing sheet: thin black rules, plain caps lettering */
+.tb{border:1.2px solid var(--drawing-ink);border-radius:16px;overflow:hidden}
+.tb&gt;div{border-right:.8px solid var(--drawing-ink);border-bottom:.8px solid var(--drawing-ink);padding:10px 14px}
+.tb&gt;div:nth-child(4),.tb&gt;div:nth-child(7){border-right:0}
+.tb .lbl{font-size:9.5px;font-weight:400;letter-spacing:.06em;color:var(--drawing-muted)}
+.tb h1{font-weight:400;letter-spacing:.1em;font-size:clamp(28px,4vw,44px);margin-top:4px}
+.tb .v{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--drawing-ink)}
+.tb .big .v{font-size:11px;color:var(--drawing-muted);line-height:1.6}
+.tb .notes{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--drawing-ink);line-height:1.9}
+.tb .notes ol{padding-left:20px}
+.tb .nh{font-weight:700;font-size:13px;letter-spacing:.06em}
+.tb .nh span{font-weight:400;font-size:11.5px;margin-left:6px}
+.tb .figs&gt;div{border-left:.8px solid var(--drawing-ink);padding-left:14px}
+.tb .figs&gt;div:first-child{border-left:0;padding-left:0}
+.tb .figs .v{font-size:18px;letter-spacing:.06em;text-transform:none;margin-top:4px}
+.foot{font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.foot b{font-weight:700}
+
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1760px;padding:24px 12px 30px}.scroll{box-shadow:none;border-radius:16px}.tb{margin-bottom:18px}.tb .notes{line-height:1.65}.tb h1{font-size:36px}.tb .big .v{max-width:410px}.th,.tc{font-size:12px}.nt{font-size:11px}.paper{fill:var(--drawing-paper)}.zone{fill:var(--drawing-surface-soft);stroke:var(--drawing-line);stroke-width:1;stroke-dasharray:12 4 2 4}.flow{fill:none;stroke:var(--drawing-ink);stroke-width:1.35;stroke-linejoin:round}.node-title{font:400 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.04em}.node-sub{font:400 10px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.05em}.role{font:400 13px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.06em}.hatch{stroke:var(--drawing-ink);stroke-width:.8}.muted{fill:var(--drawing-quiet)}.small{font-size:10px}
+
+.section-title{font:400 16px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.07em}.step-title{font:400 15px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.05em}.step-sub{font:400 11px Arial,Helvetica,sans-serif;fill:var(--drawing-muted);letter-spacing:.04em}.strong-line{stroke:var(--drawing-ink);stroke-width:2;fill:none}.dashed-flow{stroke:var(--drawing-secondary);stroke-width:1.1;stroke-dasharray:6 4;fill:none}.budget{fill:var(--drawing-fill-soft);stroke:var(--drawing-ink);stroke-width:1}.evidence{font:400 12px Arial,Helvetica,sans-serif;fill:var(--drawing-ink);letter-spacing:.03em}
+.tb{grid-template-columns:2.2fr 1fr 1fr}.tb&gt;div:nth-child(4){border-right:.8px solid var(--drawing-ink)}.tb&gt;div:nth-child(3),.tb&gt;div:nth-child(5){border-right:0}@media(max-width:640px){.tb{grid-template-columns:1fr 1fr}}
+
+:root{--f:Arial,Helvetica,sans-serif}.node-title{font-size:16px}.node-sub{font-size:12px}.role{font-size:14px}.vt{font-size:12px}.nt{font-size:12px}.dts{font-size:11px}.layer-sub{font:400 10px Arial,Helvetica,sans-serif;fill:var(--drawing-secondary);letter-spacing:.04em}.tc{font-size:13px}.th{font-size:12px}.section-title{font-size:18px}.step-title{font-size:17px}.step-sub{font-size:12px}.evidence{font-size:13px}
+body{margin:0;background:var(--drawing-fill-mid)}.review{max-width:1760px;margin:auto;padding:24px}.review h1{font:400 30px Arial,Helvetica,sans-serif;letter-spacing:.04em;text-transform:uppercase;margin:0 0 12px}.review p{font:15px/1.5 Arial,Helvetica,sans-serif;max-width:100ch;color:var(--drawing-muted)}.review svg{width:100%;height:auto;min-width:1100px}.review .scroll{overflow:auto}.review a{color:var(--drawing-ink-soft)}
+</style>
+  </defs>
+  <rect x="20" y="20" width="1660" height="1020" rx="16" class="border" />
+  <text x="50" y="58" class="nth">NOTES:</text>
+  <rect x="50" y="78" width="12" height="12" class="nb" />
+  <text x="56" y="87.5" class="nbt" text-anchor="middle">1</text>
+  <text x="72" y="88" class="nt">VERIFY THE SERVER BEFORE TRUSTING ITS KEY.</text>
+  <rect x="50" y="102" width="12" height="12" class="nb" />
+  <text x="56" y="111.5" class="nbt" text-anchor="middle">2</text>
+  <text x="72" y="112" class="nt">THE PRIVATE USER KEY STAYS ON THE CLIENT.</text>
+  <rect x="50" y="126" width="12" height="12" class="nb" />
+  <text x="56" y="135.5" class="nbt" text-anchor="middle">3</text>
+  <text x="72" y="136" class="nt">ONLY THE PUBLIC USER KEY IS INSTALLED.</text>
+  <rect x="50" y="150" width="12" height="12" class="nb" />
+  <text x="56" y="159.5" class="nbt" text-anchor="middle">4</text>
+  <text x="72" y="160" class="nt">ONE SELECTED KEY CAN ENTER TWO ACCOUNTS.</text>
+  <text x="480" y="62" class="section-title">A · TWO DIFFERENT TRUST CHECKS</text>
+  <text x="480" y="81" class="dts">HOST IDENTITY FIRST; USER AUTHORISATION SECOND</text>
+  <rect x="455" y="142" width="850" height="220" rx="12" class="zone" />
+  <text x="470" y="166" class="node-sub">HOST IDENTITY / INDEPENDENT COMPARISON</text>
+  <rect x="485" y="203" width="238" height="76" rx="9" class="obj" />
+  <text x="604" y="236" class="node-title" text-anchor="middle">PROVIDER CONSOLE</text>
+  <text x="604" y="258" class="node-sub" text-anchor="middle">HOST-KEY FINGERPRINT</text>
+  <rect x="1028" y="203" width="245" height="76" rx="9" class="obj" />
+  <text x="1150.5" y="236" class="node-title" text-anchor="middle">PRIVATE SSH PATH</text>
+  <text x="1150.5" y="258" class="node-sub" text-anchor="middle">KEY FINGERPRINT</text>
+  <polygon points="875,183.5 990,241 875,298.5 760,241" class="obj" />
+  <text x="875" y="238" class="node-title" text-anchor="middle">COMPARE</text>
+  <text x="875" y="259" class="node-sub" text-anchor="middle">MATCH REQUIRED</text>
+  <path d="M723,241 L760,241" class="flow" marker-end="url(#ar0)" />
+  <path d="M1028,241 L990,241" class="flow" marker-end="url(#ar0)" />
+  <rect x="476" y="331" width="12" height="12" class="nb" />
+  <text x="482" y="340.5" class="nbt" text-anchor="middle">1</text>
+  <text x="876" y="338" class="dts" text-anchor="middle">RECORD THE VERIFIED HOST KEY IN THE CLIENT TRUST FILE</text>
+  <rect x="455" y="398" width="850" height="230" rx="12" class="zone" />
+  <text x="470" y="422" class="node-sub">USER IDENTITY / PROOF OF POSSESSION</text>
+  <circle cx="520" cy="482" r="18" class="thin" />
+  <circle cx="520" cy="482" r="6" class="thin" />
+  <path d="M538,482 h74 v13 h-12 v-13 m-17,0 v9 h-12 v-9" class="thin" />
+  <text x="578" y="555" class="role" text-anchor="middle">K1 / 1PASSWORD SSH KEY</text>
+  <text x="578" y="575" class="dts" text-anchor="middle">PRIVATE KEY STAYS ON THE MAC</text>
+  <rect x="476" y="594" width="12" height="12" class="nb" />
+  <text x="482" y="603.5" class="nbt" text-anchor="middle">2</text>
+  <rect x="992" y="458" width="278" height="82" rx="9" class="obj" />
+  <text x="1131" y="494" class="node-title" text-anchor="middle">ACCOUNT AUTHORISATION</text>
+  <text x="1131" y="516" class="node-sub" text-anchor="middle">K2 / USER PUBLIC KEY</text>
+  <path d="M650,484 H992" class="flow" marker-end="url(#ar0)" />
+  <text x="819" y="467" class="dts" text-anchor="middle">SIGNATURE / PRIVATE SSH</text>
+  <rect x="1249" y="595" width="12" height="12" class="nb" />
+  <text x="1255" y="604.5" class="nbt" text-anchor="middle">3</text>
+  <text x="975" y="594" class="dts" text-anchor="end">K1 DOES NOT CROSS THE CONNECTION</text>
+  <text x="75" y="695" class="section-title">B · SAME KEY, SEPARATE ACCOUNTS</text>
+  <text x="75" y="714" class="dts">AUTHORISATION BELONGS TO THE SELECTED ACCOUNT</text>
+  <rect x="82" y="774" width="227" height="78" rx="9" class="obj" />
+  <text x="195.5" y="808" class="node-title" text-anchor="middle">SELECTED IDENTITY</text>
+  <text x="195.5" y="830" class="node-sub" text-anchor="middle">ONE PUBLIC KEY</text>
+  <rect x="450" y="732" width="260" height="78" rx="9" class="obj" />
+  <text x="580" y="766" class="node-title" text-anchor="middle">DEVELOPMENT ACCOUNT</text>
+  <text x="580" y="788" class="node-sub" text-anchor="middle">PROJECTS / USER SERVICES</text>
+  <rect x="450" y="868" width="260" height="78" rx="9" class="obj" />
+  <text x="580" y="902" class="node-title" text-anchor="middle">ADMINISTRATOR ACCOUNT</text>
+  <text x="580" y="924" class="node-sub" text-anchor="middle">PASSWORD-PROTECTED SUDO</text>
+  <path d="M309,813 H371 V772 H450" class="flow" marker-end="url(#ar0)" />
+  <path d="M371,813 V908 H450" class="flow" marker-end="url(#ar0)" />
+  <rect x="326" y="963" width="12" height="12" class="nb" />
+  <text x="332" y="972.5" class="nbt" text-anchor="middle">4</text>
+  <text x="802" y="696" class="section-title">C · ACCOUNT POLICY</text>
+  <text x="802" y="715" class="dts">DIRECT SSH DOES NOT GRANT GENERAL ADMINISTRATION</text>
+  <rect x="802" y="741" width="230" height="45" rx="0" class="well" />
+  <text x="814" y="768" class="evidence" text-anchor="start">PERMISSION</text>
+  <rect x="1032" y="741" width="145" height="45" rx="0" class="well" />
+  <text x="1104.5" y="768" class="evidence" text-anchor="middle">DEVELOPMENT</text>
+  <rect x="1177" y="741" width="145" height="45" rx="0" class="well" />
+  <text x="1249.5" y="768" class="evidence" text-anchor="middle">ADMINISTRATOR</text>
+  <rect x="802" y="786" width="230" height="45" rx="0" class="thin" />
+  <text x="814" y="813" class="evidence" text-anchor="start">OWN PROJECT FILES</text>
+  <rect x="1032" y="786" width="145" height="45" rx="0" class="thin" />
+  <text x="1104.5" y="813" class="evidence" text-anchor="middle">YES</text>
+  <rect x="1177" y="786" width="145" height="45" rx="0" class="thin" />
+  <text x="1249.5" y="813" class="evidence" text-anchor="middle">AS AUTHORISED</text>
+  <rect x="802" y="831" width="230" height="45" rx="0" class="thin" />
+  <text x="814" y="858" class="evidence" text-anchor="start">GENERAL SUDO</text>
+  <rect x="1032" y="831" width="145" height="45" rx="0" class="thin" />
+  <text x="1104.5" y="858" class="evidence" text-anchor="middle">NO</text>
+  <rect x="1177" y="831" width="145" height="45" rx="0" class="thin" />
+  <text x="1249.5" y="858" class="evidence" text-anchor="middle">PASSWORD</text>
+  <rect x="802" y="876" width="230" height="45" rx="0" class="thin" />
+  <text x="814" y="903" class="evidence" text-anchor="start">PREVIEW HELPER</text>
+  <rect x="1032" y="876" width="145" height="45" rx="0" class="thin" />
+  <text x="1104.5" y="903" class="evidence" text-anchor="middle">RESTRICTED</text>
+  <rect x="1177" y="876" width="145" height="45" rx="0" class="thin" />
+  <text x="1249.5" y="903" class="evidence" text-anchor="middle">MAINTAIN</text>
+  <text x="1350" y="74" class="vt">KEY MATERIAL</text>
+  <rect x="1350" y="88" width="48" height="29" rx="0" class="well" />
+  <text x="1358" y="108" class="th">REF</text>
+  <rect x="1398" y="88" width="122" height="29" rx="0" class="well" />
+  <text x="1406" y="108" class="th">KEY</text>
+  <rect x="1520" y="88" width="136" height="29" rx="0" class="well" />
+  <text x="1528" y="108" class="th">LOCATION</text>
+  <rect x="1350" y="117" width="48" height="29" rx="0" class="thin" />
+  <text x="1358" y="137" class="tc">K1</text>
+  <rect x="1398" y="117" width="122" height="29" rx="0" class="thin" />
+  <text x="1406" y="137" class="tc">private</text>
+  <rect x="1520" y="117" width="136" height="29" rx="0" class="thin" />
+  <text x="1528" y="137" class="tc">1Password</text>
+  <rect x="1350" y="146" width="48" height="29" rx="0" class="thin" />
+  <text x="1358" y="166" class="tc">K2</text>
+  <rect x="1398" y="146" width="122" height="29" rx="0" class="thin" />
+  <text x="1406" y="166" class="tc">public</text>
+  <rect x="1520" y="146" width="136" height="29" rx="0" class="thin" />
+  <text x="1528" y="166" class="tc">Server users</text>
+  <text x="1350" y="280" class="vt">SERVER SSH POLICY</text>
+  <rect x="1350" y="294" width="170" height="29" rx="0" class="well" />
+  <text x="1358" y="314" class="th">SETTING</text>
+  <rect x="1520" y="294" width="136" height="29" rx="0" class="well" />
+  <text x="1528" y="314" class="th">VALUE</text>
+  <rect x="1350" y="323" width="170" height="29" rx="0" class="thin" />
+  <text x="1358" y="343" class="tc">Root login</text>
+  <rect x="1520" y="323" width="136" height="29" rx="0" class="thin" />
+  <text x="1528" y="343" class="tc">disabled</text>
+  <rect x="1350" y="352" width="170" height="29" rx="0" class="thin" />
+  <text x="1358" y="372" class="tc">Password login</text>
+  <rect x="1520" y="352" width="136" height="29" rx="0" class="thin" />
+  <text x="1528" y="372" class="tc">disabled</text>
+  <rect x="1350" y="381" width="170" height="29" rx="0" class="thin" />
+  <text x="1358" y="401" class="tc">Agent forwarding</text>
+  <rect x="1520" y="381" width="136" height="29" rx="0" class="thin" />
+  <text x="1528" y="401" class="tc">disabled</text>
+</svg>

@@ -1,0 +1,41 @@
+import { ArticleIllustration } from '@/components/ArticleIllustration'
+
+# A development VPS I can use from anywhere
+
+I wanted to start work on my Mac, leave it running and pick it up from my phone. A virtual private server, or VPS, gave that work a rented Linux machine that runs while the laptop is closed. To make it useful, I needed persistent terminals, private browser previews and a way for Amp, the AI coding tool, to work on the server. I also wanted to keep credentials in 1Password, my password manager, and use a separate administrator account for system changes.
+
+<ArticleIllustration
+  src="/images/blog/private-vps/01-private-workspace.svg"
+  alt="Mac and iPhone connect to Tailscale and Rex on one VPS, with separate development and administrator roles."
+  caption="Ubuntu and Rex join Tailscale separately. SSH, previews and Rex each have their own access rules."
+/>
+
+## How the parts fit together
+
+I keep the project files on the VPS and run the containers, Rex server and Amp runner there. My Mac and iPhone connect to it as clients. Closing either client does not shut down the server's work.
+
+| Component | What I use it for |
+| --- | --- |
+| Tailscale | A private network, called a tailnet, connecting my devices and the VPS |
+| Rex | Terminal sessions running on the VPS, accessible from the Mac and iPhone |
+| Rootless Docker | Runs packaged applications in containers, with its background service owned by the development account |
+| 1Password | A password manager holding SSH keys, recovery credentials and project secrets |
+| Amp runner | A process for the AI coding tool Amp that accepts development and deployment work on the VPS |
+
+Rex runs on the VPS as well as on the Mac. The remote client connects to the Linux server, so the terminal and its processes live on the VPS.
+
+The operating system uses Tailscale for SSH and application previews. Rex's built-in integration joins Tailscale separately, so the same VPS appears as two devices. In these examples, `workbench` is the operating-system node and `workbench-rex` is the Rex node. Use the first for SSH and preview URLs, and the second when adding the server to Rex. Recording both names avoids trying to open a terminal through an application preview address.
+
+I use `builder` for projects and services. It owns the rootless Docker daemon, Rex and the Amp runner, so Amp has the same account permissions as my development login. A separate account, `operator`, handles operating-system changes with password-protected sudo. Part 3 covers resource limits and project mounts for individual container jobs.
+
+## Keep access and previews private
+
+I only need previews on my own devices. Each application publishes a port on the VPS's loopback address, `127.0.0.1`. That address means the machine where a command runs, so a request to it on the Mac would reach the Mac, not the VPS. [Tailscale Serve](https://tailscale.com/docs/features/tailscale-serve) puts private HTTPS in front of it, with access controlled by the Tailscale policy.
+
+This also settled Cloudflare's role. Cloudflare provides DNS services for domain names, and [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/) can connect a server application to its network. I already had Cloudflare available, but these private previews use Tailscale's names and connections. I left public sharing out of this setup. If I need it later, I can decide who should have access before exposing an application.
+
+Amp remains a hosted service. Its runner executes commands on the VPS and connects to Amp, so hosting the runner myself does not mean hosting the whole Amp service.
+
+The next post establishes private SSH access and the two Linux accounts. Docker and Rex come after that. Once an application can run and has a private URL, the Amp runner can use the same deployment path.
+
+The finished setup should let me open a terminal from either device, deploy a project and reach its preview. It also needs a recovery route through the provider console if Tailscale stops working.
