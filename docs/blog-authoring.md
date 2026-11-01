@@ -8,7 +8,7 @@ Code blocks with an explicit command or configuration language receive a copy bu
 
 Relative links between the series files resolve to their published routes. Keep executable filenames inside code examples unchanged.
 
-Import React components directly into an MDX file when a post needs them. The VPS series uses `ArticleIllustration` for the approved drawings in `public/images/blog/private-vps/`. Supply descriptive alt text and a caption. The component reserves the image's aspect ratio and links both the image and its caption to the full-size SVG. The white paper is part of the drawings; the surrounding caption and focus styles use the site's theme tokens.
+Import React components directly into an MDX file when a post needs them. The VPS series uses `ArticleIllustration` for the approved drawings in `public/images/blog/private-vps/`. Supply descriptive alt text and a caption. The component reserves the image's aspect ratio and links both the image and its caption to the full-size SVG. Each SVG contains light and dark palettes. Embedded drawings inherit the site's colour scheme; full-size links use the matching `#light` or `#dark` view. Preserve the drawing geometry, labels and line widths when changing colours, and keep the SVG palette consistent with the site's surface and text tokens.
 
 The drawings use the [Dimensional Drawing kit](https://github.com/enesozturk/dimensional-drawing). Keep its accompanying MIT licence with the assets. Copy only approved drawings into the public folder; review notes and infrastructure records remain outside the site.
 
