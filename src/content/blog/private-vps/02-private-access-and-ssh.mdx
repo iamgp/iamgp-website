@@ -2,8 +2,6 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 # Private SSH access with Tailscale and 1Password
 
-*Part 2 of 7. [Previous: the setup](01-architecture.mdx) · [Series index](README.mdx) · [Next: rootless Docker](03-rootless-docker.mdx)*
-
 The previous post set out how the VPS, remote terminals and private previews fit together. Before installing those tools, I need a reliable way to reach the server and an independent route for recovery. SSH provides an encrypted terminal connection to another computer. I use it over Tailscale, with the private key held in 1Password on my Mac. Tailscale controls which devices can reach SSH; the SSH key controls which Linux account I can log into. Start in your VPS provider's authenticated browser console as root and keep it open until private access works. This route is also how you will recover access after disabling public SSH.
 
 <ArticleIllustration

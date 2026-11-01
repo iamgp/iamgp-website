@@ -2,8 +2,6 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 # Deploying to the VPS with an Amp runner
 
-*Part 6 of 7. [Previous: project secrets](05-secrets-with-1password.mdx) · [Series index](README.mdx) · [Next: checks and recovery](07-verification-and-recovery.mdx)*
-
 [Amp](https://ampcode.com/docs) is an AI coding tool that can edit files and run terminal commands. Its runner lets me send that work to the VPS from the app, using the account setup and private previews from the previous posts. The runner is a process on the server, so work can continue when the Mac is closed.
 
 The deployment pattern also applies to other coding agents that can execute on a Linux host. The development account, rootless Docker and preview helper can stay the same; the remote-execution setup and instruction files depend on the tool. I use Amp here, so the following steps cover its runner and global settings.

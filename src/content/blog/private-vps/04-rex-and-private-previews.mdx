@@ -2,8 +2,6 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 # Using Rex and private previews from a Mac and iPhone
 
-*Part 4 of 7. [Previous: rootless Docker](03-rootless-docker.mdx) · [Series index](README.mdx) · [Next: project secrets](05-secrets-with-1password.mdx)*
-
 Rex is a terminal application with a server that keeps sessions running on a remote machine. Its Mac and iPhone clients connect to those sessions, so I can leave work on the VPS and return to it from either device. With Docker working from part 3, Tailscale Serve can give the application a private HTTPS address by forwarding requests to its local port. Rex connects to `workbench-rex`, while application previews use `workbench`. This post sets up both, starting with the terminal.
 
 <ArticleIllustration

@@ -2,8 +2,6 @@ import { ArticleIllustration } from '@/components/ArticleIllustration'
 
 # Running development containers with rootless Docker
 
-*Part 3 of 7. [Previous: private SSH access](02-private-access-and-ssh.mdx) · [Series index](README.mdx) · [Next: Rex and previews](04-rex-and-private-previews.mdx)*
-
 Private SSH now gives us the development login from part 2. Docker packages an application and its dependencies into an image, then runs that image as a container. I use rootless Docker to run those containers under `builder`, the development account. Its background service, the Docker daemon, runs under that account too, rather than as root. To make this useful for development, containers need to write their project files, and resource limits need to leave enough capacity for the rest of the VPS.
 
 <ArticleIllustration

@@ -2,7 +2,7 @@
 
 The private VPS articles live in `src/content/blog/private-vps/`. They compile to React components through `@mdx-js/rollup`; `remark-gfm` adds tables and task lists.
 
-Edit the `.mdx` source, then update its title, description and filename in `src/data/blog.ts`. That registry maps each source file to its `/blog/<slug>` URL. The page template supplies the title and date, so it omits the source file's first-level heading when rendering.
+Edit the `.mdx` source, then update its title, description and filename in `src/data/blog.ts`. That registry maps each source file to its `/blog/<slug>` URL. The page template supplies the title and date, so it omits the source file's first-level heading when rendering. It also supplies the series position and previous/index/next navigation from the post registry. Keep that navigation out of the MDX body.
 
 Relative links between the series files resolve to their published routes. Keep executable filenames inside code examples unchanged.
 
