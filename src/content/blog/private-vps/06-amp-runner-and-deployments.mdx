@@ -34,11 +34,29 @@ amp account list
 
 For the default installation used below, `command -v amp` should return `/home/builder/.local/bin/amp`, and `amp --version` should print the installed version. If the path differs, use that absolute path for both executable lines in the service unit. Open the login link in the Mac's browser and approve the account you want to control this runner. Signing in to the Mac app does not sign in a separate Linux installation, so note the account's user ID for the service below. Keep the VPS configuration separate from any unrelated Mac integrations. The runner has access to `builder`'s files and Docker daemon, so use it for trusted development work. Selecting a served project directory is not a sandbox around that directory.
 
-Git records a project's source history in a repository, and Amp's discovery option looks for these repositories. The existing demo lives beneath `/home/builder/projects`. Still as `builder` on the VPS, initialise it only if it is not already a repository:
+Git records a project's source history in a repository, and Amp's discovery option looks for these repositories. The existing demo lives beneath `/home/builder/projects`. For the fresh demo from part 4, create its first commit as `builder` on the VPS. Replace the Git identity placeholders with the name and commit email you want recorded in this repository. These settings apply only to this project. If you are using an existing repository, keep its history and identity, and use its current working revision instead of repeating this initialisation.
 
 ~~~sh
-git -C "$HOME/projects/demo" init -b main
+cd "$HOME/projects/demo"
+git init -b main
+git config user.name 'YOUR_GIT_NAME'
+git config user.email 'YOUR_GIT_EMAIL'
+printf 'write-check.txt\n' >> .gitignore
+git add .gitignore Dockerfile compose.yaml index.html
+git commit -m 'Add private preview demo'
+git log -1 --oneline
 ~~~
+
+The ignore entry leaves out the ownership-test file from part 3. The log should now show a commit ID and `Add private preview demo`. Still in this project directory, name the working revision and retain the running image:
+
+~~~sh
+git tag demo-before-amp
+demo_container=$(docker compose ps -q web)
+demo_image=$(docker inspect --format '{{.Image}}' "$demo_container")
+docker image tag "$demo_image" workbench-demo:before-amp
+~~~
+
+The Git tag records the source checkpoint. The Docker tag keeps the exact working image available after the next build. Check `git status --short`; it should print nothing before you hand the project to Amp.
 
 In this `builder` session, run `mkdir -p ~/.config/systemd/user`, then open `nano ~/.config/systemd/user/amp-workbench.service` and save the following. Replace `YOUR_AMP_USER_ID` and check that Amp is installed at `%h/.local/bin/amp`, where `%h` means the user's home directory. Adjust both executable paths if your installation differs.
 
@@ -130,12 +148,59 @@ The local pointer applies on the VPS. The global guidance helps route a request 
 
 ## Deploy a project
 
-In Amp, choose `workbench` and the demo project. Ask it to deploy the project using the server procedure and return the private URL. For the optional CLI route, use a local Mac terminal, not the VPS shell. Install the Amp CLI on the Mac as well and run `amp login` with the same account. You can then make the request through [execute mode](https://ampcode.com/docs/cli/execute-mode):
+In Amp on the Mac, choose runner `workbench` and project `/home/builder/projects/demo`. Send this request:
 
-~~~sh
-amp --executor runner:workbench --runner-dir /home/builder/projects/demo -x 'Deploy this project privately using the server runbook. Verify local health and return the private HTTPS URL. Preserve other projects.'
+~~~markdown
+Read /home/builder/.config/workbench/DEPLOYMENT.md. In the demo project, change only index.html so the page says "Deployed through the VPS runner". Commit that single file change, then build and deploy it.
+
+Keep the existing host port 3000, private HTTPS port 8443 and resource limits. Preserve workbench-demo:before-amp for rollback and leave other projects alone. Return the commit ID, private preview URL and health-check results.
 ~~~
 
-Check the completed thread, as a thread link can arrive before the work has finished. Then open the returned URL from the Mac or phone with Tailscale connected and check the application's behaviour.
+Wait for the thread to finish, then open the returned URL on the Mac or phone with Tailscale connected. The page should now say `Deployed through the VPS runner`. From a local Mac terminal, check the response directly:
 
-For a private repository, the runner also needs the intended revision and a repository-scoped credential or a source transfer. A registered runner alone does not establish repository access. The useful result is the requested version running at a private URL, with a way to return to the previous version if it fails.
+~~~sh
+curl --fail --show-error https://workbench.YOUR_TAILNET.ts.net:8443/
+~~~
+
+Expected page content:
+
+~~~text
+Deployed through the VPS runner
+~~~
+
+From the Mac, open `ssh workbench`. As `builder` on the VPS, review what changed before recording the deployed revision:
+
+~~~sh
+cd "$HOME/projects/demo"
+git status --short
+git log --oneline demo-before-amp..HEAD
+git diff demo-before-amp HEAD -- index.html
+~~~
+
+The status should be empty. The log should contain one new commit, and the diff should show the page-text change. Compare that commit ID with Amp's report. If other files changed or the history differs, review those changes before continuing. Once the result matches, run `git tag demo-through-amp` to name this revision.
+
+To practise rollback, keep this `builder` session in the demo directory. Open `nano /home/builder/.config/workbench/demo-rollback.yaml` and save:
+
+~~~yaml
+services:
+  web:
+    image: workbench-demo:before-amp
+~~~
+
+This extra Compose file selects the retained image while keeping the ports and limits from `compose.yaml`. Check `git status --short` again and resolve any uncommitted changes before proceeding. Then undo the recorded demo change and start its previous image:
+
+~~~sh
+git revert --no-edit demo-through-amp
+docker compose -f compose.yaml -f /home/builder/.config/workbench/demo-rollback.yaml up -d --no-build --pull never --wait --wait-timeout 60 web
+curl --fail --show-error http://127.0.0.1:3000/
+~~~
+
+Expected page content after rollback:
+
+~~~text
+Private preview works
+~~~
+
+[`git revert`](https://git-scm.com/docs/git-revert) records a new commit that undoes the page change. The [Compose options](https://docs.docker.com/reference/cli/docker/compose/up/) use the retained local image without rebuilding or pulling it. Open the same private URL on the Mac or phone to check that it also shows the original page. The rollback file is used only when named with `-f`; later deployments can use the normal `docker compose up -d --build --wait --wait-timeout 60` command.
+
+This example restores a stateless page. An application with database changes needs a migration and recovery procedure for that data too. For a private repository, the runner also needs the intended source revision and a repository-scoped credential or a source transfer.

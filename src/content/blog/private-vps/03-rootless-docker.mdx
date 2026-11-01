@@ -20,6 +20,13 @@ sudo apt install docker-ce docker-ce-cli containerd.io docker-ce-rootless-extras
 
 Buildx builds application images. The Compose plugin reads a project's `compose.yaml` file to build and run its services; we use it in part 4. `uidmap` supplies the user-mapping tools rootless Docker needs.
 
+Rootless Docker also needs the kernel's `nf_tables` module for its container firewall rules. Still as `operator` on the VPS, load it and arrange for it to load after reboots:
+
+~~~sh
+sudo modprobe nf_tables
+printf 'nf_tables\n' | sudo tee /etc/modules-load.d/workbench-docker.conf
+~~~
+
 Check that `builder` has subordinate user and group ID ranges:
 
 ~~~sh

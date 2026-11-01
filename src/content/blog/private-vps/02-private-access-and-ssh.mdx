@@ -15,12 +15,12 @@ The previous post set out how the VPS, remote terminals and private previews fit
 Save the root recovery credential in 1Password, alongside a note explaining how to open the provider console. Keep the administrator's sudo password in a separately labelled field. `sudo` runs a permitted command with administrator privileges; it does not mean that every terminal is a root session. In the provider console as root, prepare the basic tools with `apt update` and `apt install ca-certificates curl git less nano openssh-server python3 sudo`. Then create the accounts used throughout the series:
 
 ~~~sh
-adduser operator
+adduser --ingroup operator operator
 usermod -aG sudo operator
 adduser --disabled-password --gecos '' builder
 ~~~
 
-Set `operator`'s password when prompted. `builder` will use an SSH key and does not need a password or membership of the `sudo` group. On the Mac, create or select an SSH key in 1Password, name the item `VPS SSH` for these examples and copy its Public key field. You will paste that public key into files on the VPS through the provider's browser console. The private key stays in 1Password on the Mac.
+`--ingroup operator` reuses Ubuntu's existing Linux group of that name. Set `operator`'s password when prompted. `builder` will use an SSH key and does not need a password or membership of the `sudo` group. On the Mac, create or select an SSH key in 1Password, name the item `VPS SSH` for these examples and copy its Public key field. You will paste that public key into files on the VPS through the provider's browser console. The private key stays in 1Password on the Mac.
 
 In the VPS console, still as root, run `install -d -m 700 -o operator -g operator /home/operator/.ssh` to create the administrator's SSH directory. Open `nano /home/operator/.ssh/authorized_keys`, paste the public key as one line and save. Run `chmod 600 /home/operator/.ssh/authorized_keys` and `chown operator:operator /home/operator/.ssh/authorized_keys`. Repeat these commands with `builder` in place of `operator`, pasting the same public key. This gives each account its own directory and key file, owned by that account.
 
@@ -145,7 +145,7 @@ In the `operator` session, run `sudo -v` and authenticate with its password. If 
 
 Once both private logins work, use `ssh workbench-admin` from a Mac terminal. In that `operator` session, open `sudo nano /etc/ssh/sshd_config.d/00-workbench.conf` and save:
 
-~~~text
+~~~sshconfig
 PermitRootLogin no
 PasswordAuthentication no
 KbdInteractiveAuthentication no

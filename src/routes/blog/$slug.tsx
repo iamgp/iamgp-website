@@ -41,6 +41,9 @@ function BlogArticle() {
       <time dateTime={post.date}>{formatPostDate(post.date)}</time>
     </header>
     <div className="article-body markdown-body"><Suspense fallback={<p>Loading article…</p>}><Content components={mdxComponents} /></Suspense></div>
+    {next && <nav className="article-next" aria-label="Continue the series">
+      <Link to="/blog/$slug" params={{ slug: next.slug }} rel="next"><span>Next: </span>{next.title}</Link>
+    </nav>}
     <Link className="back-link" to="/blog">← Back to writing</Link>
   </article>
 }
