@@ -1,49 +1,10 @@
 import { ArticleIllustration } from '@/components/ArticleIllustration'
 
-# Deciding what each tool is responsible for
+# A development VPS I can use from anywhere
 
-*Part 1 of 7. [Series index](README.mdx) · [Next: private access](02-private-access-and-ssh.mdx)*
+*Part 1 of 7. [Series index](README.mdx) · [Next: private SSH access](02-private-access-and-ssh.mdx)*
 
-I wanted a development VPS that I could use from my Mac and phone. It needed to keep applications running when I closed the laptop, give me private browser previews, and let Amp deploy work without turning every project into a new infrastructure exercise.
-
-The tools were already familiar: a VPS, Tailscale, 1Password, Rex and Cloudflare. The useful work was deciding how they should fit together.
-
-This series starts with a fresh Ubuntu 24.04 LTS machine. I wanted a setup I could maintain and troubleshoot, with a clear record of how each part works.
-
-## Start with the work
-
-The main use is development. I want to open a terminal, work in a project, ask an agent to make changes, deploy a preview and inspect it from another device. I do not need strangers to reach that preview.
-
-That gives the machine a fairly narrow job. It runs the development tools and applications. My Mac and iPhone are clients. The laptop can have its own local projects and its own Rex server, but the VPS workspace should not depend on either of those being available.
-
-I also want a clear answer to a less pleasant question: what can an agent reach if I run it here? That answer changes depending on whether the agent runs in a constrained container or directly as the development account.
-
-## Give each component one clear role
-
-| Component | Its job |
-| --- | --- |
-| VPS | Run project files, containers, persistent terminals and the Amp runner |
-| Tailscale | Provide private connectivity and enforce which devices can reach which endpoints |
-| 1Password | Hold SSH identities, recovery credentials and individual project secrets |
-| Rex | Provide persistent terminal sessions that clients can reconnect to |
-| Rootless Docker | Run project containers without a root-owned development daemon |
-| Amp | Execute development and deployment tasks on the VPS |
-| Cloudflare | Remain available for a future, separately designed public-sharing workflow |
-
-Rex's Linux server and its Mac client are separate components. A remote terminal is only useful while the laptop is closed if the shell and its work are running on the remote machine. Rex supports a Linux server with private Tailscale access; the client connects to that server's address. [Rex remote-access documentation](https://www.superlogical.com/rex/docs/linux/remote-access)
-
-## Two Tailscale devices can represent one VPS
-
-This detail initially looked like duplication. It is a consequence of using two different integrations.
-
-The operating system runs Tailscale for SSH and application previews. Rex also has a built-in Tailscale integration, which joins the network as a separate device. In the examples, those devices are called `workbench` and `workbench-rex`.
-
-They have different responsibilities:
-
-- `workbench` handles SSH and private application HTTPS.
-- `workbench-rex` handles Rex control connections.
-
-The addresses should be recorded separately. A preview URL is not automatically the Rex endpoint, and a successful SSH connection does not prove that the Rex client is authorised.
+I wanted to start work on my Mac, leave it running and pick it up from my phone. A VPS gave that work somewhere to run while the laptop was closed. To make it useful, I needed persistent terminals, private browser previews and a way for Amp to work on the server. I also wanted credentials in 1Password and an administrator account separate from everyday development.
 
 <ArticleIllustration
   src="/images/blog/private-vps/01-private-workspace.svg"
@@ -51,36 +12,32 @@ The addresses should be recorded separately. A preview URL is not automatically 
   caption="Ubuntu and Rex join Tailscale separately. SSH, previews and Rex each have their own access rules."
 />
 
-The diagram shows the intended application paths. It does not imply that every endpoint trusts every device.
+## How the parts fit together
 
-## Keep administration separate
+The VPS owns the project files and runs the containers, Rex server and Amp runner. My Mac and iPhone connect to it as clients. Closing either client does not shut down the server's work.
 
-I used an administrator account and an ordinary development account. Here they are called `operator` and `builder`.
+| Component | What I use it for |
+| --- | --- |
+| Tailscale | A private network, called a tailnet, connecting my devices and the VPS |
+| Rex | Terminal sessions running on the VPS, accessible from the Mac and iPhone |
+| Rootless Docker | Project applications and jobs running under the development account |
+| 1Password | SSH keys, recovery credentials and project secrets |
+| Amp runner | Development and deployment tasks executed on the VPS |
 
-The administrator can maintain the operating system with password-protected sudo. The development account owns projects, rootless Docker, the personal Rex service and the Amp runner. It has no general sudo permission.
+Rex runs on the VPS as well as on the Mac. The remote client connects to the Linux server, so the terminal and its processes live on the VPS. Rex's [remote-access documentation](https://www.superlogical.com/rex/docs/linux/remote-access) explains that connection.
 
-One small exception lets development work publish a private preview. A root-owned helper accepts a tightly restricted set of ports and a fixed loopback target. It gives the development account a specific operation rather than access to arbitrary Tailscale commands.
+The operating system uses Tailscale for SSH and application previews. Rex's built-in integration joins Tailscale separately, so the same VPS appears as two devices. In these examples, `workbench` is the operating-system node and `workbench-rex` is the Rex node. Use the first for SSH and preview URLs, and the second when adding the server to Rex. Recording both names avoids trying to open a terminal through an application preview address.
 
-That distinction matters once Amp is involved. The host runner executes as `builder`, so it can read that account's project files and control its Docker daemon. A separate container job can receive a smaller set of files and no daemon socket. I need both options, and I need their permissions described accurately.
+I use `builder` for projects and services. It owns the rootless Docker daemon, Rex and the Amp runner, so Amp has the same account permissions as my development login. A separate account, `operator`, handles operating-system changes with password-protected sudo. Part 3 covers resource limits and project mounts for individual container jobs.
 
-## Private previews simplify the first version
+## Keep access and previews private
 
-A preview only needs to reach my devices. The application listens on `127.0.0.1`, and Tailscale Serve provides private HTTPS in front of it. Serve and Funnel have different audiences: Serve is for the tailnet, while Funnel is for public access. [Tailscale Serve documentation](https://tailscale.com/docs/features/tailscale-serve)
+I only need previews on my own devices. Each application publishes a port on the VPS's loopback address, `127.0.0.1`. [Tailscale Serve](https://tailscale.com/docs/features/tailscale-serve) puts private HTTPS in front of it, with access controlled by the Tailscale policy.
 
-Cloudflare therefore has no active role in the initial preview path. I do not need a public DNS record, a domain move or a public tunnel for each experiment. If I later want to share a preview outside my devices, that will need its own access rules and lifetime.
+This also settled Cloudflare's role. I already had it available, but private previews do not need public DNS records or a Cloudflare tunnel. I left public sharing out of this setup. If I need it later, I can decide who should have access before exposing an application.
 
-The Amp control connection is another separate path. The runner connects outbound to Amp, which means I do not need to open a public incoming port for it. This still relies on Amp's service and my Amp account. Running the tools on my VPS does not make the entire agent system self-hosted.
+Amp remains a hosted service. Its runner executes commands on the VPS and connects to Amp, so hosting the runner myself does not mean hosting the whole Amp service.
 
-## Decide what will count as working
+The next post establishes private SSH access and the two Linux accounts. Docker and Rex come after that. Once an application can run and has a private URL, the Amp runner can use the same deployment path.
 
-Before installing the application tools, I wrote down the useful outcomes:
-
-1. A fresh private SSH login works with the intended key.
-2. The administrator can use sudo, and the development user cannot run arbitrary privileged commands.
-3. Rex opens the VPS workspace from the Mac and phone.
-4. A container keeps running when the client disconnects.
-5. A private preview loads from a second device with normal certificate verification.
-6. An Amp task deploys a real application, rather than merely producing deployment instructions.
-7. Provider-console recovery works after root SSH has been disabled.
-
-Those checks determine the order of the rest of the series. Private access comes first. Containers and terminals come next. Agent deployment comes after there is a controlled way to run an application and expose its preview.
+The finished setup should let me open a terminal from either device, deploy a project and reach its preview. It also needs a recovery route through the provider console if Tailscale stops working.

@@ -1,0 +1,86 @@
+{
+  "tagOwners": {
+    "tag:workbench": [
+      "YOUR_TAILSCALE_LOGIN"
+    ],
+    "tag:workbench-rex": [
+      "YOUR_TAILSCALE_LOGIN"
+    ]
+  },
+  "grants": [
+    {
+      "src": [
+        "MAC_TS_IP"
+      ],
+      "dst": [
+        "tag:workbench"
+      ],
+      "ip": [
+        "tcp:22"
+      ]
+    },
+    {
+      "src": [
+        "MAC_TS_IP",
+        "MAC_REX_TS_IP",
+        "PHONE_TS_IP"
+      ],
+      "dst": [
+        "tag:workbench-rex"
+      ],
+      "ip": [
+        "tcp:443"
+      ]
+    },
+    {
+      "src": [
+        "YOUR_TAILSCALE_LOGIN"
+      ],
+      "dst": [
+        "tag:workbench"
+      ],
+      "ip": [
+        "tcp:8443-8499"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "src": "MAC_TS_IP",
+      "accept": [
+        "tag:workbench:22",
+        "tag:workbench:8443",
+        "tag:workbench-rex:443"
+      ],
+      "deny": [
+        "tag:workbench:5432",
+        "tag:workbench:2375"
+      ]
+    },
+    {
+      "src": "PHONE_TS_IP",
+      "accept": [
+        "tag:workbench:8443",
+        "tag:workbench-rex:443"
+      ],
+      "deny": [
+        "tag:workbench:22"
+      ]
+    },
+    {
+      "src": "tag:workbench",
+      "deny": [
+        "MAC_TS_IP:22",
+        "MAC_TS_IP:443",
+        "PHONE_TS_IP:8443"
+      ]
+    },
+    {
+      "src": "tag:workbench-rex",
+      "deny": [
+        "MAC_TS_IP:22",
+        "MAC_TS_IP:443"
+      ]
+    }
+  ]
+}

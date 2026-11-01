@@ -1,12 +1,10 @@
 import { ArticleIllustration } from '@/components/ArticleIllustration'
 
-# Rootless Docker with limits that actually apply
+# Running development containers with rootless Docker
 
-*Part 3 of 7. [Previous: private access](02-private-access-and-ssh.mdx) · [Series index](README.mdx) · [Next: Rex and previews](04-rex-and-private-previews.mdx)*
+*Part 3 of 7. [Previous: private SSH access](02-private-access-and-ssh.mdx) · [Series index](README.mdx) · [Next: Rex and previews](04-rex-and-private-previews.mdx)*
 
-Once private access worked, I needed a predictable way to run applications and agent jobs. I chose rootless Docker under the development account, with limits on both individual jobs and the account as a whole.
-
-The two checks I cared about were practical: could a job write to its project directory, and would the operating system enforce its CPU, memory and process limits?
+I use rootless Docker to run applications under `builder`, the development account. Its background service, the Docker daemon, runs under that account too, rather than as root. To make this useful for development, containers need to write their project files, and resource limits need to leave enough capacity for the rest of the VPS.
 
 <ArticleIllustration
   src="/images/blog/private-vps/03-rootless-runtime.svg"
@@ -14,11 +12,11 @@ The two checks I cared about were practical: could a job write to its project di
   caption="Each constrained job has its own resource limits beneath the development account's shared ceiling."
 />
 
-## Install the right Docker components
+## Prepare Docker
 
-Use Docker's [Ubuntu installation instructions](https://docs.docker.com/engine/install/ubuntu/) to configure its official package repository. Install the engine, CLI, rootless extras, Buildx and Compose plugin. The rootless setup also needs subordinate user and group ID ranges and tools such as `newuidmap` and `newgidmap`. [Docker's rootless prerequisites](https://docs.docker.com/engine/security/rootless/)
+As `operator`, follow Docker's [Ubuntu installation instructions](https://docs.docker.com/engine/install/ubuntu/) to add its package repository. Install the engine, CLI, rootless extras, Buildx and Compose plugin, along with the `uidmap` package.
 
-As administrator, check the development account:
+Check that `builder` has subordinate user and group ID ranges:
 
 ~~~sh
 id builder
@@ -26,36 +24,28 @@ grep '^builder:' /etc/subuid
 grep '^builder:' /etc/subgid
 ~~~
 
-There should be a sufficiently sized, non-overlapping subordinate range for both files. Docker documents a minimum range of 65,536 IDs. Do not invent overlapping ranges if your image has not configured them.
+Each range needs at least 65,536 IDs and must not overlap another user's allocation. Docker's [rootless setup guide](https://docs.docker.com/engine/security/rootless/) covers missing prerequisites.
 
-This is a fresh, dedicated development host, so I disabled and masked the system Docker service and socket:
+This machine uses only the rootless daemon. Disable the system daemon and enable lingering for `builder`:
 
 ~~~sh
 sudo systemctl disable --now docker.service docker.socket
 sudo systemctl mask docker.service docker.socket
-~~~
-
-I did not add `builder` to the rootful Docker group. That would give it control of a privileged daemon and undo the account separation established earlier.
-
-## Prepare user services and resource delegation
-
-Rootless Docker runs as a systemd user service. I enabled lingering so that the user's services could continue after the last client disconnected and could start without an interactive login:
-
-~~~sh
 sudo loginctl enable-linger builder
-loginctl show-user builder -p Linger
 ~~~
 
-For the resource controls, the host needs cgroup v2 and systemd. Rootless Docker can otherwise ignore the cgroup-related flags. Even with systemd, the CPU controller may need explicit delegation. [Docker's resource-limit guidance](https://docs.docker.com/engine/security/rootless/tips/)
+Ubuntu's systemd service manager runs Docker and the other background tools as user services. Lingering lets them start at boot and continue after the account's last login ends. Keep `builder` out of the rootful `docker` group, which would give it control of a privileged daemon.
 
-The configuration included this administrator-owned drop-in at `/etc/systemd/system/user@.service.d/workbench.conf`:
+## Set limits and start the daemon
+
+I limit individual containers and the development account as a whole. A container limit controls one job; the account limit covers its combined workload. Linux applies these limits to groups of processes through cgroups. Rootless Docker needs cgroup v2 and the systemd cgroup driver to use them. CPU controls can also need explicit delegation. Create the directory `/etc/systemd/system/user@.service.d/` as administrator and add `workbench.conf`:
 
 ~~~ini
 [Service]
 Delegate=cpu cpuset io memory pids
 ~~~
 
-It also capped the development user's slice. Look up `id -u builder`, then use that numeric value in `/etc/systemd/system/user-UID.slice.d/workbench.conf`:
+For the account limit, get the numeric ID with `id -u builder`. Create `/etc/systemd/system/user-UID.slice.d/`, replacing `UID` with that number, and add another `workbench.conf`:
 
 ~~~ini
 [Slice]
@@ -64,15 +54,11 @@ CPUQuota=175%
 TasksMax=4096
 ~~~
 
-These are example budgets for a small development machine. Choose values that leave capacity for the operating system, networking and administration. A quota of `175%` means up to 1.75 logical CPUs, not 175% of all CPUs in the machine.
+These are example budgets, so adjust them to your VPS. Leave capacity for Ubuntu, networking and administrator access. `CPUQuota=175%` permits up to 1.75 logical CPUs.
 
-Run `sudo systemctl daemon-reload`. If the user manager is already running, a daemon reload alone does not prove that its delegation changed. Apply the configuration through a planned manager restart or reboot before relying on the limits, then inspect the effective values. On a new machine, this is a good point to test the private access and recovery paths again.
+Run `sudo systemctl daemon-reload`, then reboot the fresh server before starting Docker. This applies the user-manager configuration as well as the slice settings. Reconnect through private SSH afterwards. Docker's [resource-limit guidance](https://docs.docker.com/engine/security/rootless/tips/) explains the delegation requirement.
 
-Ubuntu 24.04 also restricts unprivileged user namespaces through AppArmor. Use the packaged RootlessKit profile or the documented per-program approach when needed. The provisioning checked for the vendor profile before considering a fallback. Disabling AppArmor globally would be a much broader change than this setup needs. Follow Docker's [distribution-specific troubleshooting](https://docs.docker.com/engine/security/rootless/troubleshoot/) if the setup reports a namespace permission error.
-
-## Install the daemon as the development user
-
-Open `ssh workbench` and confirm that `whoami` returns `builder`. Run the rootless setup without sudo:
+Connect with `ssh workbench` and run the setup without sudo:
 
 ~~~sh
 dockerd-rootless-setuptool.sh install
@@ -81,50 +67,40 @@ docker context use rootless
 docker info
 ~~~
 
-Check that Docker reports rootless mode, the systemd cgroup driver and cgroup version 2. Check `docker context show` too. Running the correct client binary against the wrong daemon is an easy way to get a misleading result.
+Check that `docker info` reports rootless mode, cgroup version 2 and the systemd cgroup driver. `docker context show` should return `rootless`. If setup fails with a user-namespace permission error on Ubuntu 24.04, follow Docker's [AppArmor guidance](https://docs.docker.com/engine/security/rootless/troubleshoot/) rather than disabling AppArmor globally.
 
-For the user slice, inspect the actual unit. Replace `UID` with the development account's numeric ID:
+Check the account's effective limits too, replacing `UID` as before:
 
 ~~~sh
 systemctl show user-UID.slice -p MemoryMax -p CPUQuotaPerSecUSec -p TasksMax
 ~~~
 
-The configuration file describes intent. This output describes what systemd currently applies.
+## Run and check a project job
 
-## Give a job only its project directory
-
-My constrained-job launcher wraps a command like the following. This version can be run directly as `builder`, after verifying the rootless context:
+The following job gets one writable project directory and a temporary filesystem. Run it as `builder` against the rootless daemon:
 
 ~~~sh
 mkdir -p "$HOME/projects/demo"
-docker run --rm --init --cap-drop=ALL --security-opt=no-new-privileges --cpus=1.5 --memory=4g --pids-limit=512 --user=0:0 --workdir=/work --mount "type=bind,src=$HOME/projects/demo,dst=/work" --env HOME=/tmp --tmpfs /tmp:rw,nosuid,nodev,mode=1777,size=512m python:3.12-slim python -c 'from pathlib import Path; Path("/work/write-check.txt").write_text("project write passed"); print({name: Path("/sys/fs/cgroup", name).read_text().strip() for name in ("memory.max", "cpu.max", "pids.max")})'
+docker run --rm --init \
+  --cap-drop=ALL --security-opt=no-new-privileges \
+  --cpus=1.5 --memory=4g --pids-limit=512 \
+  --user=0:0 --workdir=/work \
+  --mount "type=bind,src=$HOME/projects/demo,dst=/work" \
+  --env HOME=/tmp \
+  --tmpfs /tmp:rw,nosuid,nodev,mode=1777,size=512m \
+  python:3.12-slim \
+  python -c 'from pathlib import Path; Path("/work/write-check.txt").write_text("project write passed"); print({name: Path("/sys/fs/cgroup", name).read_text().strip() for name in ("memory.max", "cpu.max", "pids.max")})'
 ~~~
 
-The job receives a single project mount, a temporary directory and explicit resource limits. It does not receive the Docker socket, an SSH agent socket, the user's home directory or a general vault credential. Network egress is still available; these flags do not create an offline sandbox.
+The container receives neither the user's home directory nor the Docker or SSH agent socket. It still has network access.
 
-The sample uses a normal language image to keep the check easy to reproduce. A repeatable project build should record its own image version or digest and include the tools it needs.
-
-## Container UID 0 needs context
-
-The `--user=0:0` option deserves explanation. In this verified rootless setup, container UID 0 maps to the unprivileged development account on the host. That lets the job write ordinary files in the project mount.
-
-I initially had to correct the assumption that choosing another container UID would automatically make the bind mount usable. A subordinate UID can lack permission to write the development user's files.
-
-This example depends on the rootless daemon. Do not transfer the same ownership assumptions to a default rootful daemon. Check the host owner of the new file:
+`--user=0:0` is intentional here. With rootless Docker, [container UID 0 maps to the unprivileged account running the daemon](https://docs.docker.com/engine/security/rootless/uid-gid-mapping/), so it can write `builder`'s project files. Another container UID can lack that permission. This ownership behaviour depends on using the rootless daemon. Check the file on the host:
 
 ~~~sh
 stat -c '%u %g %n' "$HOME/projects/demo/write-check.txt"
 id -u
 ~~~
 
-It should belong to the intended development user on the host. Rootless Docker's [UID mapping documentation](https://docs.docker.com/engine/security/rootless/) explains the underlying user namespace.
+Its owner should match `builder`. The job also prints its cgroup limits. Expect a 4 GiB memory maximum, a CPU quota equivalent to 1.5 CPUs and a process limit of 512. Checking these values catches configurations where Docker accepts a flag but cannot enforce it.
 
-## Read the limits inside the running job
-
-The Python command above prints the container's cgroup values before exiting. For the example job, I expect a 4 GiB memory maximum, a CPU quota equivalent to 1.5 CPUs, and a process maximum of 512. Read the reported values and compare them with the intended limits.
-
-This caught a distinction that a successful `docker run` would not catch. Docker accepting a flag is weaker evidence than the kernel reporting the corresponding limit inside the job.
-
-A container remains a way to reduce access, rather than a complete solution for hostile code. The host user that controls the daemon can inspect and alter its containers. In a later post, the Amp host runner will deliberately have that development-user authority. Its permissions need to be stated separately from those of a constrained job.
-
-For ongoing applications, I use named Compose projects and restart policies. That gives the next layer, private previews, a service to point at after the terminal closes.
+The account that owns the daemon can inspect and change its containers. These limits are useful for controlling development workloads, but a container is not a complete boundary for hostile code. In the next post, a small Compose application uses the same rootless daemon to provide a private preview.

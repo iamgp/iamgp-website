@@ -1,12 +1,10 @@
 import { ArticleIllustration } from '@/components/ArticleIllustration'
 
-# Rex, private previews and an iPhone connection
+# Using Rex and private previews from a Mac and iPhone
 
 *Part 4 of 7. [Previous: rootless Docker](03-rootless-docker.mdx) · [Series index](README.mdx) · [Next: project secrets](05-secrets-with-1password.mdx)*
 
-With private SSH and rootless Docker working, I added the interfaces I would actually use: a persistent Rex workspace and an HTTPS preview that opens on another device.
-
-These are two different services. The Rex endpoint controls terminals. The preview endpoint reaches an application. Keeping their addresses and permissions separate made the phone setup much easier to understand.
+Rex gives me a terminal on the VPS that I can return to from either device. Tailscale Serve gives me a private HTTPS address for the application I am working on. Rex connects to `workbench-rex`, while application previews use `workbench`. This post sets up both, starting with the terminal.
 
 <ArticleIllustration
   src="/images/blog/private-vps/04-private-preview.svg"
@@ -14,27 +12,20 @@ These are two different services. The Rex endpoint controls terminals. The previ
   caption="Rex reaches a terminal. Tailscale Serve reaches an application through a host port bound to loopback."
 />
 
-## Install the intended Rex package
+## Connect Rex from both devices
 
-Follow the vendor's [Linux installation instructions](https://www.superlogical.com/rex/docs/linux/installation), including any current access requirements. Linux support was still in testing when I prepared this setup.
+Install the Linux server using [Rex's own instructions](https://www.superlogical.com/rex/docs/linux/installation). The installation page requires sign-in to show its commands.
 
-On Ubuntu, inspect the package origin and the installed command:
+Check the installed binary and version:
 
 ~~~sh
-apt-cache policy rex
 rex -v
 command -v rex
 ~~~
 
-Ubuntu also has an unrelated Perl automation package called `rex`. A successful package installation is not enough to identify the product. I used the vendor repository and selected a build compatible with the Mac client. The private provisioning pinned that build deliberately and held it until a planned client/server update.
+I run a personal server as `builder`, so its terminals have the same permissions as my development SSH session. Keep unused system-wide Rex server units disabled when using this personal service.
 
-If you pin an older package, inspect the repository's existing preferences. An equal-priority rule may still leave the newer build selected. Do not copy an obsolete version number from a blog post; choose an available version and verify it on your own clients.
-
-## Run a personal server as the development user
-
-I used a personal Rex service under `builder`, rather than a root login server. Check that unused package-level shared or login-server units are not active alongside it.
-
-As `builder`, create `~/.config/systemd/user/rex.service`:
+As `builder`, save the following in `~/.config/systemd/user/rex.service`:
 
 ~~~ini
 [Unit]
@@ -52,7 +43,7 @@ TimeoutStopSec=30
 WantedBy=default.target
 ~~~
 
-The binary path assumes the vendor's Ubuntu package. Adjust it if you deliberately installed the standalone binary elsewhere.
+The executable path assumes the vendor's Ubuntu package. Start the service and read its sign-in link:
 
 ~~~sh
 systemctl --user daemon-reload
@@ -60,17 +51,29 @@ systemctl --user enable --now rex
 journalctl --user -u rex -n 30 --no-pager
 ~~~
 
-Complete the displayed Tailscale sign-in, approve the named node and verify its tag. Enable tailnet HTTPS certificates and MagicDNS for this integration.
+Approve `workbench-rex` in Tailscale and check its tag. Enable MagicDNS and tailnet HTTPS certificates. The `--tailscale-allow-tailnet-members` flag admits callers allowed by the network policy, so the restricted Rex grant from part 2 is essential. A permitted client can control terminals as `builder`. [Rex's remote-access guide](https://www.superlogical.com/rex/docs/linux/remote-access) explains this tagged-device arrangement.
 
-The membership flag is appropriate here only with the restrictive network policy already in place. A tagged node has no personal owner, and Rex admits the tailnet callers that the policy permits. A connection can exercise the server account's authority. This is why I did not put an anonymous listener on a public address. [Rex's listener and authorisation documentation](https://www.superlogical.com/rex/docs/linux/remote-access)
+In Rex on the Mac, add this remote host:
 
-In the Mac app, add `https://workbench-rex.YOUR_TAILNET.ts.net:443` as a remote host. Create a workspace there, then verify `whoami`, `hostname` and the project directory in its terminal.
+~~~text
+https://workbench-rex.YOUR_TAILNET.ts.net:443
+~~~
 
-CLI host entries and GUI entries did not synchronise in the build I used. If the CLI works and the app does not, inspect both configurations rather than assuming they share a saved host list.
+Open a workspace and run `whoami` and `hostname`. They should identify `builder` on `workbench`. On the iPhone, connect Tailscale first, then add the same VPS address in Rex iOS. Keep any existing Mac entry, as it connects to a different machine. Use the VPS address explicitly rather than a pairing code for the Mac's local server, and check the account and hostname in the phone's terminal too.
 
-## Start a small application on loopback
+On the server, `rex client ls` should show the connected clients. If the app cannot connect, check that the actual source device appears in the Rex grant from part 2.
 
-As `builder`, create `~/projects/demo`. Put a non-sensitive test marker in `index.html`, then add this Dockerfile:
+## Publish a private application preview
+
+As `builder`, create a small test page:
+
+~~~sh
+mkdir -p "$HOME/projects/demo"
+cd "$HOME/projects/demo"
+printf 'Private preview works\n' > index.html
+~~~
+
+Add a `Dockerfile`:
 
 ~~~dockerfile
 FROM python:3.12-slim
@@ -80,9 +83,7 @@ USER 65534:65534
 CMD ["python", "-m", "http.server", "8080", "--bind", "0.0.0.0", "--directory", "/site"]
 ~~~
 
-The explicit file mode matters because the host services use a restrictive umask. The application user must be able to read the copied static file.
-
-Add `compose.yaml`:
+Then add `compose.yaml`:
 
 ~~~yaml
 services:
@@ -99,119 +100,60 @@ services:
       - no-new-privileges:true
 ~~~
 
-The HTTP server listens on the container's interfaces. Docker publishes it only on the host's loopback address. Start it and check that binding:
+The application listens on the container's interfaces. Docker publishes it only on the host's loopback address. The explicit file mode lets the container's application user read a file copied from a host with a restrictive umask.
+
+Start it and check the local response:
 
 ~~~sh
 docker compose up -d --build
-docker compose ps
 curl --fail http://127.0.0.1:3000/
 ss -lnt 'sport = :3000'
 ~~~
 
-The local check should succeed before HTTPS is added.
+The request should return the test page, and the host listener should be `127.0.0.1:3000`.
 
-## Put private HTTPS in front
-
-An administrator can configure the route directly:
+As `operator`, configure Tailscale Serve:
 
 ~~~sh
 sudo tailscale serve --bg --https=8443 http://127.0.0.1:3000
 sudo tailscale serve status
 ~~~
 
-The preview is `https://workbench.YOUR_TAILNET.ts.net:8443/`. Serve handles the private HTTPS connection and forwards to the local application. With background mode, the configuration persists beyond the terminal session. [Tailscale's Docker preview example](https://tailscale.com/docs/solutions/host-private-server-docker)
+Open `https://workbench.YOUR_TAILNET.ts.net:8443/` on the Mac and phone while connected to Tailscale. Both should show the test page with a valid certificate. Background mode keeps the Serve configuration after the terminal closes. The [Serve CLI reference](https://tailscale.com/docs/reference/tailscale-cli/serve) documents the port and proxy options.
 
-I used a separate HTTPS port for each project. The example allocation is local ports 3000 to 3999 and HTTPS ports 8443 to 8499. This avoids teaching every framework to run under a shared URL prefix.
+I use one HTTPS port per application. The examples reserve host ports 3000 to 3999 and HTTPS ports 8443 to 8499, avoiding URL-prefix changes in each application.
 
-Use normal certificate verification from the Mac. Do not use `curl -k` to turn a certificate failure into a passing test.
+## Give builder a preview command
 
-## Allow preview changes without general sudo
+The Amp runner will need to publish previews without general sudo access. I use a small root-owned helper that accepts only the reserved port ranges and always forwards to host loopback.
 
-Amp will need to publish previews as `builder`. I gave it a narrowly scoped helper rather than general Tailscale administration.
+Download and inspect [workbench-preview.py](/examples/private-vps/workbench-preview.py). From the Mac, transfer it to the administrator account:
 
-Save this adapted example as `workbench-preview` and inspect it before installation:
-
-~~~python
-#!/usr/bin/python3 -I
-import subprocess
-import sys
-
-
-def port(value, first, last):
-    if not value.isascii() or not value.isdigit():
-        raise SystemExit("expected an integer port")
-    number = int(value)
-    if not first <= number <= last:
-        raise SystemExit("port outside the preview range")
-    return number
-
-
-def main():
-    args = sys.argv[1:]
-    if args == ["status"]:
-        return subprocess.call(["/usr/bin/tailscale", "serve", "status", "--json"])
-    if len(args) not in (2, 3) or args[0] not in ("set", "remove"):
-        raise SystemExit("usage: set HTTPS_PORT LOCAL_PORT | remove HTTPS_PORT | status")
-    https = port(args[1], 8443, 8499)
-    command = ["/usr/bin/tailscale", "serve", "--bg", f"--https={https}"]
-    if args[0] == "set" and len(args) == 3:
-        local = port(args[2], 3000, 3999)
-        command.append(f"http://127.0.0.1:{local}")
-    elif args[0] == "remove" and len(args) == 2:
-        command.append("off")
-    else:
-        raise SystemExit("invalid arguments")
-    return subprocess.call(command)
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+~~~sh
+scp workbench-preview.py workbench-admin:/home/operator/workbench-preview.py
 ~~~
 
-As administrator, install it as root-owned mode `0755` at `/usr/local/sbin/workbench-preview`. Verify that the parent directory is also administrator-owned. Use `visudo` to create `/etc/sudoers.d/workbench-preview`, mode `0440`, with:
+In an `ssh workbench-admin` session, install it with root ownership:
+
+~~~sh
+sudo install -o root -g root -m 0755 /home/operator/workbench-preview.py /usr/local/sbin/workbench-preview
+~~~
+
+Check that `/usr/local/sbin` is also root-owned and not writable by `builder`.
+
+With `sudo visudo -f /etc/sudoers.d/workbench-preview`, add:
 
 ~~~sudoers
 builder ALL=(root) NOPASSWD: /usr/local/sbin/workbench-preview *
 ~~~
 
-Validate the sudoers file with `visudo -cf /etc/sudoers.d/workbench-preview`. Then test the interface as `builder`:
+Set that file to mode `0440` and validate it with `sudo visudo -cf /etc/sudoers.d/workbench-preview`. The helper is privileged code, so its argument validation and ownership are part of the access control.
+
+As `builder`, test the interface:
 
 ~~~sh
 sudo -n /usr/local/sbin/workbench-preview set 8443 3000
 sudo -n /usr/local/sbin/workbench-preview status
-sudo -n -l
 ~~~
 
-The wildcard in sudoers is safe only in combination with a helper that rejects unsupported arguments before starting a privileged process. This helper constructs argument lists without a shell, accepts only numeric ports in fixed ranges and always targets `127.0.0.1`. Python's isolated mode avoids user-controlled Python import settings.
-
-The development user can replace previews within the reserved range. It cannot choose arbitrary remote targets or use this helper to configure Funnel. The helper is a privileged programme, so review any future changes as such. The command shapes follow the [Serve CLI reference](https://tailscale.com/docs/reference/tailscale-cli/serve).
-
-## Add the iPhone as a separate client
-
-First connect the phone to the same Tailscale network. To allow Rex, add the verified `PHONE_TS_IP` to the Rex grant from part 2:
-
-~~~json
-{
-  "src": ["MAC_TS_IP", "MAC_REX_TS_IP", "PHONE_TS_IP"],
-  "dst": ["tag:workbench-rex"],
-  "ip": ["tcp:443"]
-}
-~~~
-
-Update its policy test to match:
-
-~~~json
-{
-  "src": "PHONE_TS_IP",
-  "accept": ["tag:workbench:8443", "tag:workbench-rex:443"],
-  "deny": ["tag:workbench:22", "tag:workbench:5432"]
-}
-~~~
-
-Review and save that specific access expansion. Direct phone SSH remains outside the grant.
-
-In Rex iOS, add the VPS address, `https://workbench-rex.YOUR_TAILNET.ts.net:443`, and open the server's workspace. If the Mac is already paired, keep that entry. It represents a different server.
-
-The Mac's pairing QR code in this build advertised the Mac's own Rex server, even while a VPS connection existed. Checking the address avoided pairing the wrong host again. I entered the VPS address separately on the phone.
-
-Finally, inspect `rex client ls` on the VPS. I checked the native iPhone client's presence and authenticated principal as well as the Mac's connection. A successful preview in Safari had proved browser access; this separate check proved Rex control access.
+This permission lets `builder` change previews within the reserved range. The helper accepts neither arbitrary destinations nor Funnel configuration. You now have a terminal and a private application URL on both devices, plus a preview operation the deployment runner can use.
